@@ -23,16 +23,16 @@ window.PDF_ADS = {
     // Hub bottom — native 4:1 wide strip (no atOptions pattern)
     'home-bottom': { native: 'https://pl30817073.effectivecpmnetwork.com/5f5e0035e31b5c6b4e4c2fc59b1dd58b/invoke.js', id: 'container-5f5e0035e31b5c6b4e4c2fc59b1dd58b' },
     // PDF tools — always-visible page slots use UNIQUE keys (Adsterra fills only
-    'pdf-merge': { lazy: true, key: 'c8861c32088bb3814ecdd9cb556a9460', width: 468, height: 60, invoke: 'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js', id: 'container-c8861c32088bb3814ecdd9cb556a9460' },
-    'pdf-split': { lazy: true, key: 'a4b8142bcbe93c04601223e2f7cc1044', width: 300, height: 250, invoke: 'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js', id: 'container-a4b8142bcbe93c04601223e2f7cc1044' },
-    'pdf-rotate': { lazy: true, key: 'b0fe5d20d0ccd9493655ce160f41bf1e', width: 160, height: 300, invoke: 'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js', id: 'container-b0fe5d20d0ccd9493655ce160f41bf1e' },
-    'pdf-compress': { lazy: true, key: '2a5e0a571057868d17de3b619b5582b4', width: 320, height: 50, invoke: 'https://www.highperformanceformat.com/2a5e0a571057868d17de3b619b5582b4/invoke.js', id: 'container-2a5e0a571057868d17de3b619b5582b4' },
-    'pdf-p2i': { lazy: true, key: 'c8861c32088bb3814ecdd9cb556a9460', width: 468, height: 60, invoke: 'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js', id: 'container-c8861c32088bb3814ecdd9cb556a9460' },
-    'pdf-i2p': { lazy: true, key: 'a4b8142bcbe93c04601223e2f7cc1044', width: 300, height: 250, invoke: 'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js', id: 'container-a4b8142bcbe93c04601223e2f7cc1044' },
-    'pdf-pn': { lazy: true, key: 'b0fe5d20d0ccd9493655ce160f41bf1e', width: 160, height: 300, invoke: 'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js', id: 'container-b0fe5d20d0ccd9493655ce160f41bf1e' },
-    'pdf-wm': { lazy: true, key: '2a5e0a571057868d17de3b619b5582b4', width: 320, height: 50, invoke: 'https://www.highperformanceformat.com/2a5e0a571057868d17de3b619b5582b4/invoke.js', id: 'container-2a5e0a571057868d17de3b619b5582b4' },
-    'pdf-ff': { lazy: true, key: 'c8861c32088bb3814ecdd9cb556a9460', width: 468, height: 60, invoke: 'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js', id: 'container-c8861c32088bb3814ecdd9cb556a9460' },
-    'pdf-redact': { lazy: true, key: 'a4b8142bcbe93c04601223e2f7cc1044', width: 300, height: 250, invoke: 'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js', id: 'container-a4b8142bcbe93c04601223e2f7cc1044' },
+    'pdf-merge': { count: 3, lazy: true, copies: [{key:'c8861c32088bb3814ecdd9cb556a9460',width:468,height:60,invoke:'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js'}, {key:'a4b8142bcbe93c04601223e2f7cc1044',width:300,height:250,invoke:'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js'}, {key:'b0fe5d20d0ccd9493655ce160f41bf1e',width:160,height:300,invoke:'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js'}] },
+    'pdf-p2i': { count: 3, lazy: true, copies: [{key:'c8861c32088bb3814ecdd9cb556a9460',width:468,height:60,invoke:'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js'}, {key:'a4b8142bcbe93c04601223e2f7cc1044',width:300,height:250,invoke:'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js'}, {key:'b0fe5d20d0ccd9493655ce160f41bf1e',width:160,height:300,invoke:'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js'}] },
+    'pdf-ff': { count: 3, lazy: true, copies: [{key:'c8861c32088bb3814ecdd9cb556a9460',width:468,height:60,invoke:'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js'}, {key:'a4b8142bcbe93c04601223e2f7cc1044',width:300,height:250,invoke:'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js'}, {key:'b0fe5d20d0ccd9493655ce160f41bf1e',width:160,height:300,invoke:'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js'}] },
+    'pdf-split': { count: 3, lazy: true, copies: [{key:'a4b8142bcbe93c04601223e2f7cc1044',width:300,height:250,invoke:'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js'}, {key:'b0fe5d20d0ccd9493655ce160f41bf1e',width:160,height:300,invoke:'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js'}, {key:'2a5e0a571057868d17de3b619b5582b4',width:320,height:50,invoke:'https://www.highperformanceformat.com/2a5e0a571057868d17de3b619b5582b4/invoke.js'}] },
+    'pdf-i2p': { count: 3, lazy: true, copies: [{key:'a4b8142bcbe93c04601223e2f7cc1044',width:300,height:250,invoke:'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js'}, {key:'b0fe5d20d0ccd9493655ce160f41bf1e',width:160,height:300,invoke:'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js'}, {key:'2a5e0a571057868d17de3b619b5582b4',width:320,height:50,invoke:'https://www.highperformanceformat.com/2a5e0a571057868d17de3b619b5582b4/invoke.js'}] },
+    'pdf-redact': { count: 3, lazy: true, copies: [{key:'a4b8142bcbe93c04601223e2f7cc1044',width:300,height:250,invoke:'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js'}, {key:'b0fe5d20d0ccd9493655ce160f41bf1e',width:160,height:300,invoke:'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js'}, {key:'2a5e0a571057868d17de3b619b5582b4',width:320,height:50,invoke:'https://www.highperformanceformat.com/2a5e0a571057868d17de3b619b5582b4/invoke.js'}] },
+    'pdf-rotate': { count: 3, lazy: true, copies: [{key:'b0fe5d20d0ccd9493655ce160f41bf1e',width:160,height:300,invoke:'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js'}, {key:'2a5e0a571057868d17de3b619b5582b4',width:320,height:50,invoke:'https://www.highperformanceformat.com/2a5e0a571057868d17de3b619b5582b4/invoke.js'}, {key:'c8861c32088bb3814ecdd9cb556a9460',width:468,height:60,invoke:'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js'}] },
+    'pdf-pn': { count: 3, lazy: true, copies: [{key:'b0fe5d20d0ccd9493655ce160f41bf1e',width:160,height:300,invoke:'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js'}, {key:'2a5e0a571057868d17de3b619b5582b4',width:320,height:50,invoke:'https://www.highperformanceformat.com/2a5e0a571057868d17de3b619b5582b4/invoke.js'}, {key:'c8861c32088bb3814ecdd9cb556a9460',width:468,height:60,invoke:'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js'}] },
+    'pdf-compress': { count: 3, lazy: true, copies: [{key:'2a5e0a571057868d17de3b619b5582b4',width:320,height:50,invoke:'https://www.highperformanceformat.com/2a5e0a571057868d17de3b619b5582b4/invoke.js'}, {key:'c8861c32088bb3814ecdd9cb556a9460',width:468,height:60,invoke:'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js'}, {key:'a4b8142bcbe93c04601223e2f7cc1044',width:300,height:250,invoke:'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js'}] },
+    'pdf-wm': { count: 3, lazy: true, copies: [{key:'2a5e0a571057868d17de3b619b5582b4',width:320,height:50,invoke:'https://www.highperformanceformat.com/2a5e0a571057868d17de3b619b5582b4/invoke.js'}, {key:'c8861c32088bb3814ecdd9cb556a9460',width:468,height:60,invoke:'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js'}, {key:'a4b8142bcbe93c04601223e2f7cc1044',width:300,height:250,invoke:'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js'}] },
   },
   init() {
     document.querySelectorAll('.ad-slot[data-ad-slot]').forEach((el) => {
@@ -66,7 +66,7 @@ window.PDF_ADS = {
       const u = copiesArr[i];
       const wrap = document.createElement('div');
       wrap.className = 'ad-copy';
-      wrap.style.cssText = 'flex:1 1 0;min-width:0;display:flex;justify-content:center;';
+      wrap.style.cssText = 'display:flex;justify-content:center;margin:6px auto;';
       // Container id must be unique per SLOT+COPY (multiple tool slots share
       // unit keys); fall back to the unit's own container id when slot has none.
       const cid = 'container-' + (el.dataset.adSlot || u.key) + (copiesArr.length > 1 ? '-' + (i + 1) : '');
@@ -95,8 +95,12 @@ window.PDF_ADS = {
           params: {}
         }) + ";";
         wrap.appendChild(cfg);
-        // 2) load the invoke script synchronously so it runs AFTER atOptions
+        // 2) load the invoke script — MUST be async=false so it executes
+        // in document order, right after its own atOptions config. Without
+        // this, dynamic scripts default to async and ALL copies race: each
+        // invoke reads the LAST atOptions (one orphaned ad at wrong size).
         const scr = document.createElement('script');
+        scr.async = false;
         scr.setAttribute('data-cfasync', 'false');
         scr.src = u.invoke;
         wrap.appendChild(scr);
@@ -110,11 +114,11 @@ window.PDF_ADS = {
     }
   }
 };
-// Per-tool slots load 3 ad copies in a row — ensure the slot lays them out
-// side by side and wraps on narrow screens.
+// Per-tool slots load 3 ad copies of DIFFERENT sizes (different unit keys,
+// so each fills). Stack them centered with spacing.
 (function () {
   const s = document.createElement('style');
-  s.textContent = '.ad-slot[data-loaded="1"]{flex-wrap:wrap;gap:8px}';
+  s.textContent = '.ad-slot[data-loaded="1"]{flex-direction:column;gap:0;padding:4px 0}';
   document.head.appendChild(s);
 })();
 document.addEventListener('DOMContentLoaded', () => window.PDF_ADS.init());
