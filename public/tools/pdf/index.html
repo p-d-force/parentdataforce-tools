@@ -505,6 +505,18 @@ if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.clo
 const { PDFDocument, rgb, degrees, StandardFonts, rgb: RGB } = window.PDFLib;
 
 /* ====== TOOL SWITCHER ====== */
+const PDF_AD_SLOT = {
+  merge: 'pdf-merge',
+  split: 'pdf-split',
+  rotate: 'pdf-rotate',
+  compress: 'pdf-compress',
+  'pdf-to-images': 'pdf-p2i',
+  'images-to-pdf': 'pdf-i2p',
+  'page-numbers': 'pdf-pn',
+  watermark: 'pdf-wm',
+  'form-filler': 'pdf-ff',
+  redact: 'pdf-redact',
+};
 document.querySelectorAll('.tool-list li').forEach(li => {
   li.addEventListener('click', () => {
     document.querySelectorAll('.tool-list li').forEach(x => x.classList.remove('active'));
@@ -513,7 +525,7 @@ document.querySelectorAll('.tool-list li').forEach(li => {
     document.querySelectorAll('.tool-panel').forEach(p => p.classList.add('hidden'));
     document.getElementById('panel-' + tool).classList.remove('hidden');
     // Lazy-load that tool's ad slot (skip merge which was already loaded)
-    if (window.PDF_ADS) window.PDF_ADS.loadSlot('pdf-' + tool);
+    if (window.PDF_ADS && PDF_AD_SLOT[tool]) window.PDF_ADS.loadSlot(PDF_AD_SLOT[tool]);
   });
 });
 
