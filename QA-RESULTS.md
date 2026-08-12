@@ -135,3 +135,25 @@
 ### Deployment — PASS
 - All pages serve through nginx: tools/*, articles/*, robots, sitemap
 - Service active, healthz ok
+
+## FIXES QA — Tracked Links, QR Alignment, Signature (Aug 12, 2026)
+
+### Public /r/ redirects — PASS
+- /r/-69iv_Ab WITHOUT auth → 302 (was 401) ✓
+- /r/ZGNEnfsn WITHOUT auth → 302 ✓
+- /tools/ still gated → 401 ✓
+- Tracked links now work from email signatures, phones, anywhere
+
+### QR modal alignment — PASS
+- Canvas max-width:100%, display:block, modal column 230px
+- Geometry: canvas 210x210 == parent 210x210, x:295 both, centered
+- Vision confirms equal white gap on all four sides
+
+### Signature badge + snippet — PASS
+- sig-badge.svg serves 200 (dark + orange, 300x60)
+- Link Tracker: creating a tracked link generates full email-signature
+  HTML snippet (tracked link + badge img + alt text) + copy button
+- Honest copy: "Badge is a static image; the link it wraps is tracked."
+
+### Deploy — PASS
+- commit 79f8439 (fixes) + cec67cb (ads), service active, healthz ok
