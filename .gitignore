@@ -6,3 +6,5 @@ data-*/
 npm-debug.log*
 .hermes/
 data-*
+.gmail-token.json
+ADS-CODES-local.md

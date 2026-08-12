@@ -7,6 +7,7 @@ import QRCode from 'qrcode';
 import { YoutubeTranscript } from 'youtube-transcript';
 import { Auth } from './auth.mjs';
 import { Tracker } from './tracker.mjs';
+import { sendEmail } from './mail.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -138,6 +139,54 @@ app.post('/api/auth/logout', (request, response) => {
   auth.destroySession(cookies.pdf_session);
   response.setHeader('Set-Cookie', auth.clearSessionCookie());
   response.json({ ok: true });
+});
+
+// Request a password reset — always answer identically to avoid leaking account existence.
+app.post('/api/auth/forgot', async (request, response) => {
+  const email = String(request.body?.email || '').trim().toLowerCase();
+  const generic = { ok: true, message: 'If an account exists for that email, a reset link is on its way.' };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return response.json(generic);
+
+  const user = auth.findUserByEmail(email);
+  if (!user) return response.json(generic);
+
+  const token = auth.createResetToken(user.id);
+  // Link back to the host the user is on (tools.parentdataforce.org is the public one)
+  const host = request.get('host') || 'tools.parentdataforce.org';
+  const resetUrl = `https://${host}/tools/qr/?reset=${encodeURIComponent(token)}`;
+
+  try {
+    await sendEmail({
+      to: user.email,
+      subject: 'Reset your Parent Data Force password',
+      html: `
+<p>Someone asked to reset the password for your Parent Data Force account.</p>
+<p><a href="${resetUrl}" style="display:inline-block;background:#0b5cad;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none">Reset your password</a></p>
+<p>Or copy this link: ${resetUrl}</p>
+<p>This link expires in 1 hour. If you didn't request this, you can ignore this email.</p>
+<p>— Parent Data Force</p>`
+    });
+    response.json(generic);
+  } catch (error) {
+    console.error('reset email failed:', error.message);
+    response.status(502).json({ error: 'Could not send the reset email right now. Please try again in a few minutes.' });
+  }
+});
+
+// Complete a password reset with a one-time token.
+app.post('/api/auth/reset', (request, response) => {
+  try {
+    const token = String(request.body?.token || '');
+    const password = String(request.body?.password || '');
+    if (!token) return response.status(400).json({ error: 'Reset link is missing a token.' });
+    const userId = auth.consumeResetToken(token);
+    if (!userId) return response.status(400).json({ error: 'This reset link is invalid or has expired. Request a new one.' });
+    const user = auth.setPassword(userId, password);
+    auth.destroyAllSessions(userId);
+    response.json({ ok: true, user: { id: user.id, email: user.email, plan: user.plan } });
+  } catch (error) {
+    response.status(400).json({ error: error.message || 'Unable to reset password.' });
+  }
 });
 
 app.get('/api/auth/me', (request, response) => {

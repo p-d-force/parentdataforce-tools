@@ -5,15 +5,18 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+const RESET_TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hour
 
 export class Auth {
   constructor(dataDirectory) {
     this.dataDirectory = dataDirectory;
     this.usersPath = path.join(dataDirectory, 'users.json');
     this.sessionsPath = path.join(dataDirectory, 'sessions.json');
+    this.resetsPath = path.join(dataDirectory, 'resets.json');
     fs.mkdirSync(dataDirectory, { recursive: true });
     this._ensureFile(this.usersPath);
     this._ensureFile(this.sessionsPath);
+    this._ensureFile(this.resetsPath);
   }
 
   _ensureFile(p) {
@@ -131,6 +134,65 @@ export class Auth {
       delete sessions[token];
       this._write(this.sessionsPath, sessions);
     }
+  }
+
+  // ── Password reset ─────────────────────────────────────────────────
+  createResetToken(userId) {
+    const resets = this._read(this.resetsPath);
+    const now = Date.now();
+    // Garbage-collect expired tokens
+    for (const [token, r] of Object.entries(resets)) {
+      if (r.expiresAt && r.expiresAt < now) delete resets[token];
+    }
+    const token = crypto.randomBytes(32).toString('base64url');
+    resets[token] = {
+      userId,
+      createdAt: new Date().toISOString(),
+      expiresAt: now + RESET_TOKEN_TTL_MS,
+    };
+    this._write(this.resetsPath, resets);
+    return token;
+  }
+
+  consumeResetToken(token) {
+    if (!token) return null;
+    const resets = this._read(this.resetsPath);
+    const entry = resets[token];
+    if (!entry) return null;
+    if (entry.expiresAt && entry.expiresAt < Date.now()) {
+      delete resets[token];
+      this._write(this.resetsPath, resets);
+      return null;
+    }
+    delete resets[token];
+    this._write(this.resetsPath, resets);
+    return entry.userId || null;
+  }
+
+  setPassword(userId, password) {
+    if (!password || String(password).length < 8) {
+      throw new Error('Password must be at least 8 characters.');
+    }
+    const users = this._read(this.usersPath);
+    const user = users[userId];
+    if (!user) throw new Error('Account not found.');
+    const { salt, hash } = this.hashPassword(String(password));
+    user.salt = salt;
+    user.hash = hash;
+    this._write(this.usersPath, users);
+    return { id: userId, email: user.email, plan: user.plan };
+  }
+
+  destroyAllSessions(userId) {
+    const sessions = this._read(this.sessionsPath);
+    let changed = false;
+    for (const [token, s] of Object.entries(sessions)) {
+      if (s.userId === userId) {
+        delete sessions[token];
+        changed = true;
+      }
+    }
+    if (changed) this._write(this.sessionsPath, sessions);
   }
 
   // ── Express helpers ────────────────────────────────────────────────

@@ -48,6 +48,8 @@ main{max-width:1100px;margin:auto;padding:0 30px 72px}
 .field input:focus,.field textarea:focus{outline:1px solid var(--accent-glow);border-color:var(--accent-glow)}
 .auth-switch{margin-top:18px;font-size:.82rem;color:var(--text-secondary);text-align:center}
 .auth-switch a{color:var(--accent-glow);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.auth-guest{margin-top:14px;border-top:1px dashed var(--border);padding-top:16px}
+.auth-guest .btn-ghost{width:100%}
 .form-error{display:none;background:rgba(255,59,31,.1);border:1px solid rgba(255,59,31,.35);color:var(--err);border-radius:4px;padding:10px 14px;font-size:.82rem;margin-bottom:16px}
 .form-error.show{display:block}
 
@@ -188,6 +190,27 @@ footer a{color:var(--accent-glow)}
       </div>
       <button class="btn btn-lg" id="auth-submit">Create account</button>
       <div class="auth-switch" id="auth-switch-line">Already have an account? <a id="auth-switch">Log in</a></div>
+      <div class="auth-switch"><a id="auth-forgot-link" style="display:none">Forgot your password?</a></div>
+      <div class="auth-guest"><button class="btn btn-ghost btn-lg" id="auth-guest-btn">Use as guest — no account needed</button></div>
+    </div>
+  </section>
+
+  <!-- RESET VIEW (password reset via ?reset=TOKEN) -->
+  <section id="reset-view" style="display:none">
+    <div class="auth-box">
+      <div class="form-error" id="reset-error"></div>
+      <h2 id="reset-title">Set a new password</h2>
+      <p class="sub">Choose a new password for your account. It must be at least 8 characters.</p>
+      <div class="field">
+        <label for="reset-password">New password</label>
+        <input type="password" id="reset-password" autocomplete="new-password" placeholder="At least 8 characters">
+      </div>
+      <div class="field">
+        <label for="reset-password2">Repeat password</label>
+        <input type="password" id="reset-password2" autocomplete="new-password" placeholder="Repeat your new password">
+      </div>
+      <button class="btn btn-lg" id="reset-submit">Update password</button>
+      <div class="auth-switch" id="reset-done" style="display:none">Password updated. <a id="reset-login">Log in</a></div>
     </div>
   </section>
 
@@ -267,6 +290,7 @@ footer a{color:var(--accent-glow)}
   const authError = $('auth-error');
   let mode = 'signup';
   let currentUser = null;
+  let guestMode = false;
 
   async function api(path, options = {}) {
     const res = await fetch(path, {
@@ -320,6 +344,7 @@ footer a{color:var(--accent-glow)}
       ? 'Already have an account? <a id="auth-switch">Log in</a>'
       : 'New here? <a id="auth-switch">Create an account</a>';
     $('auth-switch').addEventListener('click', () => setMode(mode === 'signup' ? 'login' : 'signup'));
+    $('auth-forgot-link').style.display = m === 'login' ? 'block' : 'none';
     authError.classList.remove('show');
   }
 
@@ -351,6 +376,107 @@ footer a{color:var(--accent-glow)}
 
   $('auth-submit').addEventListener('click', submitAuth);
   $('auth-password').addEventListener('keydown', (e) => { if (e.key === 'Enter') submitAuth(); });
+
+  // ── Guest mode ─────────────────────────────────────────────────────
+  $('auth-guest-btn').addEventListener('click', () => {
+    guestMode = true;
+    currentUser = null;
+    authView.style.display = 'none';
+    appView.style.display = 'block';
+    userbar.style.display = 'flex';
+    userbar.innerHTML = '<span class="email">Guest session</span><button class="btn btn-ghost btn-sm" id="guest-login-btn">Create account / Log in</button>';
+    $('guest-login-btn').addEventListener('click', () => {
+      guestMode = false;
+      appView.style.display = 'none';
+      userbar.style.display = 'none';
+      authView.style.display = 'block';
+      setMode('login');
+    });
+    loadGuestDashboard();
+  });
+
+  // ── Forgot password ────────────────────────────────────────────────
+  $('auth-forgot-link').addEventListener('click', () => {
+    authError.classList.remove('show');
+    $('auth-title').textContent = 'Reset your password';
+    $('auth-sub').textContent = 'Enter your account email and we\u2019ll send a reset link.';
+    $('auth-email').value = '';
+    $('auth-password').value = '';
+    $('auth-password').style.display = 'none';
+    $('auth-switch-line').innerHTML = '<a id="auth-switch">Back to log in</a>';
+    $('auth-switch').addEventListener('click', () => { $('auth-password').style.display = ''; setMode('login'); });
+    $('auth-forgot-link').style.display = 'none';
+    $('auth-guest-btn').style.display = 'none';
+    $('auth-submit').textContent = 'Send reset link';
+    const submitFn = async () => {
+      const email = $('auth-email').value.trim();
+      if (!email) return showError('Enter your email address.');
+      const btn = $('auth-submit');
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+      try {
+        const data = await api('/api/auth/forgot', { method: 'POST', body: JSON.stringify({ email }) });
+        $('auth-title').textContent = 'Check your inbox';
+        $('auth-sub').textContent = data.message || 'If an account exists, a reset link is on its way.';
+        $('auth-submit').style.display = 'none';
+        $('auth-email').style.display = 'none';
+        $('auth-switch-line').innerHTML = '<a id="auth-switch">Back to log in</a>';
+        $('auth-switch').addEventListener('click', () => { $('auth-email').style.display = ''; $('auth-submit').style.display = ''; $('auth-guest-btn').style.display = ''; setMode('login'); });
+      } catch (e) {
+        showError(e.message);
+      }
+      btn.disabled = false;
+      btn.textContent = 'Send reset link';
+    };
+    $('auth-submit').onclick = submitFn;
+    $('auth-password').onkeydown = null;
+    $('auth-email').addEventListener('keydown', (e) => { if (e.key === 'Enter') submitFn(); });
+  });
+
+  // ── Reset view (arrived via email link ?reset=TOKEN) ───────────────
+  function showResetView(token) {
+    resetToken = token;
+    authView.style.display = 'none';
+    appView.style.display = 'none';
+    userbar.style.display = 'none';
+    const rv = $('reset-view');
+    rv.style.display = 'block';
+    $('reset-error').classList.remove('show');
+    $('reset-done').style.display = 'none';
+    $('reset-submit').style.display = '';
+    $('reset-password').value = '';
+    $('reset-password2').value = '';
+    $('reset-submit').addEventListener('click', async () => {
+      const password = $('reset-password').value;
+      const password2 = $('reset-password2').value;
+      if (!password || password.length < 8) { $('reset-error').textContent = 'Password must be at least 8 characters.'; $('reset-error').classList.add('show'); return; }
+      if (password !== password2) { $('reset-error').textContent = 'Passwords do not match.'; $('reset-error').classList.add('show'); return; }
+      const btn = $('reset-submit');
+      btn.disabled = true;
+      btn.textContent = 'Updating…';
+      try {
+        await api('/api/auth/reset', { method: 'POST', body: JSON.stringify({ token, password }) });
+        $('reset-error').classList.remove('show');
+        $('reset-title').textContent = 'Password updated';
+        $('reset-submit').style.display = 'none';
+        $('reset-password').style.display = 'none';
+        $('reset-password2').style.display = 'none';
+        $('reset-done').style.display = 'block';
+        $('reset-login').addEventListener('click', () => {
+          rv.style.display = 'none';
+          authView.style.display = 'block';
+          setMode('login');
+        });
+        history.replaceState(null, '', window.location.pathname);
+      } catch (e) {
+        $('reset-error').textContent = e.message;
+        $('reset-error').classList.add('show');
+      }
+      btn.disabled = false;
+      btn.textContent = 'Update password';
+    });
+  }
+  let resetToken = null;
 
   function showApp() {
     authView.style.display = 'none';
@@ -420,6 +546,13 @@ footer a{color:var(--accent-glow)}
   });
 
   async function loadDashboard() {
+    if (guestMode) {
+      const dash = $('dashboard');
+      const strip = $('summary-strip');
+      strip.style.display = 'none';
+      dash.innerHTML = '<div class="empty-state"><div class="big">👤</div><p>You\u2019re using the link tracker as a guest. Create a free account to save your tracked links and see click analytics.</p><p class="hint">Guest links work instantly, but aren\u2019t saved to a dashboard.</p></div>';
+      return;
+    }
     try {
       const data = await api('/api/my/qrs');
       const dash = $('dashboard');
@@ -652,6 +785,12 @@ footer a{color:var(--accent-glow)}
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
   (async function boot() {
+    const params = new URLSearchParams(window.location.search);
+    const resetTokenParam = params.get('reset');
+    if (resetTokenParam) {
+      showResetView(resetTokenParam);
+      return;
+    }
     setMode('signup');
     try {
       const data = await api('/api/auth/me');
