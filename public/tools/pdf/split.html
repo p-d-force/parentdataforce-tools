@@ -7,6 +7,11 @@
 <title>Split PDF | PDF Tools | Parent Data Force</title>
 <link rel="stylesheet" href="/styles.css">
 <style>
+/* UNIFORM per-tool ad frame */
+.ad-slot-tool{min-height:300px;margin:14px 0;padding:10px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.ad-slot-tool .ad-copy{display:flex;justify-content:center;align-items:center;min-height:280px}
+</style>
+<style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@400;500;600;700;800&display=swap');
 :root{--bg-primary:#0b0b0b;--bg-secondary:#161616;--bg-elevated:#1d1d1d;--bg-card:rgba(255,255,255,.03);--accent:#ff5a1f;--accent-hot:#ff3b1f;--accent-glow:#ffa366;--text-primary:#f5f5f5;--text-secondary:#a0a0a0;--text-muted:#767676;--border:#2a2a2a}
 *{box-sizing:border-box}
@@ -197,9 +202,9 @@ footer a{color:var(--accent-glow)}
       <div class="preview-area" id="split-preview"></div>
       <div id="split-status"></div>
 </div>
-      <div class="ad-slot" data-ad-slot="pdf-split-1" style="margin:28px 0 8px;min-height:60px;background:var(--bg-elevated);border:1px dashed var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:.75rem;font-family:'DM Mono',monospace">Ad space reserved</div>
-<div class="ad-slot" data-ad-slot="pdf-split-2" style="margin:28px 0 8px;min-height:60px;background:var(--bg-elevated);border:1px dashed var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:.75rem;font-family:'DM Mono',monospace">Ad space reserved</div>
-<div class="ad-slot" data-ad-slot="pdf-split-3" style="margin:28px 0 8px;min-height:60px;background:var(--bg-elevated);border:1px dashed var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:.75rem;font-family:'DM Mono',monospace">Ad space reserved</div>
+      <div class="ad-slot ad-slot-tool" data-ad-slot="pdf-split-1">Ad space reserved</div>
+<div class="ad-slot ad-slot-tool" data-ad-slot="pdf-split-2">Ad space reserved</div>
+<div class="ad-slot ad-slot-tool" data-ad-slot="pdf-split-3">Ad space reserved</div>
     
 
   </div>

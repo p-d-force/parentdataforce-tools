@@ -10,8 +10,23 @@ import io, re, os
 SRC = r"C:/Users/LokiF/dev/parentdataforce-tools/public/tools/pdf/index.html"
 OUT = r"C:/Users/LokiF/dev/parentdataforce-tools/public/tools/pdf"
 
-with io.open(SRC, encoding="utf-8") as fh:
-    html = fh.read()
+# The source 10-panel page lives in git history (20331cb~1) because index.html
+# is now the hub. If the on-disk file is the hub (no pdf-lib script), restore
+# the source from git so the splitter stays reproducible.
+def load_source():
+    with io.open(SRC, encoding="utf-8") as fh:
+        txt = fh.read()
+    if 'src="https://unpkg.com/pdf-lib' in txt:
+        return txt
+    import subprocess
+    out = subprocess.run(
+        ["git", "-C", r"C:/Users/LokiF/dev/parentdataforce-tools",
+         "show", "20331cb~1:public/tools/pdf/index.html"],
+        capture_output=True, text=True, check=True)
+    print("NOTE: index.html is the hub; splitter sourced from git 20331cb~1")
+    return out.stdout
+
+html = load_source()
 
 # ---- 1. Extract shared chrome -------------------------------------------------
 # Everything from <!doctype> through the hero section close </section>
@@ -77,17 +92,15 @@ for tool in TOOL_JS:
     panels[tool] = html[start:panel_close]
 
 # ---- 4. Per-tool ad slot block (3 DIFFERENT sizes, eager) --------------------
-# sizes cycle: 468x60, 300x250, 160x300, 320x50 — distinct keys so all fill.
+# UNIFORM LOOK: every per-tool slot is the same fixed-height centered box, so
+# all 10 pages look identical whether the fill is square/wide/tall. The ad
+# renders at its native size centered inside the uniform frame.
 AD_SIZES = ["468x60", "300x250", "160x300", "320x50"]
 def ad_block(tool):
     divs = []
     for i, size in enumerate(AD_SIZES[:3]):
         divs.append(
-            '<div class="ad-slot" data-ad-slot="pdf-%s-%d" '
-            'style="margin:28px 0 8px;min-height:60px;background:var(--bg-elevated);'
-            'border:1px dashed var(--border);border-radius:6px;display:flex;'
-            'align-items:center;justify-content:center;color:var(--text-muted);'
-            'font-size:.75rem;font-family:\'DM Mono\',monospace">Ad space reserved</div>'
+            '<div class="ad-slot ad-slot-tool" data-ad-slot="pdf-%s-%d">Ad space reserved</div>'
             % (tool, i + 1)
         )
     return "\n".join(divs)
@@ -119,6 +132,16 @@ def tool_page(tool, title, lede, badge):
     head = shared_head.replace(
         "<title>PDF Tools | Parent Data Force</title>",
         "<title>%s | PDF Tools | Parent Data Force</title>" % title
+    )
+    # Uniform ad-frame CSS injected into every generated page
+    head = head.replace(
+        '<link rel="stylesheet" href="/styles.css">',
+        '<link rel="stylesheet" href="/styles.css">\n'
+        '<style>\n'
+        '/* UNIFORM per-tool ad frame */\n'
+        '.ad-slot-tool{min-height:300px;margin:14px 0;padding:10px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;overflow:hidden}\n'
+        '.ad-slot-tool .ad-copy{display:flex;justify-content:center;align-items:center;min-height:280px}\n'
+        '</style>'
     )
     # hero: keep generic lede; per-tool page replaces h1 + lede
     head = head.replace("<h1>PDF Tools</h1>", "<h1>PDF Tools</h1>")
