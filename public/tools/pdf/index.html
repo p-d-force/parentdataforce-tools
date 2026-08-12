@@ -512,6 +512,8 @@ document.querySelectorAll('.tool-list li').forEach(li => {
     const tool = li.dataset.tool;
     document.querySelectorAll('.tool-panel').forEach(p => p.classList.add('hidden'));
     document.getElementById('panel-' + tool).classList.remove('hidden');
+    // Lazy-load that tool's ad slot (skip merge which was already loaded)
+    if (window.PDF_ADS) window.PDF_ADS.loadSlot('pdf-' + tool);
   });
 });
 
