@@ -40,17 +40,16 @@ window.PDF_ADS = {
     // Email tracker detail — box
     'email-detail': { key: 'a4b8142bcbe93c04601223e2f7cc1044', width: 300, height: 250, invoke: 'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js', id: 'container-a4b8142bcbe93c04601223e2f7cc1044' },
     // PDF tools — one ad per tool panel. Only ONE panel is visible at a time, so
-    // keys may repeat ACROSS tools but must not collide with pdf-between/pdf-side.
-    'pdf-merge': { count: 3, lazy: true, key: 'c8861c32088bb3814ecdd9cb556a9460', width: 468, height: 60, invoke: 'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js', id: 'container-c8861c32088bb3814ecdd9cb556a9460' },
-    'pdf-split': { count: 3, lazy: true, key: 'a4b8142bcbe93c04601223e2f7cc1044', width: 300, height: 250, invoke: 'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js', id: 'container-a4b8142bcbe93c04601223e2f7cc1044' },
-    'pdf-rotate': { count: 3, lazy: true, key: 'b0fe5d20d0ccd9493655ce160f41bf1e', width: 160, height: 300, invoke: 'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js', id: 'container-b0fe5d20d0ccd9493655ce160f41bf1e' },
-    'pdf-compress': { count: 3, lazy: true, key: '2a5e0a571057868d17de3b619b5582b4', width: 320, height: 50, invoke: 'https://www.highperformanceformat.com/2a5e0a571057868d17de3b619b5582b4/invoke.js', id: 'container-2a5e0a571057868d17de3b619b5582b4' },
-    'pdf-p2i': { count: 3, lazy: true, key: 'c8861c32088bb3814ecdd9cb556a9460', width: 468, height: 60, invoke: 'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js', id: 'container-c8861c32088bb3814ecdd9cb556a9460' },
-    'pdf-i2p': { count: 3, lazy: true, key: 'a4b8142bcbe93c04601223e2f7cc1044', width: 300, height: 250, invoke: 'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js', id: 'container-a4b8142bcbe93c04601223e2f7cc1044' },
-    'pdf-pn': { count: 3, lazy: true, key: 'b0fe5d20d0ccd9493655ce160f41bf1e', width: 160, height: 300, invoke: 'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js', id: 'container-b0fe5d20d0ccd9493655ce160f41bf1e' },
-    'pdf-wm': { count: 3, lazy: true, key: '2a5e0a571057868d17de3b619b5582b4', width: 320, height: 50, invoke: 'https://www.highperformanceformat.com/2a5e0a571057868d17de3b619b5582b4/invoke.js', id: 'container-2a5e0a571057868d17de3b619b5582b4' },
-    'pdf-ff': { count: 3, lazy: true, key: 'c8861c32088bb3814ecdd9cb556a9460', width: 468, height: 60, invoke: 'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js', id: 'container-c8861c32088bb3814ecdd9cb556a9460' },
-    'pdf-redact': { count: 3, lazy: true, key: 'a4b8142bcbe93c04601223e2f7cc1044', width: 300, height: 250, invoke: 'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js', id: 'container-a4b8142bcbe93c04601223e2f7cc1044' },
+    'pdf-merge': { count: 3, lazy: true, copies: [{key:'c8861c32088bb3814ecdd9cb556a9460',width:468,height:60,invoke:'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js'}, {key:'a4b8142bcbe93c04601223e2f7cc1044',width:300,height:250,invoke:'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js'}, {key:'b0fe5d20d0ccd9493655ce160f41bf1e',width:160,height:300,invoke:'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js'}] },
+    'pdf-p2i': { count: 3, lazy: true, copies: [{key:'c8861c32088bb3814ecdd9cb556a9460',width:468,height:60,invoke:'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js'}, {key:'a4b8142bcbe93c04601223e2f7cc1044',width:300,height:250,invoke:'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js'}, {key:'b0fe5d20d0ccd9493655ce160f41bf1e',width:160,height:300,invoke:'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js'}] },
+    'pdf-ff': { count: 3, lazy: true, copies: [{key:'c8861c32088bb3814ecdd9cb556a9460',width:468,height:60,invoke:'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js'}, {key:'a4b8142bcbe93c04601223e2f7cc1044',width:300,height:250,invoke:'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js'}, {key:'b0fe5d20d0ccd9493655ce160f41bf1e',width:160,height:300,invoke:'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js'}] },
+    'pdf-split': { count: 3, lazy: true, copies: [{key:'a4b8142bcbe93c04601223e2f7cc1044',width:300,height:250,invoke:'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js'}, {key:'b0fe5d20d0ccd9493655ce160f41bf1e',width:160,height:300,invoke:'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js'}, {key:'2a5e0a571057868d17de3b619b5582b4',width:320,height:50,invoke:'https://www.highperformanceformat.com/2a5e0a571057868d17de3b619b5582b4/invoke.js'}] },
+    'pdf-i2p': { count: 3, lazy: true, copies: [{key:'a4b8142bcbe93c04601223e2f7cc1044',width:300,height:250,invoke:'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js'}, {key:'b0fe5d20d0ccd9493655ce160f41bf1e',width:160,height:300,invoke:'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js'}, {key:'2a5e0a571057868d17de3b619b5582b4',width:320,height:50,invoke:'https://www.highperformanceformat.com/2a5e0a571057868d17de3b619b5582b4/invoke.js'}] },
+    'pdf-redact': { count: 3, lazy: true, copies: [{key:'a4b8142bcbe93c04601223e2f7cc1044',width:300,height:250,invoke:'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js'}, {key:'b0fe5d20d0ccd9493655ce160f41bf1e',width:160,height:300,invoke:'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js'}, {key:'2a5e0a571057868d17de3b619b5582b4',width:320,height:50,invoke:'https://www.highperformanceformat.com/2a5e0a571057868d17de3b619b5582b4/invoke.js'}] },
+    'pdf-rotate': { count: 3, lazy: true, copies: [{key:'b0fe5d20d0ccd9493655ce160f41bf1e',width:160,height:300,invoke:'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js'}, {key:'2a5e0a571057868d17de3b619b5582b4',width:320,height:50,invoke:'https://www.highperformanceformat.com/2a5e0a571057868d17de3b619b5582b4/invoke.js'}, {key:'c8861c32088bb3814ecdd9cb556a9460',width:468,height:60,invoke:'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js'}] },
+    'pdf-pn': { count: 3, lazy: true, copies: [{key:'b0fe5d20d0ccd9493655ce160f41bf1e',width:160,height:300,invoke:'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js'}, {key:'2a5e0a571057868d17de3b619b5582b4',width:320,height:50,invoke:'https://www.highperformanceformat.com/2a5e0a571057868d17de3b619b5582b4/invoke.js'}, {key:'c8861c32088bb3814ecdd9cb556a9460',width:468,height:60,invoke:'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js'}] },
+    'pdf-compress': { count: 3, lazy: true, copies: [{key:'2a5e0a571057868d17de3b619b5582b4',width:320,height:50,invoke:'https://www.highperformanceformat.com/2a5e0a571057868d17de3b619b5582b4/invoke.js'}, {key:'c8861c32088bb3814ecdd9cb556a9460',width:468,height:60,invoke:'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js'}, {key:'a4b8142bcbe93c04601223e2f7cc1044',width:300,height:250,invoke:'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js'}] },
+    'pdf-wm': { count: 3, lazy: true, copies: [{key:'2a5e0a571057868d17de3b619b5582b4',width:320,height:50,invoke:'https://www.highperformanceformat.com/2a5e0a571057868d17de3b619b5582b4/invoke.js'}, {key:'c8861c32088bb3814ecdd9cb556a9460',width:468,height:60,invoke:'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js'}, {key:'a4b8142bcbe93c04601223e2f7cc1044',width:300,height:250,invoke:'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js'}] },
   },
   init() {
     document.querySelectorAll('.ad-slot[data-ad-slot]').forEach((el) => {
@@ -74,17 +73,21 @@ window.PDF_ADS = {
   load(el, unit) {
     el.dataset.loaded = '1';
     el.innerHTML = '';
-    // Load the unit `count` times (default 1). Per-tool slots use count 3 so
-    // the ad appears 3x in a row. Each copy gets its own container id.
-    const copies = unit.count || 1;
-    for (let i = 0; i < copies; i++) {
+    // Load the unit `count` times (default 1). Per-tool slots use count 3 with
+    // a `copies` array of DISTINCT unit keys so all three actually fill
+    // (Adsterra serves one ad per unit key per page view).
+    let copiesArr;
+    if (unit.copies && unit.copies.length) copiesArr = unit.copies;
+    else copiesArr = [unit];
+    for (let i = 0; i < copiesArr.length; i++) {
+      const u = copiesArr[i];
       const wrap = document.createElement('div');
       wrap.className = 'ad-copy';
       wrap.style.cssText = 'flex:1 1 0;min-width:0;display:flex;justify-content:center;';
       // Container id must be unique per SLOT+COPY (multiple tool slots share
       // unit keys); fall back to the unit's own container id when slot has none.
-      const cid = 'container-' + (el.dataset.adSlot || unit.key) + (copies > 1 ? '-' + (i + 1) : '');
-      if (unit.native) {
+      const cid = 'container-' + (el.dataset.adSlot || u.key) + (copiesArr.length > 1 ? '-' + (i + 1) : '');
+      if (u.native) {
         // Native banner: script + container div, no atOptions needed
         const div = document.createElement('div');
         div.id = cid;
@@ -92,9 +95,9 @@ window.PDF_ADS = {
         const scr = document.createElement('script');
         scr.async = true;
         scr.setAttribute('data-cfasync', 'false');
-        scr.src = unit.native;
+        scr.src = u.native;
         wrap.appendChild(scr);
-      } else if (unit.invoke) {
+      } else if (u.invoke) {
         // Container div the invoke script writes into
         const div = document.createElement('div');
         div.id = cid;
@@ -102,22 +105,22 @@ window.PDF_ADS = {
         // 1) set the global atOptions config for THIS unit
         const cfg = document.createElement('script');
         cfg.text = "atOptions = " + JSON.stringify({
-          key: unit.key,
+          key: u.key,
           format: 'iframe',
-          height: unit.height,
-          width: unit.width,
+          height: u.height,
+          width: u.width,
           params: {}
         }) + ";";
         wrap.appendChild(cfg);
         // 2) load the invoke script synchronously so it runs AFTER atOptions
         const scr = document.createElement('script');
         scr.setAttribute('data-cfasync', 'false');
-        scr.src = unit.invoke;
+        scr.src = u.invoke;
         wrap.appendChild(scr);
-      } else if (unit.src) {
+      } else if (u.src) {
         const scr = document.createElement('script');
         scr.async = true;
-        scr.src = unit.src;
+        scr.src = u.src;
         wrap.appendChild(scr);
       }
       el.appendChild(wrap);
