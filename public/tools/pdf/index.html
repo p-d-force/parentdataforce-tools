@@ -149,7 +149,7 @@ footer a{color:var(--accent-glow)}
     <p class="lede">Merge, split, rotate, compress, redact, and more — all processing happens in your browser. Files are never uploaded to any server.</p>
   </section>
 
-  <div class="ad-slot">Ad space reserved</div>
+  <div class="ad-slot" data-ad-slot="pdf-between">Ad space reserved</div>
 
   <div class="pdf-layout">
     <aside class="sidebar">
@@ -473,7 +473,7 @@ footer a{color:var(--accent-glow)}
   </div>
 </main>
 
-<div class="ad-slot" style="margin:20px 30px">Ad space reserved</div>
+<div class="ad-slot" data-ad-slot="pdf-side" style="margin:20px 30px">Ad space reserved</div>
 
 <section class="donation-section">
   <h2>Support Our Work</h2>
@@ -1220,5 +1220,6 @@ document.getElementById('redact-btn').addEventListener('click', async () => {
   btn.disabled = false; btn.textContent = 'Redact & Download';
 });
 </script>
+  <script src="/ads.js" defer></script>
 </body>
 </html>
