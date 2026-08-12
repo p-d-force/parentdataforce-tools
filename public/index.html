@@ -30,7 +30,7 @@
         <span class="banner-icon">♥</span>
         <p>All tools are <strong>free and open</strong> — no accounts, no tracking, no ads. If these tools help your family, <a href="#support">consider supporting us</a> so we can keep building.</p>
       </div>
-      <div class="actions"><a class="button" href="#qr-tool">Create a QR code</a><a class="text-link" href="#resources">Browse resources ↓</a></div>
+      <div class="actions"><a class="button" href="/tools/qr/">Create a QR code</a><a class="text-link" href="#resources">Browse resources ↓</a></div>
     </section>
 
     <!-- Donation / Support Section -->
@@ -64,19 +64,13 @@
     </section>
 
     <section id="tools" class="section">
-      <div class="section-heading"><p class="eyebrow">UTILITY LAB</p><h2>Tools in this development release</h2><p>One useful tool at a time. No accounts required for the QR generator.</p></div>
+      <div class="section-heading"><p class="eyebrow">UTILITY LAB</p><h2>Tools in this development release</h2><p>One useful tool at a time. QR Studio accounts are free — the rest need no account at all.</p></div>
       <div class="tool-grid">
-        <article id="qr-tool" class="tool-card tool-card-active">
-          <div class="tool-icon">QR</div><span class="status live">DEVELOPMENT PILOT</span>
-          <h3>QR code generator</h3>
-          <p>Create a downloadable QR code. Optional first-party click counts use a short redirect link; we store the destination, a label, total clicks, and the last-click time—not visitor identity, IP addresses, or device fingerprints.</p>
-          <form id="qr-form">
-            <label>Destination URL<input id="destination" name="destination" type="url" placeholder="https://example.org/page" required maxlength="2048"></label>
-            <label>Optional label<input id="label" name="label" type="text" placeholder="School-event flyer" maxlength="80"></label>
-            <label class="toggle"><input id="tracking" name="tracking" type="checkbox" checked><span>Use a tracked redirect link and count scans</span></label>
-            <button type="submit">Generate QR code</button>
-          </form>
-          <div id="qr-result" class="qr-result" hidden aria-live="polite"></div>
+        <article id="qr-tool" class="tool-card tool-card-live">
+          <div class="tool-icon">QR</div><span class="status live">LIVE</span><span class="badge-new">Accounts</span>
+          <h3><a href="/tools/qr/" class="tool-link">QR Studio</a></h3>
+          <p>Create QR codes with first-party click tracking. Free account saves your codes, tracks scan counts, and manages everything from one dashboard. No PII, no ads.</p>
+          <p style="margin-top:16px"><a class="text-link" href="/tools/qr/" style="color:var(--accent-glow);text-underline-offset:5px">Open QR Studio →</a></p>
         </article>
         <article class="tool-card tool-card-live"><div class="tool-icon">PDF</div><span class="status live">LIVE</span><span class="badge-new">New Tool</span><h3><a href="/tools/pdf/" class="tool-link">PDF tools</a></h3><p>Private, browser-first basics: merge, split, rotate, compress, and convert. No upload-based processing until the privacy model is reviewed.</p></article>
         <article class="tool-card tool-card-live"><div class="tool-icon">YT</div><span class="status live">LIVE</span><span class="badge-new">New Tool</span><h3><a href="/tools/youtube/" class="tool-link">Video resources</a></h3><p>Video transcript and accessibility resources first. Any download feature must respect platform terms, copyright, and creator rights.</p></article>

@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import express from 'express';
 import QRCode from 'qrcode';
 import { YoutubeTranscript } from 'youtube-transcript';
+import { Auth } from './auth.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -14,6 +15,7 @@ const dataDirectory = process.env.DATA_DIRECTORY || path.join(__dirname, 'data')
 const linkStorePath = path.join(dataDirectory, 'links.json');
 
 fs.mkdirSync(dataDirectory, { recursive: true });
+const auth = new Auth(dataDirectory);
 
 function readStore() {
   try {
@@ -60,11 +62,56 @@ app.get('/healthz', (_request, response) => {
   response.json({ status: 'ok' });
 });
 
+// ─── Auth Routes ─────────────────────────────────────────────────────────────
+
+app.post('/api/auth/signup', (request, response) => {
+  try {
+    const { email, password } = request.body || {};
+    const user = auth.createUser(email, password);
+    const token = auth.createSession(user.id);
+    response.setHeader('Set-Cookie', auth.sessionCookie(token));
+    response.status(201).json({ user: { id: user.id, email: user.email, plan: user.plan } });
+  } catch (error) {
+    response.status(400).json({ error: error.message || 'Unable to create account.' });
+  }
+});
+
+app.post('/api/auth/login', (request, response) => {
+  try {
+    const { email, password } = request.body || {};
+    const user = auth.findUserByEmail(email);
+    if (!user || !auth.verifyPassword(String(password || ''), user.salt, user.hash)) {
+      return response.status(401).json({ error: 'Invalid email or password.' });
+    }
+    const token = auth.createSession(user.id);
+    response.setHeader('Set-Cookie', auth.sessionCookie(token));
+    response.json({ user: { id: user.id, email: user.email, plan: user.plan } });
+  } catch (error) {
+    response.status(400).json({ error: error.message || 'Unable to log in.' });
+  }
+});
+
+app.post('/api/auth/logout', (request, response) => {
+  const cookies = auth.parseCookies(request);
+  auth.destroySession(cookies.pdf_session);
+  response.setHeader('Set-Cookie', auth.clearSessionCookie());
+  response.json({ ok: true });
+});
+
+app.get('/api/auth/me', (request, response) => {
+  const cookies = auth.parseCookies(request);
+  const user = auth.getUserBySessionToken(cookies.pdf_session);
+  if (!user) return response.status(401).json({ error: 'Not logged in.' });
+  return response.json({ user: { id: user.id, email: user.email, plan: user.plan } });
+});
+
 app.post('/api/qr', async (request, response) => {
   try {
     const destination = normalizeHttpUrl(request.body?.destination);
     const label = String(request.body?.label || '').trim().slice(0, 80);
     const tracking = Boolean(request.body?.tracking);
+    const cookies = auth.parseCookies(request);
+    const user = auth.getUserBySessionToken(cookies.pdf_session);
     const store = readStore();
     let encodedValue = destination;
     let code = null;
@@ -74,6 +121,7 @@ app.post('/api/qr', async (request, response) => {
       store[code] = {
         destination,
         label,
+        userId: user ? user.id : null,
         createdAt: new Date().toISOString(),
         clicks: 0,
         lastClickedAt: null
@@ -100,6 +148,47 @@ app.post('/api/qr', async (request, response) => {
   } catch (error) {
     response.status(400).json({ error: error.message || 'Unable to create QR code.' });
   }
+});
+
+// List the current user's tracked QR codes
+app.get('/api/my/qrs', (request, response) => {
+  const cookies = auth.parseCookies(request);
+  const user = auth.getUserBySessionToken(cookies.pdf_session);
+  if (!user) return response.status(401).json({ error: 'Not logged in.' });
+
+  const store = readStore();
+  const codes = Object.entries(store)
+    .filter(([, item]) => item.userId === user.id)
+    .map(([code, item]) => ({
+      code,
+      label: item.label,
+      destination: item.destination,
+      createdAt: item.createdAt,
+      clicks: item.clicks,
+      lastClickedAt: item.lastClickedAt,
+      redirectUrl: `${publicBaseUrl.replace(/\/$/, '')}/r/${code}`
+    }))
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  response.json({ codes });
+});
+
+// Delete a tracked QR code (owner only, or admin-less anonymous codes allowed)
+app.delete('/api/qr/:code', (request, response) => {
+  const store = readStore();
+  const item = store[request.params.code];
+  if (!item) return response.status(404).json({ error: 'Tracked link not found.' });
+
+  const cookies = auth.parseCookies(request);
+  const user = auth.getUserBySessionToken(cookies.pdf_session);
+
+  if (item.userId && (!user || user.id !== item.userId)) {
+    return response.status(403).json({ error: 'You can only delete your own QR codes.' });
+  }
+
+  delete store[request.params.code];
+  writeStore(store);
+  response.json({ ok: true });
 });
 
 app.get('/api/qr/:code', (request, response) => {
