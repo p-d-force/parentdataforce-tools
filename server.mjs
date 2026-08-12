@@ -56,6 +56,30 @@ function createCode(store) {
   throw new Error('Could not allocate a unique tracking code.');
 }
 
+// ── QR style config ───────────────────────────────────────────────────
+const DEFAULT_STYLE = {
+  dots: 'square',          // square | rounded | dots | classy | classy-rounded | extra-rounded
+  eyes: 'square',          // square | circle | rounded | leaf | diamond
+  dotColor: '#0b0b0b',
+  eyeColor: '#0b0b0b',
+  bgColor: '#ffffff',
+  logo: null,              // data URL (client-uploaded, small)
+  logoSize: 0.18           // fraction of QR size
+};
+
+function sanitizeStyle(raw) {
+  const src = raw && typeof raw === 'object' ? raw : {};
+  const out = { ...DEFAULT_STYLE };
+  if (['square', 'rounded', 'dots', 'classy', 'classy-rounded', 'extra-rounded'].includes(src.dots)) out.dots = src.dots;
+  if (['square', 'circle', 'rounded', 'leaf', 'diamond'].includes(src.eyes)) out.eyes = src.eyes;
+  if (typeof src.dotColor === 'string' && /^#[0-9a-fA-F]{6}$/.test(src.dotColor)) out.dotColor = src.dotColor;
+  if (typeof src.eyeColor === 'string' && /^#[0-9a-fA-F]{6}$/.test(src.eyeColor)) out.eyeColor = src.eyeColor;
+  if (typeof src.bgColor === 'string' && /^#[0-9a-fA-F]{6}$/.test(src.bgColor)) out.bgColor = src.bgColor;
+  if (typeof src.logo === 'string' && src.logo.startsWith('data:image/') && src.logo.length < 200000) out.logo = src.logo;
+  if (typeof src.logoSize === 'number' && src.logoSize >= 0.08 && src.logoSize <= 0.3) out.logoSize = src.logoSize;
+  return out;
+}
+
 app.disable('x-powered-by');
 app.use(express.json({ limit: '16kb' }));
 app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html'] }));
@@ -113,6 +137,7 @@ app.post('/api/qr', async (request, response) => {
     const label = String(request.body?.label || '').trim().slice(0, 80);
     const tracking = Boolean(request.body?.tracking);
     const webhookUrl = String(request.body?.webhookUrl || '').trim().slice(0, 500);
+    const style = sanitizeStyle(request.body?.style);
     const cookies = auth.parseCookies(request);
     const user = auth.getUserBySessionToken(cookies.pdf_session);
     const store = readStore();
@@ -128,6 +153,7 @@ app.post('/api/qr', async (request, response) => {
         createdAt: new Date().toISOString(),
         clicks: 0,
         lastClickedAt: null,
+        style,
         ...(webhookUrl ? { webhookUrl } : {})
       };
       writeStore(store);
@@ -170,7 +196,9 @@ app.get('/api/my/qrs', (request, response) => {
       createdAt: item.createdAt,
       clicks: item.clicks,
       lastClickedAt: item.lastClickedAt,
-      redirectUrl: `${publicBaseUrl.replace(/\/$/, '')}/r/${code}`
+      redirectUrl: `${publicBaseUrl.replace(/\/$/, '')}/r/${code}`,
+      style: item.style || DEFAULT_STYLE,
+      uniqueScans: item.uniqueFp ? Object.keys(item.uniqueFp).length : 0
     }))
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
@@ -281,6 +309,7 @@ app.get('/api/qr/:code', (request, response) => {
     lastClickedAt: item.lastClickedAt,
     redirectUrl: `${publicBaseUrl.replace(/\/$/, '')}/r/${request.params.code}`,
     webhookUrl: (isOwner || isPublicView) ? (item.webhookUrl || null) : null,
+    style: item.style || DEFAULT_STYLE,
     // Full detail (history + stats) only for owner or anonymous codes
     stats: (isOwner || isPublicView) ? summarizeStats(item) : null,
     history: (isOwner || isPublicView) ? sanitizeHistory(item.history) : null
@@ -311,8 +340,9 @@ app.patch('/api/qr/:code', (request, response) => {
       if (w === '') delete item.webhookUrl;
       else item.webhookUrl = w;
     }
+    if (request.body?.style) item.style = sanitizeStyle(request.body.style);
     writeStore(store);
-    response.json({ ok: true, label: item.label, destination: item.destination, webhookUrl: item.webhookUrl || null });
+    response.json({ ok: true, label: item.label, destination: item.destination, webhookUrl: item.webhookUrl || null, style: item.style || DEFAULT_STYLE });
   } catch (error) {
     response.status(400).json({ error: error.message || 'Unable to update.' });
   }
