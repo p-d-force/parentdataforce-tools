@@ -180,6 +180,85 @@ app.post('/api/qr', async (request, response) => {
   }
 });
 
+// ─── Tracked Link Routes (email tracker — reuses QR store + tracker) ─────────
+
+app.post('/api/links', (request, response) => {
+  try {
+    const destination = normalizeHttpUrl(request.body?.destination);
+    const label = String(request.body?.label || '').trim().slice(0, 80);
+    const webhookUrl = String(request.body?.webhookUrl || '').trim().slice(0, 500);
+    const cookies = auth.parseCookies(request);
+    const user = auth.getUserBySessionToken(cookies.pdf_session);
+    const store = readStore();
+    const code = createCode(store);
+    store[code] = {
+      destination,
+      label,
+      kind: 'link',
+      userId: user ? user.id : null,
+      createdAt: new Date().toISOString(),
+      clicks: 0,
+      lastClickedAt: null,
+      ...(webhookUrl ? { webhookUrl } : {})
+    };
+    writeStore(store);
+    response.status(201).json({
+      code,
+      label,
+      destination,
+      kind: 'link',
+      redirectUrl: `${publicBaseUrl.replace(/\/$/, '')}/r/${code}`
+    });
+  } catch (error) {
+    response.status(400).json({ error: error.message || 'Unable to create link.' });
+  }
+});
+
+// Bulk CSV import — "label,destination" per line (header row optional)
+app.post('/api/links/bulk', (request, response) => {
+  try {
+    const csv = String(request.body?.csv || '').trim();
+    if (!csv) return response.status(400).json({ error: 'No CSV provided.' });
+
+    const cookies = auth.parseCookies(request);
+    const user = auth.getUserBySessionToken(cookies.pdf_session);
+    const store = readStore();
+
+    const lines = csv.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+    const created = [];
+    let skipped = 0;
+
+    for (const line of lines.slice(0, 100)) {
+      // Strip optional header row
+      if (/^(label|name|title)\s*[,]/i.test(line) && created.length === 0 && skipped === 0) continue;
+      const comma = line.indexOf(',');
+      const label = comma > -1 ? line.slice(0, comma).trim().slice(0, 80) : '';
+      const dest = (comma > -1 ? line.slice(comma + 1) : line).trim();
+      try {
+        const destination = normalizeHttpUrl(dest);
+        const code = createCode(store);
+        store[code] = {
+          destination,
+          label,
+          kind: 'link',
+          userId: user ? user.id : null,
+          createdAt: new Date().toISOString(),
+          clicks: 0,
+          lastClickedAt: null
+        };
+        created.push({ code, label, destination, redirectUrl: `${publicBaseUrl.replace(/\/$/, '')}/r/${code}` });
+      } catch {
+        skipped += 1;
+      }
+    }
+
+    writeStore(store);
+    response.status(201).json({ created: created.length, skipped, codes: created });
+  } catch (error) {
+    response.status(400).json({ error: error.message || 'Unable to import links.' });
+  }
+});
+
 // List the current user's tracked QR codes
 app.get('/api/my/qrs', (request, response) => {
   const cookies = auth.parseCookies(request);
@@ -191,6 +270,7 @@ app.get('/api/my/qrs', (request, response) => {
     .filter(([, item]) => item.userId === user.id)
     .map(([code, item]) => ({
       code,
+      kind: item.kind || 'qr',
       label: item.label,
       destination: item.destination,
       createdAt: item.createdAt,
@@ -304,6 +384,7 @@ app.get('/api/qr/:code', (request, response) => {
 
   return response.json({
     code: request.params.code,
+    kind: item.kind || 'qr',
     label: item.label,
     destination: item.destination,
     createdAt: item.createdAt,
