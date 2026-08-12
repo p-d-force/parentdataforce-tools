@@ -4,16 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow,noarchive">
-<title>PDF Tools | Parent Data Force</title>
+<title>Merge PDF | PDF Tools | Parent Data Force</title>
 <link rel="stylesheet" href="/styles.css">
-<style>
-.tool-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;margin-top:20px}
-.tool-card{display:block;padding:24px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:6px;text-decoration:none;transition:transform .15s,border-color .15s}
-.tool-card:hover{transform:translateY(-2px);border-color:var(--accent)}
-.tool-card h3{margin:0 0 8px;font-size:1.05rem;color:var(--text-primary)}
-.tool-card p{margin:0 0 14px;color:var(--text-secondary);font-size:.85rem}
-.tool-card-cta{color:var(--accent-glow);font-size:.8rem;font-family:'DM Mono',monospace}
-</style>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@400;500;600;700;800&display=swap');
 :root{--bg-primary:#0b0b0b;--bg-secondary:#161616;--bg-elevated:#1d1d1d;--bg-card:rgba(255,255,255,.03);--accent:#ff5a1f;--accent-hot:#ff3b1f;--accent-glow:#ffa366;--text-primary:#f5f5f5;--text-secondary:#a0a0a0;--text-muted:#767676;--border:#2a2a2a}
@@ -153,66 +145,55 @@ footer a{color:var(--accent-glow)}
   <section class="hero">
     <p class="eyebrow">FREE • PRIVATE • CLIENT-SIDE ONLY</p>
     <h1>PDF Tools</h1>
-    <p class="lede">Merge, split, rotate, compress, redact, and more — all processing happens in your browser. Files are never uploaded to any server.</p>
+    <p class="lede">Combine multiple PDF files into one. Drag files to reorder.</p>
   </section>
-
 
 
 
   <div class="ad-slot" data-ad-slot="pdf-between">Ad space reserved</div>
 
-  <section class="tool-grid">
-      <a class="tool-card" href="merge.html">
-        <h3>Merge PDF</h3>
+  <div class="pdf-layout">
+    <aside class="sidebar">
+      <h2>Tools</h2>
+      <ul class="tool-list">
+        <li class="active"><a href="merge.html" style="display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none;width:100%"><span class="tool-num">01</span> Merge PDF</a></li>
+        <li><a href="split.html" style="display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none;width:100%"><span class="tool-num">02</span> Split PDF</a></li>
+        <li><a href="rotate.html" style="display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none;width:100%"><span class="tool-num">03</span> Rotate Pages</a></li>
+        <li><a href="compress.html" style="display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none;width:100%"><span class="tool-num">04</span> Compress PDF</a></li>
+        <li><a href="pdf-to-images.html" style="display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none;width:100%"><span class="tool-num">05</span> PDF to Images</a></li>
+        <li><a href="images-to-pdf.html" style="display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none;width:100%"><span class="tool-num">06</span> Images to PDF</a></li>
+        <li><a href="page-numbers.html" style="display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none;width:100%"><span class="tool-num">07</span> Add Page Numbers</a></li>
+        <li><a href="watermark.html" style="display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none;width:100%"><span class="tool-num">08</span> Add Watermark</a></li>
+        <li><a href="form-filler.html" style="display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none;width:100%"><span class="tool-num">09</span> PDF Form Filler</a></li>
+        <li><a href="redact.html" style="display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none;width:100%"><span class="tool-num">10</span> Redact PDF</a></li>
+      </ul>
+    </aside>
+
+    <div class="tool-panel" id="panel-merge">
+      <div class="tool-header">
+        <div class="privacy-badge">🔒 100% Client-Side — No Upload</div>
+        <h2>Merge PDF</h2>
         <p>Combine multiple PDF files into one. Drag files to reorder.</p>
-        <span class="tool-card-cta">Open tool →</span>
-      </a>
-      <a class="tool-card" href="split.html">
-        <h3>Split PDF</h3>
-        <p>Extract specific pages or split a PDF into individual pages.</p>
-        <span class="tool-card-cta">Open tool →</span>
-      </a>
-      <a class="tool-card" href="rotate.html">
-        <h3>Rotate Pages</h3>
-        <p>Rotate pages 90, 180, or 270 degrees.</p>
-        <span class="tool-card-cta">Open tool →</span>
-      </a>
-      <a class="tool-card" href="compress.html">
-        <h3>Compress PDF</h3>
-        <p>Reduce PDF file size by re-encoding with optimized settings.</p>
-        <span class="tool-card-cta">Open tool →</span>
-      </a>
-      <a class="tool-card" href="pdf-to-images.html">
-        <h3>PDF to Images</h3>
-        <p>Convert each page of a PDF to PNG or JPG images.</p>
-        <span class="tool-card-cta">Open tool →</span>
-      </a>
-      <a class="tool-card" href="images-to-pdf.html">
-        <h3>Images to PDF</h3>
-        <p>Convert images (PNG, JPG, BMP) into a single PDF document.</p>
-        <span class="tool-card-cta">Open tool →</span>
-      </a>
-      <a class="tool-card" href="page-numbers.html">
-        <h3>Add Page Numbers</h3>
-        <p>Add page numbers to every page of a PDF.</p>
-        <span class="tool-card-cta">Open tool →</span>
-      </a>
-      <a class="tool-card" href="watermark.html">
-        <h3>Add Watermark</h3>
-        <p>Add a text watermark to every page of a PDF.</p>
-        <span class="tool-card-cta">Open tool →</span>
-      </a>
-      <a class="tool-card" href="form-filler.html">
-        <h3>PDF Form Filler</h3>
-        <p>Fill form fields in a fillable PDF, then flatten and download.</p>
-        <span class="tool-card-cta">Open tool →</span>
-      </a>
-      <a class="tool-card" href="redact.html">
-        <h3>Redact PDF</h3>
-        <p>Draw redaction boxes over sensitive information.</p>
-        <span class="tool-card-cta">Open tool →</span>
-      </a>
-  </section>
+      </div>
+      <div class="upload-zone" id="merge-upload" onclick="document.getElementById('merge-file-input').click()">
+        <div class="upload-icon">📄</div>
+        <p><strong>Drop PDF files here</strong> or click to browse</p>
+        <p class="file-types">PDF files only • Multiple files supported</p>
+        <input type="file" id="merge-file-input" accept="application/pdf" multiple hidden>
+      </div>
+      <div class="file-list" id="merge-file-list"></div>
+      <div class="controls">
+        <button class="btn" id="merge-btn" disabled>Merge PDFs</button>
+      </div>
+      <div class="preview-area" id="merge-preview"></div>
+      <div id="merge-status"></div>
+</div>
+      <div class="ad-slot" data-ad-slot="pdf-merge-1" style="margin:28px 0 8px;min-height:60px;background:var(--bg-elevated);border:1px dashed var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:.75rem;font-family:'DM Mono',monospace">Ad space reserved</div>
+<div class="ad-slot" data-ad-slot="pdf-merge-2" style="margin:28px 0 8px;min-height:60px;background:var(--bg-elevated);border:1px dashed var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:.75rem;font-family:'DM Mono',monospace">Ad space reserved</div>
+<div class="ad-slot" data-ad-slot="pdf-merge-3" style="margin:28px 0 8px;min-height:60px;background:var(--bg-elevated);border:1px dashed var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:.75rem;font-family:'DM Mono',monospace">Ad space reserved</div>
+    
+
+  </div>
 
   <div class="ad-slot" data-ad-slot="pdf-side" style="margin:20px 30px">Ad space reserved</div>
 
@@ -229,5 +210,126 @@ footer a{color:var(--accent-glow)}
   <span>© Parent Data Force — All processing happens in your browser. Files are never uploaded to any server.</span>
   <a href="https://www.parentdataforce.com/donate/" target="_blank" rel="noreferrer">Support the watchdog ↗</a>
 </footer>
+
+
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+const { PDFDocument, rgb, degrees, StandardFonts, rgb: RGB } = window.PDFLib;
+
+/* ====== TOOL SWITCHER ====== */
+const PDF_AD_SLOT = {
+  merge: 'pdf-merge',
+  split: 'pdf-split',
+  rotate: 'pdf-rotate',
+  compress: 'pdf-compress',
+  'pdf-to-images': 'pdf-p2i',
+  'images-to-pdf': 'pdf-i2p',
+  'page-numbers': 'pdf-pn',
+  watermark: 'pdf-wm',
+  'form-filler': 'pdf-ff',
+  redact: 'pdf-redact',
+};
+document.querySelectorAll('.tool-list li').forEach(li => {
+  li.addEventListener('click', () => {
+    document.querySelectorAll('.tool-list li').forEach(x => x.classList.remove('active'));
+    li.classList.add('active');
+    const tool = li.dataset.tool;
+    document.querySelectorAll('.tool-panel').forEach(p => p.classList.add('hidden'));
+    document.getElementById('panel-' + tool).classList.remove('hidden');
+    // Lazy-load that tool's ad slot (skip merge which was already loaded)
+    if (window.PDF_ADS && PDF_AD_SLOT[tool]) window.PDF_ADS.loadSlot(PDF_AD_SLOT[tool]);
+  });
+});
+
+/* ====== HELPERS ====== */
+function showStatus(id, msg, type) {
+  const el = document.getElementById(id);
+  el.innerHTML = `<div class="status-msg ${type}">${msg}</div>`;
+}
+function downloadBlob(bytes, filename) {
+  const blob = new Blob([bytes], { type: 'application/pdf' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+function formatBytes(b) {
+  if (b < 1024) return b + ' B';
+  if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
+  return (b/1048576).toFixed(1) + ' MB';
+}
+async function readFileAsBytes(file) {
+  return new Uint8Array(await file.arrayBuffer());
+}
+
+/* ====== DRAG & DROP SETUP ====== */
+function setupDrop(zoneId, fileInputId, callback) {
+  const zone = document.getElementById(zoneId);
+  const input = document.getElementById(fileInputId);
+  ['dragover','dragenter'].forEach(ev => zone.addEventListener(ev, e => { e.preventDefault(); zone.classList.add('dragover'); }));
+  ['dragleave','drop'].forEach(ev => zone.addEventListener(ev, e => { e.preventDefault(); zone.classList.remove('dragover'); }));
+  zone.addEventListener('drop', e => {
+    const files = Array.from(e.dataTransfer.files);
+    if (callback) callback(files);
+  });
+  input.addEventListener('change', () => {
+    if (callback) callback(Array.from(input.files));
+  });
+}
+
+let mergeFiles = [];
+setupDrop('merge-upload', 'merge-file-input', files => {
+  files.filter(f => f.type === 'application/pdf').forEach(f => mergeFiles.push(f));
+  renderMergeList();
+});
+function renderMergeList() {
+  const list = document.getElementById('merge-file-list');
+  list.innerHTML = '';
+  mergeFiles.forEach((f, i) => {
+    const item = document.createElement('div');
+    item.className = 'file-item';
+    item.innerHTML = `<span class="file-name">${f.name}</span><span class="file-size">${formatBytes(f.size)}</span>
+      <div class="file-actions">
+        <button class="move-btn" onclick="moveMergeFile(${i},-1)">↑</button>
+        <button class="move-btn" onclick="moveMergeFile(${i},1)">↓</button>
+        <button onclick="removeMergeFile(${i})" title="Remove">✕</button>
+      </div>`;
+    list.appendChild(item);
+  });
+  document.getElementById('merge-btn').disabled = mergeFiles.length < 2;
+}
+window.moveMergeFile = (i, dir) => {
+  const j = i + dir;
+  if (j < 0 || j >= mergeFiles.length) return;
+  [mergeFiles[i], mergeFiles[j]] = [mergeFiles[j], mergeFiles[i]];
+  renderMergeList();
+};
+window.removeMergeFile = (i) => { mergeFiles.splice(i, 1); renderMergeList(); };
+
+document.getElementById('merge-btn').addEventListener('click', async () => {
+  const btn = document.getElementById('merge-btn');
+  btn.disabled = true; btn.textContent = 'Merging…';
+  try {
+    const mergedDoc = await PDFDocument.create();
+    for (const f of mergeFiles) {
+      const bytes = await readFileAsBytes(f);
+      const doc = await PDFDocument.load(bytes);
+      const pages = await mergedDoc.copyPages(doc, doc.getPageIndices());
+      pages.forEach(p => mergedDoc.addPage(p));
+    }
+    const out = await mergedDoc.save();
+    downloadBlob(out, 'merged.pdf');
+    showStatus('merge-status', '✅ Merged ' + mergeFiles.length + ' PDFs successfully!', 'success');
+  } catch (e) {
+    showStatus('merge-status', '❌ Error: ' + e.message, 'error');
+  }
+  btn.disabled = false; btn.textContent = 'Merge PDFs';
+});
+
+</script>
+  <script src="/ads.js" defer></script>
 </body>
 </html>
