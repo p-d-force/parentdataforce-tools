@@ -4,6 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import express from 'express';
 import QRCode from 'qrcode';
+import { YoutubeTranscript } from 'youtube-transcript';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -124,6 +125,142 @@ app.get('/r/:code', (request, response) => {
   item.lastClickedAt = new Date().toISOString();
   writeStore(store);
   return response.redirect(302, item.destination);
+});
+
+// ─── YouTube Transcript Routes ───────────────────────────────────────────────
+
+const YOUTUBE_RE = /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/i;
+
+function extractVideoId(input) {
+  const url = String(input || '').trim();
+  if (url.length === 11 && /^[A-Za-z0-9_-]{11}$/.test(url)) return url;
+  const match = url.match(YOUTUBE_RE);
+  if (match) return match[1];
+  return null;
+}
+
+app.get('/api/youtube/info', async (request, response) => {
+  try {
+    const url = request.query.url;
+    if (!url) return response.status(400).json({ error: 'Missing url query parameter.' });
+
+    const videoId = extractVideoId(url);
+    if (!videoId) return response.status(400).json({ error: 'Could not extract a valid YouTube video ID from the URL.' });
+
+    // Fetch the YouTube watch page and extract metadata from the initial data JSON
+    const pageResp = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept-Language': 'en-US,en;q=0.9',
+      },
+    });
+    if (!pageResp.ok) {
+      return response.status(502).json({ error: 'Unable to reach YouTube.' });
+    }
+    const html = await pageResp.text();
+
+    // Try to extract ytInitialData for title and channel
+    let title = null;
+    let channel = null;
+
+    // Extract from ytInitialData
+    const initDataMatch = html.match(/var\s+ytInitialData\s*=\s*/);
+    if (initDataMatch) {
+      const jsonStart = html.indexOf('{', initDataMatch.index);
+      if (jsonStart !== -1) {
+        let depth = 0;
+        for (let i = jsonStart; i < html.length; i++) {
+          if (html[i] === '{') depth++;
+          else if (html[i] === '}') {
+            depth--;
+            if (depth === 0) {
+              try {
+                const data = JSON.parse(html.slice(jsonStart, i + 1));
+                // Navigate to video title
+                const contents = data?.contents?.twoColumnWatchNextResults?.results?.results?.contents;
+                if (contents) {
+                  for (const c of contents) {
+                    if (c.videoPrimaryInfoRenderer) {
+                      title = c.videoPrimaryInfoRenderer?.title?.runs?.[0]?.text || null;
+                    }
+                    if (c.videoSecondaryInfoRenderer) {
+                      channel = c.videoSecondaryInfoRenderer?.owner?.videoOwnerRenderer?.title?.runs?.[0]?.text || null;
+                    }
+                  }
+                }
+                break;
+              } catch { /* ignore parse errors */ }
+            }
+          }
+        }
+      }
+    }
+
+    // Fallback: extract title from <meta> tag
+    if (!title) {
+      const titleMatch = html.match(/<meta\s+name="title"\s+content="([^"]+)"/i)
+        || html.match(/<title>(.+?)<\/title>/i);
+      if (titleMatch) title = titleMatch[1].replace(' - YouTube', '').trim();
+    }
+
+    response.json({
+      videoId,
+      title: title || 'Unknown title',
+      channel: channel || 'Unknown channel',
+      thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+      videoUrl: `https://www.youtube.com/watch?v=${videoId}`,
+    });
+  } catch (error) {
+    console.error('YouTube info error:', error);
+    response.status(500).json({ error: error.message || 'Failed to fetch video info.' });
+  }
+});
+
+app.post('/api/youtube/transcript', express.json({ limit: '4kb' }), async (request, response) => {
+  try {
+    const { url } = request.body || {};
+    if (!url) return response.status(400).json({ error: 'Missing url in request body.' });
+
+    const videoId = extractVideoId(url);
+    if (!videoId) return response.status(400).json({ error: 'Could not extract a valid YouTube video ID from the URL.' });
+
+    const transcript = await YoutubeTranscript.fetchTranscript(videoId);
+
+    if (!transcript || transcript.length === 0) {
+      return response.status(404).json({ error: 'No transcript available for this video.' });
+    }
+
+    // Normalize offsets: the library returns milliseconds for srv3 and seconds for classic format.
+    // We detect which format and normalize everything to seconds.
+    const hasMilliseconds = transcript.some(item => item.offset > 100000 || (item.duration && item.duration > 1000));
+    const normalizedTranscript = transcript.map(item => ({
+      text: item.text,
+      offset: hasMilliseconds ? item.offset / 1000 : item.offset,
+      duration: item.duration
+        ? (hasMilliseconds ? item.duration / 1000 : item.duration)
+        : 0,
+      lang: item.lang || 'en',
+    }));
+
+    response.json({
+      videoId,
+      transcript: normalizedTranscript,
+      lang: normalizedTranscript[0]?.lang || 'en',
+    });
+  } catch (error) {
+    console.error('YouTube transcript error:', error);
+    const message = String(error.message || error);
+    if (message.includes('TooManyRequest')) {
+      return response.status(429).json({ error: 'YouTube is rate-limiting requests. Please try again later.' });
+    }
+    if (message.includes('VideoUnavailable')) {
+      return response.status(404).json({ error: 'This video is unavailable.' });
+    }
+    if (message.includes('TranscriptDisabled') || message.includes('NotAvailable')) {
+      return response.status(404).json({ error: 'Transcript is not available for this video.' });
+    }
+    response.status(500).json({ error: message || 'Failed to fetch transcript.' });
+  }
 });
 
 app.use((error, _request, response, _next) => {
