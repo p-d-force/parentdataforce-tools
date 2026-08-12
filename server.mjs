@@ -251,11 +251,13 @@ function summarizeStats(item) {
     if (!uniqueByDay[day]) uniqueByDay[day] = { new: 0, existing: 0 };
     uniqueByDay[day].new += 1;
   });
+  // History loop: count every click, but only the fp's FIRST-EVER click is
+  // already attributed as "new" above — everything else is a repeat scan.
   history.forEach((h) => {
     const day = (h.t || '').slice(0, 10);
     if (!uniqueByDay[day]) uniqueByDay[day] = { new: 0, existing: 0 };
-    const isNew = h.fp && fpFirst[h.fp] === h.t;
-    uniqueByDay[day][isNew ? 'new' : 'existing'] += 1;
+    const isFirstEver = h.fp && fpFirst[h.fp] === h.t;
+    if (!isFirstEver) uniqueByDay[day].existing += 1;
   });
 
   const uniqueScans = Object.keys(fpFirst).length;
