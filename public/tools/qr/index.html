@@ -68,6 +68,20 @@ main{max-width:1100px;margin:auto;padding:0 30px 72px}
 .qr-result code{display:block;overflow-wrap:anywhere;color:var(--accent-glow);font:.72rem 'DM Mono',monospace;margin:12px 0}
 .qr-result a.download{color:var(--accent-glow);font-size:.88rem}
 
+/* STYLE PICKER */
+details.style-picker{margin-top:14px;border:1px solid var(--border);border-radius:6px;padding:12px 14px;background:rgba(0,0,0,.15)}
+details.style-picker summary{cursor:pointer;color:var(--accent-glow);font-size:.82rem;font-weight:600;user-select:none}
+.style-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:14px}
+.style-grid label{display:block;color:var(--text-secondary);font-size:.72rem;margin-bottom:4px}
+.style-grid select,.style-grid input[type=color]{width:100%;padding:6px 8px;background:#101010;border:1px solid #393939;color:var(--text-primary);font:400 .8rem 'DM Mono',monospace;border-radius:3px;height:32px}
+.style-grid input[type=color]{padding:2px;cursor:pointer}
+.style-grid input[type=file]{font-size:.72rem}
+.style-logo-btn{display:inline-block;padding:6px 10px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:3px;color:var(--text-secondary);font-size:.72rem;cursor:pointer;text-align:center}
+.style-logo-btn:hover{border-color:var(--accent)}
+.style-preview{text-align:center;margin-top:14px}
+.style-preview canvas{width:min(100%,200px);height:auto;border-radius:6px;background:#fff;padding:6px}
+.preview-label{font:500 .62rem 'DM Mono',monospace;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+
 /* DASHBOARD GRID */
 .dash-head{display:flex;align-items:center;justify-content:space-between;margin:30px 0 16px;flex-wrap:wrap;gap:10px}
 .dash-head h2{margin:0;font-size:1.2rem}
@@ -115,9 +129,15 @@ main{max-width:1100px;margin:auto;padding:0 30px 72px}
 .stat-tile .k{font-size:.66rem;color:var(--text-muted);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em}
 .section-label{font:500 .68rem 'DM Mono',monospace;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;margin:20px 0 10px;border-top:1px solid var(--border);padding-top:16px}
 .chart{display:flex;align-items:flex-end;gap:4px;height:110px;padding:10px 0;border-bottom:1px solid var(--border)}
-.chart .bar{flex:1;background:linear-gradient(180deg,var(--accent),var(--accent-hot));border-radius:3px 3px 0 0;min-height:2px;position:relative;transition:opacity .2s}
-.chart .bar:hover{opacity:.8}
-.chart .bar .bar-label{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font:500 .58rem 'DM Mono',monospace;color:var(--text-muted);white-space:nowrap}
+.chart-col{flex:1;display:flex;align-items:flex-end;justify-content:center;gap:2px;height:100%;position:relative}
+.chart-col .bar{width:45%;border-radius:3px 3px 0 0;min-height:2px;transition:opacity .2s}
+.chart-col .bar.total{background:linear-gradient(180deg,var(--accent),var(--accent-hot))}
+.chart-col .bar.unique{background:linear-gradient(180deg,var(--blue),#2b6fb0)}
+.chart-col:hover .bar{opacity:.8}
+.chart-col .bar-label{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font:500 .58rem 'DM Mono',monospace;color:var(--text-muted);white-space:nowrap}
+.chart-legend{display:flex;justify-content:flex-end;gap:18px;margin-top:26px;font-size:.72rem;color:var(--text-secondary)}
+.chart-legend .lg-total::before{content:"■";color:var(--accent);margin-right:5px}
+.chart-legend .lg-unique::before{content:"■";color:var(--blue);margin-right:5px}
 .chart-labels{display:flex;justify-content:space-between;font:500 .62rem 'DM Mono',monospace;color:var(--text-muted);margin-top:24px}
 .chart-labels span:first-child{color:var(--text-secondary)}
 .geo-breakdown{display:grid;grid-template-columns:1fr 1fr;gap:14px}
@@ -213,6 +233,42 @@ footer a{color:var(--accent-glow)}
           <input type="text" id="label" placeholder="School-event flyer" maxlength="80">
           <div class="toggle"><input type="checkbox" id="tracking" checked><span>Use a tracked redirect link — count scans, IP, location, device</span></div>
           <button class="btn" id="gen-btn">Generate QR code</button>
+          <details class="style-picker" id="style-picker">
+            <summary>Customize look</summary>
+            <div class="style-grid">
+              <div><label>Dot shape</label>
+                <select id="st-dots">
+                  <option value="square">Square</option>
+                  <option value="rounded">Rounded</option>
+                  <option value="dots">Dots</option>
+                  <option value="classy">Classy</option>
+                  <option value="classy-rounded">Classy rounded</option>
+                  <option value="extra-rounded">Extra rounded</option>
+                </select>
+              </div>
+              <div><label>Eye style</label>
+                <select id="st-eyes">
+                  <option value="square">Square</option>
+                  <option value="circle">Circle</option>
+                  <option value="rounded">Rounded</option>
+                  <option value="leaf">Leaf</option>
+                  <option value="diamond">Diamond</option>
+                </select>
+              </div>
+              <div><label>Dot color</label><input type="color" id="st-dotcolor" value="#0b0b0b"></div>
+              <div><label>Eye color</label><input type="color" id="st-eyecolor" value="#0b0b0b"></div>
+              <div><label>Background</label><input type="color" id="st-bgcolor" value="#ffffff"></div>
+              <div><label>Center logo</label>
+                <span class="style-logo-btn" id="st-logo-btn">Choose image…</span>
+                <input type="file" id="st-logo" accept="image/png,image/jpeg,image/webp" hidden>
+                <div id="st-logo-name" style="font-size:.68rem;color:var(--text-muted);margin-top:4px"></div>
+              </div>
+            </div>
+            <div class="style-preview">
+              <div class="preview-label">Live preview</div>
+              <div id="st-preview"></div>
+            </div>
+          </details>
         </div>
         <div class="qr-result" id="qr-result"></div>
       </div>
@@ -254,6 +310,7 @@ footer a{color:var(--accent-glow)}
   <a href="https://www.parentdataforce.com/donate/" target="_blank" rel="noreferrer">Support the watchdog ↗</a>
 </footer>
 
+<script src="https://unpkg.com/qr-code-styling@1.9.2/lib/qr-code-styling.js"></script>
 <script>
 (() => {
   const $ = (id) => document.getElementById(id);
@@ -291,6 +348,96 @@ footer a{color:var(--accent-glow)}
   function escapeHtml(s) {
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
+
+  // ── Style helpers ───────────────────────────────────────────────────
+  const DEFAULT_STYLE = {
+    dots: 'square', eyes: 'square',
+    dotColor: '#0b0b0b', eyeColor: '#0b0b0b', bgColor: '#ffffff',
+    logo: null, logoSize: 0.18
+  };
+  let currentLogoDataUrl = null;
+
+  function collectStyle() {
+    return {
+      dots: $('st-dots').value,
+      eyes: $('st-eyes').value,
+      dotColor: $('st-dotcolor').value,
+      eyeColor: $('st-eyecolor').value,
+      bgColor: $('st-bgcolor').value,
+      logo: currentLogoDataUrl,
+      logoSize: 0.18
+    };
+  }
+
+  function renderStyledQR(container, text, style, size) {
+    container.innerHTML = '';
+    if (!window.QRCodeStyling) {
+      container.innerHTML = '<span style="color:var(--text-muted);font-size:.75rem">QR renderer unavailable</span>';
+      return null;
+    }
+    const opts = {
+      width: size, height: size, data: text,
+      dotsOptions: { type: style.dots || 'square', color: style.dotColor || '#0b0b0b' },
+      cornersSquareOptions: { type: style.eyes || 'square', color: style.eyeColor || '#0b0b0b' },
+      backgroundOptions: { color: style.bgColor || '#ffffff' },
+      imageOptions: { crossOrigin: 'anonymous', margin: 4, imageSize: style.logoSize || 0.18 }
+    };
+    if (style.logo) opts.image = style.logo;
+    const qr = new window.QRCodeStyling(opts);
+    qr.append(container);
+    return qr;
+  }
+
+  // Downscale uploaded logo to <=256px PNG data URL (keeps storage small)
+  function downscaleLogo(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error('Could not read image.'));
+      reader.onload = () => {
+        const img = new Image();
+        img.onerror = () => reject(new Error('Not a valid image.'));
+        img.onload = () => {
+          const max = 256;
+          const scale = Math.min(1, max / Math.max(img.width, img.height));
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.round(img.width * scale));
+          canvas.height = Math.max(1, Math.round(img.height * scale));
+          canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/png'));
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function updateStylePreview() {
+    const target = $('st-preview');
+    const style = collectStyle();
+    const text = $('destination').value.trim() || 'https://parentdataforce.org';
+    renderStyledQR(target, text, style, 180);
+  }
+
+  // Style picker events
+  ['st-dots', 'st-eyes', 'st-dotcolor', 'st-eyecolor', 'st-bgcolor'].forEach((id) => {
+    $(id).addEventListener('input', updateStylePreview);
+    $(id).addEventListener('change', updateStylePreview);
+  });
+  $('destination').addEventListener('input', updateStylePreview);
+  $('st-logo-btn').addEventListener('click', () => $('st-logo').click());
+  $('st-logo').addEventListener('change', async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    try {
+      currentLogoDataUrl = await downscaleLogo(file);
+      $('st-logo-name').textContent = file.name + ' ✓';
+      updateStylePreview();
+    } catch (err) {
+      currentLogoDataUrl = null;
+      $('st-logo-name').textContent = 'Could not use that image.';
+    }
+  });
+  updateStylePreview();
   function timeAgo(iso) {
     if (!iso) return '—';
     const secs = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
@@ -380,17 +527,29 @@ footer a{color:var(--accent-glow)}
         body: JSON.stringify({
           destination,
           label: $('label').value.trim(),
-          tracking: $('tracking').checked
+          tracking: $('tracking').checked,
+          style: collectStyle()
         })
       });
       qrThumbs[data.code] = data.qrDataUrl;
       const box = $('qr-result');
       box.classList.add('show');
-      box.innerHTML = `
-        <img src="${data.qrDataUrl}" alt="Generated QR code">
-        <code>${escapeHtml(data.redirectUrl || data.destination)}</code>
-        <a class="download" href="${data.qrDataUrl}" download="parent-data-force-qr${data.code ? '-' + data.code : ''}.png">Download PNG ↓</a>
-      `;
+      box.innerHTML = '';
+      const style = data.style || collectStyle();
+      const qr = renderStyledQR(box, data.redirectUrl || data.destination, style, 220);
+      const codeEl = document.createElement('code');
+      codeEl.textContent = data.redirectUrl || data.destination;
+      box.appendChild(codeEl);
+      const dl = document.createElement('a');
+      dl.className = 'download';
+      dl.textContent = 'Download PNG ↓';
+      dl.href = '#';
+      dl.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (qr && qr.download) qr.download({ name: 'parent-data-force-qr' + (data.code ? '-' + data.code : ''), extension: 'png' });
+        else if (data.qrDataUrl) { const a = document.createElement('a'); a.href = data.qrDataUrl; a.download = 'qr.png'; a.click(); }
+      });
+      box.appendChild(dl);
       $('destination').value = '';
       $('label').value = '';
       toast('QR code created');
@@ -416,6 +575,7 @@ footer a{color:var(--accent-glow)}
       }
 
       const totalScans = data.codes.reduce((s, c) => s + c.clicks, 0);
+      const totalUnique = data.codes.reduce((s, c) => s + (c.uniqueScans || 0), 0);
       const totalLinks = data.codes.length;
       const lastActive = data.codes.reduce((acc, c) => {
         if (!acc || (c.lastClickedAt && c.lastClickedAt > acc)) return c.lastClickedAt || acc;
@@ -425,6 +585,7 @@ footer a{color:var(--accent-glow)}
       strip.innerHTML = `
         <div class="summary-card"><div class="num">${totalLinks}</div><div class="lbl">QR codes</div></div>
         <div class="summary-card"><div class="num accent">${totalScans}</div><div class="lbl">Total scans</div></div>
+        <div class="summary-card"><div class="num blue">${totalUnique}</div><div class="lbl">Unique scanners</div></div>
         <div class="summary-card"><div class="num blue">${timeAgo(lastActive)}</div><div class="lbl">Last scan</div></div>
       `;
 
@@ -441,7 +602,7 @@ footer a{color:var(--accent-glow)}
       dash.innerHTML = '<div class="qr-grid">' + codes.map((c) => `
         <article class="qr-card" data-code="${c.code}">
           <div class="card-top">
-            <div class="thumb">${qrThumbs[c.code] ? `<img src="${qrThumbs[c.code]}" alt="">` : '<span style="font-size:1.4rem">📱</span>'}</div>
+            <div class="thumb" data-thumb="${c.code}"></div>
             <div class="card-info">
               <h3>${escapeHtml(c.label || 'Untitled')}</h3>
               <div class="dest" title="${escapeHtml(c.destination)}">${escapeHtml(c.destination)}</div>
@@ -449,14 +610,21 @@ footer a{color:var(--accent-glow)}
           </div>
           <div class="card-stats">
             <div class="stat"><span class="v">${c.clicks}</span><span class="k">Scans</span></div>
+            <div class="stat"><span class="v">${c.uniqueScans ?? '—'}</span><span class="k">Unique</span></div>
             <div class="stat"><span class="v">${timeAgo(c.lastClickedAt)}</span><span class="k">Last</span></div>
-            <div class="stat"><span class="v">${new Date(c.createdAt).toLocaleDateString()}</span><span class="k">Created</span></div>
           </div>
           <div class="card-actions">
             <button class="btn btn-ghost btn-sm detail-btn" data-code="${c.code}">Details</button>
             <button class="btn btn-danger btn-sm del-btn" data-code="${c.code}">Delete</button>
           </div>
         </article>`).join('') + '</div>';
+
+      // Render styled thumbnails in place
+      codes.forEach((c) => {
+        const thumb = dash.querySelector(`[data-thumb="${c.code}"]`);
+        if (!thumb) return;
+        renderStyledQR(thumb, c.redirectUrl || c.destination, c.style || DEFAULT_STYLE, 72);
+      });
 
       dash.querySelectorAll('.qr-card').forEach((card) => {
         card.addEventListener('click', (e) => {
@@ -514,7 +682,7 @@ footer a{color:var(--accent-glow)}
       const stats = d.stats || {};
       const history = d.history || [];
 
-      // ── Chart (last 14 days) ──
+      // ── Chart (last 14 days: total + new unique) ──
       const days = [];
       const now = new Date();
       for (let i = 13; i >= 0; i--) {
@@ -522,11 +690,19 @@ footer a{color:var(--accent-glow)}
         dt.setDate(dt.getDate() - i);
         const key = dt.toISOString().slice(0, 10);
         const lbl = dt.toLocaleDateString(undefined, { month: 'numeric', day: 'numeric' });
-        days.push({ key, lbl, count: stats.byDay?.[key] || 0 });
+        days.push({
+          key, lbl,
+          total: stats.byDay?.[key] || 0,
+          unique: stats.uniqueByDay?.[key]?.new || 0
+        });
       }
-      const maxDay = Math.max(1, ...days.map((d) => d.count));
+      const maxDay = Math.max(1, ...days.map((d) => d.total));
       const chartHtml = days.map((d) =>
-        `<div class="bar" style="height:${Math.max(2, (d.count / maxDay) * 100)}%" title="${d.lbl}: ${d.count} scans"><span class="bar-label">${d.lbl}</span></div>`
+        `<div class="chart-col" title="${d.lbl} — ${d.total} scans, ${d.unique} new unique">
+           <div class="bar total" style="height:${Math.max(2, (d.total / maxDay) * 100)}%"></div>
+           <div class="bar unique" style="height:${Math.max(2, (d.unique / maxDay) * 100)}%"></div>
+           <span class="bar-label">${d.lbl}</span>
+         </div>`
       ).join('');
 
       // ── Click table ──
@@ -555,22 +731,23 @@ footer a{color:var(--accent-glow)}
 
       $('modal-body').innerHTML = `
         <div class="qr-big">
-          <img src="${img}" alt="QR code">
+          <div id="modal-qr-render"></div>
           <div class="qr-actions">
-            <a class="btn" href="${img}" download="qr-${code}.png">Download PNG</a>
+            <button class="btn" id="dl-png-btn">Download PNG</button>
             <button class="btn btn-ghost" id="copy-link-btn">Copy link</button>
           </div>
         </div>
         <div>
           <div class="stat-grid">
-            <div class="stat-tile"><div class="v">${stats.totalClicks ?? d.clicks}</div><div class="k">Scans</div></div>
-            <div class="stat-tile"><div class="v">${stats.uniqueIps ?? 0}</div><div class="k">Unique IPs</div></div>
+            <div class="stat-tile"><div class="v">${stats.totalClicks ?? d.clicks}</div><div class="k">Scans (net)</div></div>
+            <div class="stat-tile"><div class="v">${stats.uniqueScans ?? 0}</div><div class="k">Unique scanners</div></div>
+            <div class="stat-tile"><div class="v">${stats.returnRate ?? 0}%</div><div class="k">Return rate</div></div>
             <div class="stat-tile"><div class="v">${timeAgo(d.lastClickedAt)}</div><div class="k">Last scan</div></div>
           </div>
 
           <div class="section-label">Scans — last 14 days</div>
           <div class="chart">${chartHtml}</div>
-          <div class="chart-labels"><span>14 days ago</span><span>today</span></div>
+          <div class="chart-legend"><span class="lg-total">■ Total scans</span><span class="lg-unique">■ New unique</span></div>
 
           <div class="section-label">Location breakdown</div>
           <div class="geo-breakdown">
@@ -593,6 +770,32 @@ footer a{color:var(--accent-glow)}
               <input type="url" id="edit-webhook" placeholder="https://discord.com/api/webhooks/..." value="${escapeHtml(d.webhookUrl || '')}">
               <div style="color:var(--text-muted);font-size:.72rem;margin-top:5px">Every scan POSTs a message with location, IP, device, and referrer. Leave blank to disable.</div>
             </div>
+            <details class="style-picker" id="edit-style-picker" style="margin-top:14px">
+              <summary>Customize look</summary>
+              <div class="style-grid">
+                <div><label>Dot shape</label>
+                  <select id="edit-st-dots">
+                    <option value="square">Square</option><option value="rounded">Rounded</option>
+                    <option value="dots">Dots</option><option value="classy">Classy</option>
+                    <option value="classy-rounded">Classy rounded</option><option value="extra-rounded">Extra rounded</option>
+                  </select>
+                </div>
+                <div><label>Eye style</label>
+                  <select id="edit-st-eyes">
+                    <option value="square">Square</option><option value="circle">Circle</option>
+                    <option value="rounded">Rounded</option><option value="leaf">Leaf</option><option value="diamond">Diamond</option>
+                  </select>
+                </div>
+                <div><label>Dot color</label><input type="color" id="edit-st-dotcolor" value="#0b0b0b"></div>
+                <div><label>Eye color</label><input type="color" id="edit-st-eyecolor" value="#0b0b0b"></div>
+                <div><label>Background</label><input type="color" id="edit-st-bgcolor" value="#ffffff"></div>
+                <div><label>Center logo</label>
+                  <span class="style-logo-btn" id="edit-st-logo-btn">Choose image…</span>
+                  <input type="file" id="edit-st-logo" accept="image/png,image/jpeg,image/webp" hidden>
+                  <div id="edit-st-logo-name" style="font-size:.68rem;color:var(--text-muted);margin-top:4px"></div>
+                </div>
+              </div>
+            </details>
           </div>
 
           <div class="danger-zone">
@@ -601,6 +804,50 @@ footer a{color:var(--accent-glow)}
           </div>
         </div>`;
 
+      const modalStyle = d.style || DEFAULT_STYLE;
+      let modalQr = renderStyledQR($('modal-qr-render'), d.redirectUrl, modalStyle, 220);
+
+      // Hydrate modal style controls
+      $('edit-st-dots').value = modalStyle.dots || 'square';
+      $('edit-st-eyes').value = modalStyle.eyes || 'square';
+      $('edit-st-dotcolor').value = modalStyle.dotColor || '#0b0b0b';
+      $('edit-st-eyecolor').value = modalStyle.eyeColor || '#0b0b0b';
+      $('edit-st-bgcolor').value = modalStyle.bgColor || '#ffffff';
+      let modalLogo = modalStyle.logo || null;
+      if (modalLogo) $('edit-st-logo-name').textContent = 'Logo attached ✓';
+
+      function collectModalStyle() {
+        return {
+          dots: $('edit-st-dots').value,
+          eyes: $('edit-st-eyes').value,
+          dotColor: $('edit-st-dotcolor').value,
+          eyeColor: $('edit-st-eyecolor').value,
+          bgColor: $('edit-st-bgcolor').value,
+          logo: modalLogo,
+          logoSize: 0.18
+        };
+      }
+      function updateModalPreview() {
+        modalQr = renderStyledQR($('modal-qr-render'), d.redirectUrl, collectModalStyle(), 220);
+      }
+      ['edit-st-dots', 'edit-st-eyes', 'edit-st-dotcolor', 'edit-st-eyecolor', 'edit-st-bgcolor'].forEach((id) => {
+        $(id).addEventListener('input', updateModalPreview);
+        $(id).addEventListener('change', updateModalPreview);
+      });
+      $('edit-st-logo-btn').addEventListener('click', () => $('edit-st-logo').click());
+      $('edit-st-logo').addEventListener('change', async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        try {
+          modalLogo = await downscaleLogo(file);
+          $('edit-st-logo-name').textContent = file.name + ' ✓';
+          updateModalPreview();
+        } catch { $('edit-st-logo-name').textContent = 'Could not use that image.'; }
+      });
+
+      $('dl-png-btn').addEventListener('click', () => {
+        if (modalQr && modalQr.download) modalQr.download({ name: 'qr-' + code, extension: 'png' });
+      });
       $('copy-link-btn').addEventListener('click', () => {
         navigator.clipboard.writeText(d.redirectUrl).then(() => toast('Link copied'));
       });
@@ -611,7 +858,8 @@ footer a{color:var(--accent-glow)}
             body: JSON.stringify({
               label: $('edit-label').value,
               destination: $('edit-dest').value,
-              webhookUrl: $('edit-webhook').value.trim()
+              webhookUrl: $('edit-webhook').value.trim(),
+              style: collectModalStyle()
             })
           });
           $('modal-title').textContent = upd.label || 'Untitled QR';
