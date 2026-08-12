@@ -22,10 +22,11 @@ window.PDF_ADS = {
     'home-top': { key: 'cfc10471417c6e261f17aa91ce4a6a36', width: 728, height: 90, invoke: 'https://www.highperformanceformat.com/cfc10471417c6e261f17aa91ce4a6a36/invoke.js', id: 'container-cfc10471417c6e261f17aa91ce4a6a36' },
     // Hub bottom — native 4:1 wide strip (no atOptions pattern)
     'home-bottom': { native: 'https://pl30817073.effectivecpmnetwork.com/5f5e0035e31b5c6b4e4c2fc59b1dd58b/invoke.js', id: 'container-5f5e0035e31b5c6b4e4c2fc59b1dd58b' },
-    // PDF tools — between tools
-    'pdf-between': { key: 'c8861c32088bb3814ecdd9cb556a9460', width: 468, height: 60, invoke: 'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js', id: 'container-c8861c32088bb3814ecdd9cb556a9460' },
-    // PDF tools — sidebar box
-    'pdf-side': { key: 'a4b8142bcbe93c04601223e2f7cc1044', width: 300, height: 250, invoke: 'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js', id: 'container-a4b8142bcbe93c04601223e2f7cc1044' },
+    // PDF tools — always-visible page slots use UNIQUE keys (Adsterra fills only
+    // one ad per unit key per page view — keys here must not collide with the
+    // per-tool slots below)
+    'pdf-between': { key: 'cfc10471417c6e261f17aa91ce4a6a36', width: 728, height: 90, invoke: 'https://www.highperformanceformat.com/cfc10471417c6e261f17aa91ce4a6a36/invoke.js', id: 'container-cfc10471417c6e261f17aa91ce4a6a36' },
+    'pdf-side': { key: 'c22c4d61ef65608804e05e0a1bd38c72', width: 160, height: 600, invoke: 'https://www.highperformanceformat.com/c22c4d61ef65608804e05e0a1bd38c72/invoke.js', id: 'container-c22c4d61ef65608804e05e0a1bd38c72' },
     // YouTube results — mobile leaderboard
     'youtube-results': { key: '2a5e0a571057868d17de3b619b5582b4', width: 320, height: 50, invoke: 'https://www.highperformanceformat.com/2a5e0a571057868d17de3b619b5582b4/invoke.js', id: 'container-2a5e0a571057868d17de3b619b5582b4' },
     // YouTube bottom — 160x300 vertical
@@ -38,7 +39,8 @@ window.PDF_ADS = {
     'qr-modal': { key: 'a4b8142bcbe93c04601223e2f7cc1044', width: 300, height: 250, invoke: 'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js', id: 'container-a4b8142bcbe93c04601223e2f7cc1044' },
     // Email tracker detail — box
     'email-detail': { key: 'a4b8142bcbe93c04601223e2f7cc1044', width: 300, height: 250, invoke: 'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js', id: 'container-a4b8142bcbe93c04601223e2f7cc1044' },
-    // PDF tools — one ad per tool panel (cycle formats so the page isn't identical boxes)
+    // PDF tools — one ad per tool panel. Only ONE panel is visible at a time, so
+    // keys may repeat ACROSS tools but must not collide with pdf-between/pdf-side.
     'pdf-merge': { lazy: true, key: 'c8861c32088bb3814ecdd9cb556a9460', width: 468, height: 60, invoke: 'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js', id: 'container-c8861c32088bb3814ecdd9cb556a9460' },
     'pdf-split': { lazy: true, key: 'a4b8142bcbe93c04601223e2f7cc1044', width: 300, height: 250, invoke: 'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js', id: 'container-a4b8142bcbe93c04601223e2f7cc1044' },
     'pdf-rotate': { lazy: true, key: 'b0fe5d20d0ccd9493655ce160f41bf1e', width: 160, height: 300, invoke: 'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js', id: 'container-b0fe5d20d0ccd9493655ce160f41bf1e' },
