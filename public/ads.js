@@ -41,16 +41,16 @@ window.PDF_ADS = {
     'email-detail': { key: 'a4b8142bcbe93c04601223e2f7cc1044', width: 300, height: 250, invoke: 'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js', id: 'container-a4b8142bcbe93c04601223e2f7cc1044' },
     // PDF tools — one ad per tool panel. Only ONE panel is visible at a time, so
     // keys may repeat ACROSS tools but must not collide with pdf-between/pdf-side.
-    'pdf-merge': { lazy: true, key: 'c8861c32088bb3814ecdd9cb556a9460', width: 468, height: 60, invoke: 'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js', id: 'container-c8861c32088bb3814ecdd9cb556a9460' },
-    'pdf-split': { lazy: true, key: 'a4b8142bcbe93c04601223e2f7cc1044', width: 300, height: 250, invoke: 'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js', id: 'container-a4b8142bcbe93c04601223e2f7cc1044' },
-    'pdf-rotate': { lazy: true, key: 'b0fe5d20d0ccd9493655ce160f41bf1e', width: 160, height: 300, invoke: 'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js', id: 'container-b0fe5d20d0ccd9493655ce160f41bf1e' },
-    'pdf-compress': { lazy: true, key: '2a5e0a571057868d17de3b619b5582b4', width: 320, height: 50, invoke: 'https://www.highperformanceformat.com/2a5e0a571057868d17de3b619b5582b4/invoke.js', id: 'container-2a5e0a571057868d17de3b619b5582b4' },
-    'pdf-p2i': { lazy: true, key: 'c8861c32088bb3814ecdd9cb556a9460', width: 468, height: 60, invoke: 'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js', id: 'container-c8861c32088bb3814ecdd9cb556a9460' },
-    'pdf-i2p': { lazy: true, key: 'a4b8142bcbe93c04601223e2f7cc1044', width: 300, height: 250, invoke: 'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js', id: 'container-a4b8142bcbe93c04601223e2f7cc1044' },
-    'pdf-pn': { lazy: true, key: 'b0fe5d20d0ccd9493655ce160f41bf1e', width: 160, height: 300, invoke: 'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js', id: 'container-b0fe5d20d0ccd9493655ce160f41bf1e' },
-    'pdf-wm': { lazy: true, key: '2a5e0a571057868d17de3b619b5582b4', width: 320, height: 50, invoke: 'https://www.highperformanceformat.com/2a5e0a571057868d17de3b619b5582b4/invoke.js', id: 'container-2a5e0a571057868d17de3b619b5582b4' },
-    'pdf-ff': { lazy: true, key: 'c8861c32088bb3814ecdd9cb556a9460', width: 468, height: 60, invoke: 'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js', id: 'container-c8861c32088bb3814ecdd9cb556a9460' },
-    'pdf-redact': { lazy: true, key: 'a4b8142bcbe93c04601223e2f7cc1044', width: 300, height: 250, invoke: 'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js', id: 'container-a4b8142bcbe93c04601223e2f7cc1044' },
+    'pdf-merge': { count: 3, lazy: true, key: 'c8861c32088bb3814ecdd9cb556a9460', width: 468, height: 60, invoke: 'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js', id: 'container-c8861c32088bb3814ecdd9cb556a9460' },
+    'pdf-split': { count: 3, lazy: true, key: 'a4b8142bcbe93c04601223e2f7cc1044', width: 300, height: 250, invoke: 'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js', id: 'container-a4b8142bcbe93c04601223e2f7cc1044' },
+    'pdf-rotate': { count: 3, lazy: true, key: 'b0fe5d20d0ccd9493655ce160f41bf1e', width: 160, height: 300, invoke: 'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js', id: 'container-b0fe5d20d0ccd9493655ce160f41bf1e' },
+    'pdf-compress': { count: 3, lazy: true, key: '2a5e0a571057868d17de3b619b5582b4', width: 320, height: 50, invoke: 'https://www.highperformanceformat.com/2a5e0a571057868d17de3b619b5582b4/invoke.js', id: 'container-2a5e0a571057868d17de3b619b5582b4' },
+    'pdf-p2i': { count: 3, lazy: true, key: 'c8861c32088bb3814ecdd9cb556a9460', width: 468, height: 60, invoke: 'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js', id: 'container-c8861c32088bb3814ecdd9cb556a9460' },
+    'pdf-i2p': { count: 3, lazy: true, key: 'a4b8142bcbe93c04601223e2f7cc1044', width: 300, height: 250, invoke: 'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js', id: 'container-a4b8142bcbe93c04601223e2f7cc1044' },
+    'pdf-pn': { count: 3, lazy: true, key: 'b0fe5d20d0ccd9493655ce160f41bf1e', width: 160, height: 300, invoke: 'https://www.highperformanceformat.com/b0fe5d20d0ccd9493655ce160f41bf1e/invoke.js', id: 'container-b0fe5d20d0ccd9493655ce160f41bf1e' },
+    'pdf-wm': { count: 3, lazy: true, key: '2a5e0a571057868d17de3b619b5582b4', width: 320, height: 50, invoke: 'https://www.highperformanceformat.com/2a5e0a571057868d17de3b619b5582b4/invoke.js', id: 'container-2a5e0a571057868d17de3b619b5582b4' },
+    'pdf-ff': { count: 3, lazy: true, key: 'c8861c32088bb3814ecdd9cb556a9460', width: 468, height: 60, invoke: 'https://www.highperformanceformat.com/c8861c32088bb3814ecdd9cb556a9460/invoke.js', id: 'container-c8861c32088bb3814ecdd9cb556a9460' },
+    'pdf-redact': { count: 3, lazy: true, key: 'a4b8142bcbe93c04601223e2f7cc1044', width: 300, height: 250, invoke: 'https://www.highperformanceformat.com/a4b8142bcbe93c04601223e2f7cc1044/invoke.js', id: 'container-a4b8142bcbe93c04601223e2f7cc1044' },
   },
   init() {
     document.querySelectorAll('.ad-slot[data-ad-slot]').forEach((el) => {
@@ -74,24 +74,31 @@ window.PDF_ADS = {
   load(el, unit) {
     el.dataset.loaded = '1';
     el.innerHTML = '';
-    // Container id must be unique per SLOT (multiple tool slots share unit keys);
-    // fall back to the unit's own container id when the slot has none.
-    const cid = 'container-' + (el.dataset.adSlot || unit.key);
-    if (unit.native) {
+    // Load the unit `count` times (default 1). Per-tool slots use count 3 so
+    // the ad appears 3x in a row. Each copy gets its own container id.
+    const copies = unit.count || 1;
+    for (let i = 0; i < copies; i++) {
+      const wrap = document.createElement('div');
+      wrap.className = 'ad-copy';
+      wrap.style.cssText = 'flex:1 1 0;min-width:0;display:flex;justify-content:center;';
+      // Container id must be unique per SLOT+COPY (multiple tool slots share
+      // unit keys); fall back to the unit's own container id when slot has none.
+      const cid = 'container-' + (el.dataset.adSlot || unit.key) + (copies > 1 ? '-' + (i + 1) : '');
+      if (unit.native) {
         // Native banner: script + container div, no atOptions needed
         const div = document.createElement('div');
         div.id = cid;
-        el.appendChild(div);
+        wrap.appendChild(div);
         const scr = document.createElement('script');
         scr.async = true;
         scr.setAttribute('data-cfasync', 'false');
         scr.src = unit.native;
-        el.appendChild(scr);
+        wrap.appendChild(scr);
       } else if (unit.invoke) {
         // Container div the invoke script writes into
         const div = document.createElement('div');
         div.id = cid;
-        el.appendChild(div);
+        wrap.appendChild(div);
         // 1) set the global atOptions config for THIS unit
         const cfg = document.createElement('script');
         cfg.text = "atOptions = " + JSON.stringify({
@@ -101,18 +108,27 @@ window.PDF_ADS = {
           width: unit.width,
           params: {}
         }) + ";";
-        el.appendChild(cfg);
+        wrap.appendChild(cfg);
         // 2) load the invoke script synchronously so it runs AFTER atOptions
         const scr = document.createElement('script');
         scr.setAttribute('data-cfasync', 'false');
         scr.src = unit.invoke;
-        el.appendChild(scr);
+        wrap.appendChild(scr);
       } else if (unit.src) {
         const scr = document.createElement('script');
         scr.async = true;
         scr.src = unit.src;
-        el.appendChild(scr);
+        wrap.appendChild(scr);
       }
+      el.appendChild(wrap);
+    }
   }
 };
+// Per-tool slots load 3 ad copies in a row — ensure the slot lays them out
+// side by side and wraps on narrow screens.
+(function () {
+  const s = document.createElement('style');
+  s.textContent = '.ad-slot[data-loaded="1"]{flex-wrap:wrap;gap:8px}';
+  document.head.appendChild(s);
+})();
 document.addEventListener('DOMContentLoaded', () => window.PDF_ADS.init());
