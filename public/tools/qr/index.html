@@ -29,6 +29,7 @@ main{max-width:1100px;margin:auto;padding:0 30px 72px}
 .userbar{display:flex;align-items:center;gap:14px;justify-content:flex-end;padding:14px 0 0;font-size:.85rem}
 .userbar .email{color:var(--text-secondary)}
 .userbar .plan{color:var(--accent-glow);font-family:'DM Mono',monospace;font-size:.7rem;border:1px solid rgba(255,90,31,.4);padding:2px 8px;border-radius:3px}
+.userbar .upgrade{color:var(--accent-glow);text-decoration:underline;text-underline-offset:3px;font-size:.78rem;cursor:pointer}
 .btn{display:inline-block;cursor:pointer;border:0;padding:11px 18px;background:linear-gradient(100deg,var(--accent-hot),var(--accent));color:#fff;font:600 .85rem Outfit,sans-serif;text-decoration:none;border-radius:3px}
 .btn:hover{opacity:.9}
 .btn:disabled{opacity:.4;cursor:not-allowed}
@@ -502,7 +503,9 @@ footer a{color:var(--accent-glow)}
     authView.style.display = 'none';
     appView.style.display = 'block';
     userbar.style.display = 'flex';
-    userbar.innerHTML = `<span class="email">${escapeHtml(currentUser.email)}</span><span class="plan">${escapeHtml(currentUser.plan)}</span><button class="btn btn-ghost btn-sm" id="logout-btn">Log out</button>`;
+    const plan = currentUser.plan === 'pro' ? 'PRO' : 'FREE';
+    const upgrade = currentUser.plan === 'pro' ? '' : '<a class="upgrade" href="https://ko-fi.com/parentdataforce" target="_blank" rel="noreferrer">Upgrade →</a>';
+    userbar.innerHTML = `<span class="email">${escapeHtml(currentUser.email)}</span><span class="plan">${plan}</span>${upgrade}<button class="btn btn-ghost btn-sm" id="logout-btn">Log out</button>`;
     $('logout-btn').addEventListener('click', async () => {
       await api('/api/auth/logout', { method: 'POST' });
       currentUser = null;
@@ -766,9 +769,9 @@ footer a{color:var(--accent-glow)}
               <button class="btn btn-sm" id="save-edit-btn" style="white-space:nowrap">Save</button>
             </div>
             <div class="field" style="margin-top:12px">
-              <label>Scan notification webhook (Discord) — optional</label>
-              <input type="url" id="edit-webhook" placeholder="https://discord.com/api/webhooks/..." value="${escapeHtml(d.webhookUrl || '')}">
-              <div style="color:var(--text-muted);font-size:.72rem;margin-top:5px">Every scan POSTs a message with location, IP, device, and referrer. Leave blank to disable.</div>
+              <label>Scan notification webhook (Discord) — ${currentUser.plan === 'pro' ? '' : 'Pro'}</label>
+              <input type="url" id="edit-webhook" placeholder="https://discord.com/api/webhooks/..." value="${escapeHtml(d.webhookUrl || '')}" ${currentUser.plan !== 'pro' ? 'disabled' : ''}>
+              <div style="color:var(--text-muted);font-size:.72rem;margin-top:5px">${currentUser.plan === 'pro' ? 'Every scan POSTs a message with location, IP, device, and referrer. Leave blank to disable.' : 'Upgrade to Pro to receive webhook alerts on every scan.'}</div>
             </div>
             <details class="style-picker" id="edit-style-picker" style="margin-top:14px">
               <summary>Customize look</summary>
@@ -858,7 +861,7 @@ footer a{color:var(--accent-glow)}
             body: JSON.stringify({
               label: $('edit-label').value,
               destination: $('edit-dest').value,
-              webhookUrl: $('edit-webhook').value.trim(),
+              webhookUrl: currentUser.plan === 'pro' ? $('edit-webhook').value.trim() : '',
               style: collectModalStyle()
             })
           });
