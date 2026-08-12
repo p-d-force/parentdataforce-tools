@@ -109,3 +109,29 @@
 ---
 
 *Next: QR user accounts + dashboard (phase 2), email tracker, article sites.*
+
+## PHASE 2 QA — Email Tracker, Articles, Premium (Aug 12, 2026)
+
+### Email / Link Tracker — PASS
+- /api/links create → 201 with redirectUrl, kind=link
+- /api/links/bulk CSV → created 3, skipped 0 (header row stripped)
+- /api/my/qrs lists links with kind, uniqueScans
+- Click /r/:code → 302, tracking works (clicks 1, unique 1, geo Ashburn US)
+- Frontend: link cards 🔗, detail modal with 4 stat tiles + dual chart + geo table
+- Webhook field disabled for free tier
+
+### Articles — PASS
+- /articles/ hub + 4 articles, all valid HTML, themed, accurate MA content
+- robots.txt + sitemap.xml valid, served through nginx
+- Article renders with category/date/readtime/sections/related/CTA
+
+### Premium tiering — PASS
+- /api/auth/me returns limits + used count
+- Free: 10-link cap enforced (11th → 403)
+- Bulk blocked for free (403)
+- Webhook blocked for free (403), clear allowed
+- Upgrade link + FREE/PRO badge in userbar
+
+### Deployment — PASS
+- All pages serve through nginx: tools/*, articles/*, robots, sitemap
+- Service active, healthz ok
