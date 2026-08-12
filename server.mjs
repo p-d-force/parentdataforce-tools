@@ -80,6 +80,22 @@ function sanitizeStyle(raw) {
   return out;
 }
 
+// ── Premium tier limits ───────────────────────────────────────────────
+const TIER_LIMITS = {
+  free: { maxLinks: 10, historyCap: 200, webhooks: false, bulk: false },
+  pro: { maxLinks: 1000, historyCap: 5000, webhooks: true, bulk: true }
+};
+
+function userLinkCount(userId) {
+  if (!userId) return 0;
+  const store = readStore();
+  return Object.values(store).filter((item) => item.userId === userId).length;
+}
+
+function tierOf(user) {
+  return (user && user.plan === 'pro') ? 'pro' : 'free';
+}
+
 app.disable('x-powered-by');
 app.use(express.json({ limit: '16kb' }));
 app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html'] }));
@@ -128,7 +144,11 @@ app.get('/api/auth/me', (request, response) => {
   const cookies = auth.parseCookies(request);
   const user = auth.getUserBySessionToken(cookies.pdf_session);
   if (!user) return response.status(401).json({ error: 'Not logged in.' });
-  return response.json({ user: { id: user.id, email: user.email, plan: user.plan } });
+  return response.json({
+    user: { id: user.id, email: user.email, plan: user.plan },
+    limits: TIER_LIMITS[tierOf(user)] || TIER_LIMITS.free,
+    used: { links: userLinkCount(user.id) }
+  });
 });
 
 app.post('/api/qr', async (request, response) => {
@@ -145,6 +165,12 @@ app.post('/api/qr', async (request, response) => {
     let code = null;
 
     if (tracking) {
+      if (user && userLinkCount(user.id) >= TIER_LIMITS[tierOf(user)].maxLinks) {
+        return response.status(403).json({ error: 'Free tier limit reached — upgrade to Pro for more.' });
+      }
+      if (webhookUrl && !TIER_LIMITS[tierOf(user)].webhooks && user) {
+        return response.status(403).json({ error: 'Webhook alerts are a Pro feature.' });
+      }
       code = createCode(store);
       store[code] = {
         destination,
@@ -190,6 +216,12 @@ app.post('/api/links', (request, response) => {
     const cookies = auth.parseCookies(request);
     const user = auth.getUserBySessionToken(cookies.pdf_session);
     const store = readStore();
+    if (user && userLinkCount(user.id) >= TIER_LIMITS[tierOf(user)].maxLinks) {
+      return response.status(403).json({ error: 'Free tier limit reached — upgrade to Pro for more.' });
+    }
+    if (webhookUrl && !TIER_LIMITS[tierOf(user)].webhooks && user) {
+      return response.status(403).json({ error: 'Webhook alerts are a Pro feature.' });
+    }
     const code = createCode(store);
     store[code] = {
       destination,
@@ -223,6 +255,10 @@ app.post('/api/links/bulk', (request, response) => {
     const cookies = auth.parseCookies(request);
     const user = auth.getUserBySessionToken(cookies.pdf_session);
     const store = readStore();
+
+    if (user && !TIER_LIMITS[tierOf(user)].bulk) {
+      return response.status(403).json({ error: 'Bulk import is a Pro feature.' });
+    }
 
     const lines = csv.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
     const created = [];
@@ -420,6 +456,11 @@ app.patch('/api/qr/:code', (request, response) => {
     }
     if (typeof request.body?.webhookUrl === 'string') {
       const w = request.body.webhookUrl.trim().slice(0, 500);
+      const cookies2 = auth.parseCookies(request);
+      const u2 = auth.getUserBySessionToken(cookies2.pdf_session);
+      if (w !== '' && u2 && !TIER_LIMITS[tierOf(u2)].webhooks) {
+        return response.status(403).json({ error: 'Webhook alerts are a Pro feature.' });
+      }
       if (w === '') delete item.webhookUrl;
       else item.webhookUrl = w;
     }
