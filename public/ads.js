@@ -74,10 +74,13 @@ window.PDF_ADS = {
   load(el, unit) {
     el.dataset.loaded = '1';
     el.innerHTML = '';
+    // Container id must be unique per SLOT (multiple tool slots share unit keys);
+    // fall back to the unit's own container id when the slot has none.
+    const cid = 'container-' + (el.dataset.adSlot || unit.key);
     if (unit.native) {
         // Native banner: script + container div, no atOptions needed
         const div = document.createElement('div');
-        div.id = unit.id;
+        div.id = cid;
         el.appendChild(div);
         const scr = document.createElement('script');
         scr.async = true;
@@ -87,7 +90,7 @@ window.PDF_ADS = {
       } else if (unit.invoke) {
         // Container div the invoke script writes into
         const div = document.createElement('div');
-        div.id = unit.id;
+        div.id = cid;
         el.appendChild(div);
         // 1) set the global atOptions config for THIS unit
         const cfg = document.createElement('script');
