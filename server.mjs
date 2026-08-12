@@ -6,6 +6,7 @@ import express from 'express';
 import QRCode from 'qrcode';
 import { YoutubeTranscript } from 'youtube-transcript';
 import { Auth } from './auth.mjs';
+import { Tracker } from './tracker.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -16,6 +17,7 @@ const linkStorePath = path.join(dataDirectory, 'links.json');
 
 fs.mkdirSync(dataDirectory, { recursive: true });
 const auth = new Auth(dataDirectory);
+const tracker = new Tracker(dataDirectory, { readStore, writeStore });
 
 function readStore() {
   try {
@@ -191,29 +193,133 @@ app.delete('/api/qr/:code', (request, response) => {
   response.json({ ok: true });
 });
 
+function summarizeStats(item) {
+  const history = Array.isArray(item.history) ? item.history : [];
+  const uniqueIps = new Set(history.map((h) => h.ip));
+  const countries = {};
+  const cities = {};
+  const byDay = {};
+  const byDevice = {};
+  history.forEach((h) => {
+    const day = (h.t || '').slice(0, 10);
+    byDay[day] = (byDay[day] || 0) + 1;
+    if (h.device) byDevice[h.device] = (byDevice[h.device] || 0) + 1;
+    if (h.geo && h.geo.countryCode) {
+      countries[h.geo.countryCode] = (countries[h.geo.countryCode] || 0) + 1;
+    }
+    if (h.geo && h.geo.city) {
+      const key = `${h.geo.city}, ${h.geo.countryCode || ''}`;
+      cities[key] = (cities[key] || 0) + 1;
+    }
+  });
+  return {
+    totalClicks: item.clicks || 0,
+    uniqueIps: uniqueIps.size,
+    firstClickAt: history.length ? history[0].t : null,
+    lastClickAt: item.lastClickedAt || null,
+    byDay,
+    byDevice,
+    topCountries: Object.entries(countries).sort((a, b) => b[1] - a[1]).slice(0, 6),
+    topCities: Object.entries(cities).sort((a, b) => b[1] - a[1]).slice(0, 6)
+  };
+}
+
+function sanitizeHistory(history) {
+  // Strip raw UA (keep parsed fields) — full UA not needed client-side
+  return (Array.isArray(history) ? history : []).map((h) => ({
+    t: h.t,
+    ip: h.ip,
+    ref: h.ref || '',
+    browser: h.browser,
+    os: h.os,
+    device: h.device,
+    geo: h.geo
+  }));
+}
+
 app.get('/api/qr/:code', (request, response) => {
   const store = readStore();
   const item = store[request.params.code];
   if (!item) return response.status(404).json({ error: 'Tracked link not found.' });
+
+  const cookies = auth.parseCookies(request);
+  const user = auth.getUserBySessionToken(cookies.pdf_session);
+  const isOwner = item.userId && user && user.id === item.userId;
+  const isPublicView = !item.userId; // anonymous codes are fully public
+
   return response.json({
     code: request.params.code,
     label: item.label,
     destination: item.destination,
     createdAt: item.createdAt,
     clicks: item.clicks,
-    lastClickedAt: item.lastClickedAt
+    lastClickedAt: item.lastClickedAt,
+    redirectUrl: `${publicBaseUrl.replace(/\/$/, '')}/r/${request.params.code}`,
+    // Full detail (history + stats) only for owner or anonymous codes
+    stats: (isOwner || isPublicView) ? summarizeStats(item) : null,
+    history: (isOwner || isPublicView) ? sanitizeHistory(item.history) : null
   });
 });
 
-app.get('/r/:code', (request, response) => {
+// Edit label / destination (owner only)
+app.patch('/api/qr/:code', (request, response) => {
+  const store = readStore();
+  const item = store[request.params.code];
+  if (!item) return response.status(404).json({ error: 'Tracked link not found.' });
+
+  const cookies = auth.parseCookies(request);
+  const user = auth.getUserBySessionToken(cookies.pdf_session);
+  if (item.userId && (!user || user.id !== item.userId)) {
+    return response.status(403).json({ error: 'You can only edit your own QR codes.' });
+  }
+
+  try {
+    if (typeof request.body?.label === 'string') {
+      item.label = request.body.label.trim().slice(0, 80);
+    }
+    if (typeof request.body?.destination === 'string') {
+      item.destination = normalizeHttpUrl(request.body.destination);
+    }
+    writeStore(store);
+    response.json({ ok: true, label: item.label, destination: item.destination });
+  } catch (error) {
+    response.status(400).json({ error: error.message || 'Unable to update.' });
+  }
+});
+
+// Regenerate QR image for a code (PNG data URL)
+app.get('/api/qr/:code/image', async (request, response) => {
+  const store = readStore();
+  const item = store[request.params.code];
+  if (!item) return response.status(404).json({ error: 'Tracked link not found.' });
+
+  const encodedValue = `${publicBaseUrl.replace(/\/$/, '')}/r/${request.params.code}`;
+  try {
+    const qrDataUrl = await QRCode.toDataURL(encodedValue, {
+      errorCorrectionLevel: 'M',
+      margin: 2,
+      width: 720,
+      color: { dark: '#0b0b0b', light: '#ffffff' }
+    });
+    response.json({ qrDataUrl });
+  } catch (error) {
+    response.status(500).json({ error: 'Unable to render QR code.' });
+  }
+});
+
+app.get('/r/:code', async (request, response) => {
   const store = readStore();
   const item = store[request.params.code];
   if (!item) return response.status(404).send('Tracked link not found.');
 
   item.clicks += 1;
   item.lastClickedAt = new Date().toISOString();
+  const entry = tracker.recordClick(item, request);
   writeStore(store);
-  return response.redirect(302, item.destination);
+
+  // Geo enrichment happens AFTER the redirect is sent (never blocks)
+  response.redirect(302, item.destination);
+  tracker.enrichWithGeo(item, entry).catch(() => {});
 });
 
 // ─── YouTube Transcript Routes ───────────────────────────────────────────────

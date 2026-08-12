@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="/styles.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@400;500;600;700;800&display=swap');
-:root{--bg-primary:#0b0b0b;--bg-secondary:#161616;--bg-elevated:#1d1d1d;--bg-card:rgba(255,255,255,.03);--accent:#ff5a1f;--accent-hot:#ff3b1f;--accent-glow:#ffa366;--text-primary:#f5f5f5;--text-secondary:#a0a0a0;--text-muted:#767676;--border:#2a2a2a;--ok:#4ade80;--err:#ff8e8e}
+:root{--bg-primary:#0b0b0b;--bg-secondary:#161616;--bg-elevated:#1d1d1d;--bg-card:rgba(255,255,255,.03);--accent:#ff5a1f;--accent-hot:#ff3b1f;--accent-glow:#ffa366;--text-primary:#f5f5f5;--text-secondary:#a0a0a0;--text-muted:#767676;--border:#2a2a2a;--ok:#4ade80;--err:#ff8e8e;--blue:#4da3ff}
 *{box-sizing:border-box}
 body{margin:0;color:var(--text-primary);background:radial-gradient(circle at 92% 0%,rgba(255,59,31,.12),transparent 26%),var(--bg-primary);font-family:Outfit,Arial,sans-serif;line-height:1.55}
 a{color:inherit}
@@ -20,10 +20,23 @@ a{color:inherit}
 nav{display:flex;align-items:center;gap:24px;font-size:.88rem;color:var(--text-secondary)}
 nav a{text-decoration:none}nav a:hover{color:var(--accent-glow)}
 main{max-width:1100px;margin:auto;padding:0 30px 72px}
-.hero{padding:56px 0 36px}
+.hero{padding:52px 0 30px}
 .eyebrow{margin:0 0 13px;color:var(--accent-glow);font:500 .7rem 'DM Mono',monospace;letter-spacing:.16em}
-.hero h1{margin:0;font-size:clamp(2rem,5vw,3.6rem);line-height:1;letter-spacing:-.055em}
-.lede{max-width:640px;margin:18px 0 0;color:var(--text-secondary);font-size:1.05rem}
+.hero h1{margin:0;font-size:clamp(2rem,5vw,3.4rem);line-height:1;letter-spacing:-.055em}
+.lede{max-width:640px;margin:16px 0 0;color:var(--text-secondary);font-size:1.02rem}
+
+/* USERBAR */
+.userbar{display:flex;align-items:center;gap:14px;justify-content:flex-end;padding:14px 0 0;font-size:.85rem}
+.userbar .email{color:var(--text-secondary)}
+.userbar .plan{color:var(--accent-glow);font-family:'DM Mono',monospace;font-size:.7rem;border:1px solid rgba(255,90,31,.4);padding:2px 8px;border-radius:3px}
+.btn{display:inline-block;cursor:pointer;border:0;padding:11px 18px;background:linear-gradient(100deg,var(--accent-hot),var(--accent));color:#fff;font:600 .85rem Outfit,sans-serif;text-decoration:none;border-radius:3px}
+.btn:hover{opacity:.9}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-ghost{background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-primary)}
+.btn-ghost:hover{border-color:var(--accent)}
+.btn-sm{padding:6px 12px;font-size:.78rem}
+.btn-danger{background:transparent;border:1px solid rgba(255,59,31,.5);color:var(--err)}
+.btn-lg{width:100%;padding:13px 18px;font-size:.9rem}
 
 /* AUTH */
 .auth-box{max-width:420px;margin:0 auto 56px;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:32px}
@@ -38,18 +51,6 @@ main{max-width:1100px;margin:auto;padding:0 30px 72px}
 .form-error{display:none;background:rgba(255,59,31,.1);border:1px solid rgba(255,59,31,.35);color:var(--err);border-radius:4px;padding:10px 14px;font-size:.82rem;margin-bottom:16px}
 .form-error.show{display:block}
 
-/* DASHBOARD */
-.userbar{display:flex;align-items:center;gap:14px;justify-content:flex-end;padding:12px 0 0;font-size:.85rem}
-.userbar .email{color:var(--text-secondary)}
-.userbar .plan{color:var(--accent-glow);font-family:'DM Mono',monospace;font-size:.7rem;border:1px solid rgba(255,90,31,.4);padding:2px 8px;border-radius:3px}
-.btn{display:inline-block;cursor:pointer;border:0;padding:11px 18px;background:linear-gradient(100deg,var(--accent-hot),var(--accent));color:#fff;font:600 .85rem Outfit,sans-serif;text-decoration:none;border-radius:3px}
-.btn:hover{opacity:.9}
-.btn:disabled{opacity:.4;cursor:not-allowed}
-.btn-ghost{background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-primary)}
-.btn-ghost:hover{border-color:var(--accent)}
-.btn-sm{padding:6px 12px;font-size:.78rem}
-.btn-danger{background:transparent;border:1px solid rgba(255,59,31,.5);color:var(--err)}
-
 /* GENERATOR */
 .generator{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:28px;margin-bottom:40px}
 .generator h2{margin:0 0 16px;font-size:1.2rem}
@@ -63,22 +64,88 @@ main{max-width:1100px;margin:auto;padding:0 30px 72px}
 .toggle span{color:var(--text-secondary);font-size:.82rem}
 .qr-result{text-align:center;display:none}
 .qr-result.show{display:block}
-.qr-result img{display:block;width:min(100%,240px);margin:0 auto;padding:9px;background:#fff;border-radius:4px}
+.qr-result img{display:block;width:min(100%,220px);margin:0 auto;padding:9px;background:#fff;border-radius:4px}
 .qr-result code{display:block;overflow-wrap:anywhere;color:var(--accent-glow);font:.72rem 'DM Mono',monospace;margin:12px 0}
 .qr-result a.download{color:var(--accent-glow);font-size:.88rem}
 
-/* TABLE */
-.qr-table{width:100%;border-collapse:collapse;font-size:.85rem}
-.qr-table th{text-align:left;padding:10px 14px;color:var(--text-muted);font:500 .68rem 'DM Mono',monospace;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--border)}
-.qr-table td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
-.qr-table tr:hover td{background:var(--bg-card)}
-.qr-table .label{font-weight:600}
-.qr-table .dest{color:var(--text-muted);font-size:.78rem;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.qr-table .clicks{font-family:'DM Mono',monospace;color:var(--accent-glow)}
-.qr-table .actions{display:flex;gap:8px}
-.copy-link{background:none;border:none;color:var(--accent-glow);cursor:pointer;font-size:.75rem;text-decoration:underline;text-underline-offset:2px}
-.empty-state{text-align:center;padding:48px 20px;color:var(--text-muted)}
-.empty-state .big{font-size:2rem;margin-bottom:10px}
+/* DASHBOARD GRID */
+.dash-head{display:flex;align-items:center;justify-content:space-between;margin:30px 0 16px;flex-wrap:wrap;gap:10px}
+.dash-head h2{margin:0;font-size:1.2rem}
+.summary-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:26px}
+.summary-card{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:18px 20px}
+.summary-card .num{font-size:1.8rem;font-weight:700;letter-spacing:-.03em}
+.summary-card .lbl{color:var(--text-muted);font-size:.72rem;font-family:'DM Mono',monospace;letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
+.summary-card .num.accent{color:var(--accent-glow)}
+.summary-card .num.blue{color:var(--blue)}
+.qr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.qr-card{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color .15s,transform .15s;cursor:pointer;display:flex;flex-direction:column}
+.qr-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.qr-card .card-top{display:flex;gap:16px;padding:18px 18px 14px;align-items:center}
+.qr-card .thumb{width:72px;height:72px;background:#fff;border-radius:6px;padding:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.qr-card .thumb img{width:100%;height:100%;object-fit:contain}
+.qr-card .card-info{min-width:0;flex:1}
+.qr-card .card-info h3{margin:0 0 4px;font-size:1.02rem;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qr-card .card-info .dest{color:var(--text-muted);font-size:.76rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qr-card .card-stats{display:flex;gap:22px;padding:12px 18px;border-top:1px solid var(--border);background:rgba(0,0,0,.15)}
+.qr-card .stat{display:flex;flex-direction:column}
+.qr-card .stat .v{font-size:1.05rem;font-weight:600;color:var(--accent-glow)}
+.qr-card .stat .k{font-size:.64rem;color:var(--text-muted);font-family:'DM Mono',monospace;letter-spacing:.06em;text-transform:uppercase}
+.qr-card .card-actions{display:flex;gap:8px;padding:0 18px 16px;justify-content:flex-end}
+.empty-state{text-align:center;padding:56px 20px;color:var(--text-muted);border:1px dashed var(--border);border-radius:8px}
+.empty-state .big{font-size:2.4rem;margin-bottom:10px}
+.empty-state .hint{font-size:.85rem;color:var(--text-secondary);margin-top:6px}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:100;overflow-y:auto}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;max-width:760px;width:100%;padding:32px;position:relative}
+.modal .close{position:absolute;top:16px;right:18px;background:none;border:none;color:var(--text-muted);font-size:1.4rem;cursor:pointer;line-height:1}
+.modal .close:hover{color:var(--accent-glow)}
+.modal h2{margin:0 0 4px;font-size:1.4rem;letter-spacing:-.02em}
+.modal .dest-line{color:var(--text-muted);font-size:.82rem;margin:0 0 20px;overflow-wrap:anywhere}
+.modal-body{display:grid;grid-template-columns:200px 1fr;gap:26px}
+@media(max-width:720px){.modal-body{grid-template-columns:1fr}}
+.qr-big{background:#fff;border-radius:8px;padding:10px;align-self:start;text-align:center}
+.qr-big img{width:100%;height:auto;display:block}
+.qr-big .qr-actions{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.qr-big .qr-actions .btn{font-size:.75rem;padding:8px 10px;text-align:center}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.stat-tile{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:12px 14px}
+.stat-tile .v{font-size:1.35rem;font-weight:700;color:var(--accent-glow)}
+.stat-tile .k{font-size:.66rem;color:var(--text-muted);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em}
+.section-label{font:500 .68rem 'DM Mono',monospace;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;margin:20px 0 10px;border-top:1px solid var(--border);padding-top:16px}
+.chart{display:flex;align-items:flex-end;gap:4px;height:110px;padding:10px 0;border-bottom:1px solid var(--border)}
+.chart .bar{flex:1;background:linear-gradient(180deg,var(--accent),var(--accent-hot));border-radius:3px 3px 0 0;min-height:2px;position:relative;transition:opacity .2s}
+.chart .bar:hover{opacity:.8}
+.chart .bar .bar-label{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font:500 .58rem 'DM Mono',monospace;color:var(--text-muted);white-space:nowrap}
+.chart-labels{display:flex;justify-content:space-between;font:500 .62rem 'DM Mono',monospace;color:var(--text-muted);margin-top:24px}
+.chart-labels span:first-child{color:var(--text-secondary)}
+.geo-breakdown{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:720px){.geo-breakdown{grid-template-columns:1fr}}
+.geo-list{list-style:none;margin:0;padding:0}
+.geo-list li{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:.84rem}
+.geo-list li .cnt{color:var(--accent-glow);font-family:'DM Mono',monospace;font-size:.78rem}
+.click-table-wrap{overflow-x:auto}
+.click-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.click-table th{text-align:left;padding:8px 10px;color:var(--text-muted);font:500 .64rem 'DM Mono',monospace;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid var(--border)}
+.click-table td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+.click-table .ip{font-family:'DM Mono',monospace;font-size:.76rem}
+.click-table .loc{color:var(--text-secondary)}
+.click-table .flag{font-size:1rem;margin-right:4px}
+.click-table .dev{color:var(--text-muted);font-size:.74rem}
+.click-table .ref{color:var(--text-muted);font-size:.72rem;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.modal-edit{margin-top:6px}
+.modal-edit .field{margin-bottom:10px}
+.modal-edit-row{display:flex;gap:10px;align-items:flex-end}
+.modal-edit-row .field{flex:1;margin-bottom:0}
+.danger-zone{margin-top:22px;padding-top:16px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.danger-zone .hint{color:var(--text-muted);font-size:.78rem;max-width:320px}
+.no-scans{color:var(--text-muted);padding:20px 0;font-size:.85rem}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg-elevated);border:1px solid var(--border);border-left:3px solid var(--ok);border-radius:6px;padding:13px 18px;font-size:.85rem;z-index:200;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none;max-width:320px}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.error{border-left-color:var(--err)}
 
 /* DONATION */
 .donation-section{padding:46px 0;border-top:1px solid var(--border);text-align:center}
@@ -90,10 +157,9 @@ main{max-width:1100px;margin:auto;padding:0 30px 72px}
 .donate-kofi{background:#41729f;color:#fff}
 .donate-paypal{background:#0070ba;color:#fff}
 .donate-venmo{background:#3d95ce;color:#fff}
-
 footer{max-width:1280px;margin:auto;padding:24px 30px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:12px;color:var(--text-muted);font-size:.75rem;flex-wrap:wrap}
 footer a{color:var(--accent-glow)}
-@media(max-width:768px){.site-header,main,footer{padding-left:18px;padding-right:18px}.site-header{flex-direction:column;align-items:flex-start}.qr-table{display:block;overflow-x:auto}}
+@media(max-width:768px){.site-header,main,footer{padding-left:18px;padding-right:18px}.site-header{flex-direction:column;align-items:flex-start}.stat-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -110,9 +176,9 @@ footer a{color:var(--accent-glow)}
 
 <main>
   <section class="hero">
-    <p class="eyebrow">FREE • PRIVATE • TRACKED LINKS</p>
+    <p class="eyebrow">FREE • PRIVATE • CLICK ANALYTICS</p>
     <h1>QR Studio</h1>
-    <p class="lede">Create QR codes with first-party click tracking. Create a free account to save your codes, watch scan counts, and manage everything from one dashboard.</p>
+    <p class="lede">Create QR codes with tracked redirect links. See every scan — location, device, and time — from one dashboard.</p>
     <div class="userbar" id="userbar" style="display:none"></div>
   </section>
 
@@ -130,12 +196,12 @@ footer a{color:var(--accent-glow)}
         <label for="auth-password">Password</label>
         <input type="password" id="auth-password" autocomplete="current-password" placeholder="At least 8 characters">
       </div>
-      <button class="btn" id="auth-submit" style="width:100%">Create account</button>
+      <button class="btn btn-lg" id="auth-submit">Create account</button>
       <div class="auth-switch" id="auth-switch-line">Already have an account? <a id="auth-switch">Log in</a></div>
     </div>
   </section>
 
-  <!-- APP VIEW (hidden until logged in) -->
+  <!-- APP VIEW -->
   <section id="app-view" style="display:none">
     <div class="generator">
       <h2>Create a QR code</h2>
@@ -145,19 +211,33 @@ footer a{color:var(--accent-glow)}
           <input type="url" id="destination" placeholder="https://example.org/page" required maxlength="2048">
           <label for="label">Label (optional)</label>
           <input type="text" id="label" placeholder="School-event flyer" maxlength="80">
-          <div class="toggle"><input type="checkbox" id="tracking" checked><span>Use a tracked redirect link and count scans</span></div>
+          <div class="toggle"><input type="checkbox" id="tracking" checked><span>Use a tracked redirect link — count scans, IP, location, device</span></div>
           <button class="btn" id="gen-btn">Generate QR code</button>
         </div>
         <div class="qr-result" id="qr-result"></div>
       </div>
     </div>
 
-    <h2 style="font-size:1.2rem;margin-bottom:14px">Your QR codes</h2>
-    <div id="dashboard">
-      <div class="empty-state"><div class="big">📱</div><p>No QR codes yet. Create one above — it will appear here.</p></div>
+    <div class="dash-head">
+      <h2>Your QR codes</h2>
+      <button class="btn btn-ghost btn-sm" id="refresh-btn">Refresh</button>
     </div>
+    <div class="summary-strip" id="summary-strip" style="display:none"></div>
+    <div id="dashboard"></div>
   </section>
 </main>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <button class="close" id="modal-close" aria-label="Close">✕</button>
+    <h2 id="modal-title">QR details</h2>
+    <p class="dest-line" id="modal-dest"></p>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <section class="donation-section">
   <h2>Keep the tools free</h2>
@@ -170,7 +250,7 @@ footer a{color:var(--accent-glow)}
 </section>
 
 <footer>
-  <span>© Parent Data Force — first-party tracking only, no PII, no ads.</span>
+  <span>© Parent Data Force — click analytics stores IP and approximate location for scan reporting; no account data is sold or shared.</span>
   <a href="https://www.parentdataforce.com/donate/" target="_blank" rel="noreferrer">Support the watchdog ↗</a>
 </footer>
 
@@ -183,8 +263,9 @@ footer a{color:var(--accent-glow)}
   const authError = $('auth-error');
   let mode = 'signup';
   let currentUser = null;
+  let qrThumbs = {}; // code -> dataUrl cache for thumbnails
 
-  // ── API helper (same-origin, cookies included) ─────────────────────
+  // ── API helper ──────────────────────────────────────────────────────
   async function api(path, options = {}) {
     const res = await fetch(path, {
       headers: { 'content-type': 'application/json' },
@@ -194,6 +275,34 @@ footer a{color:var(--accent-glow)}
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || 'Request failed.');
     return data;
+  }
+
+  // ── Toast ───────────────────────────────────────────────────────────
+  let toastTimer;
+  function toast(msg, isError = false) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.className = 'toast show' + (isError ? ' error' : '');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // ── Helpers ─────────────────────────────────────────────────────────
+  function escapeHtml(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function timeAgo(iso) {
+    if (!iso) return '—';
+    const secs = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+    if (secs < 60) return 'just now';
+    if (secs < 3600) return Math.floor(secs / 60) + 'm ago';
+    if (secs < 86400) return Math.floor(secs / 3600) + 'h ago';
+    if (secs < 86400 * 7) return Math.floor(secs / 86400) + 'd ago';
+    return new Date(iso).toLocaleDateString();
+  }
+  function flagEmoji(cc) {
+    if (!cc) return '';
+    return String.fromCodePoint(...cc.toUpperCase().split('').map((c) => 127397 + c.charCodeAt(0)));
   }
 
   // ── Auth UI ─────────────────────────────────────────────────────────
@@ -258,14 +367,10 @@ footer a{color:var(--accent-glow)}
     loadDashboard();
   }
 
-  function escapeHtml(s) {
-    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  }
-
   // ── Generator ───────────────────────────────────────────────────────
   $('gen-btn').addEventListener('click', async () => {
     const destination = $('destination').value.trim();
-    if (!destination) { $('qr-result').classList.remove('show'); return; }
+    if (!destination) { toast('Enter a destination URL.', true); return; }
     const btn = $('gen-btn');
     btn.disabled = true;
     btn.textContent = 'Creating…';
@@ -278,6 +383,7 @@ footer a{color:var(--accent-glow)}
           tracking: $('tracking').checked
         })
       });
+      qrThumbs[data.code] = data.qrDataUrl;
       const box = $('qr-result');
       box.classList.add('show');
       box.innerHTML = `
@@ -285,11 +391,12 @@ footer a{color:var(--accent-glow)}
         <code>${escapeHtml(data.redirectUrl || data.destination)}</code>
         <a class="download" href="${data.qrDataUrl}" download="parent-data-force-qr${data.code ? '-' + data.code : ''}.png">Download PNG ↓</a>
       `;
+      $('destination').value = '';
+      $('label').value = '';
+      toast('QR code created');
       loadDashboard();
     } catch (e) {
-      const box = $('qr-result');
-      box.classList.add('show');
-      box.innerHTML = `<p style="color:var(--err)">${escapeHtml(e.message)}</p>`;
+      toast(e.message, true);
     }
     btn.disabled = false;
     btn.textContent = 'Generate QR code';
@@ -300,49 +407,79 @@ footer a{color:var(--accent-glow)}
     try {
       const data = await api('/api/my/qrs');
       const dash = $('dashboard');
+      const strip = $('summary-strip');
+
       if (!data.codes || data.codes.length === 0) {
-        dash.innerHTML = '<div class="empty-state"><div class="big">📱</div><p>No QR codes yet. Create one above — it will appear here.</p></div>';
+        strip.style.display = 'none';
+        dash.innerHTML = '<div class="empty-state"><div class="big">📱</div><p>No QR codes yet. Create one above — it will appear here.</p><p class="hint">Tracked codes show scan location, device, and time.</p></div>';
         return;
       }
-      let rows = '';
-      data.codes.forEach((c) => {
-        const date = new Date(c.createdAt).toLocaleDateString();
-        const last = c.lastClickedAt ? new Date(c.lastClickedAt).toLocaleDateString() : '—';
-        rows += `<tr>
-          <td class="label">${escapeHtml(c.label || 'Untitled')}</td>
-          <td class="dest" title="${escapeHtml(c.destination)}">${escapeHtml(c.destination)}</td>
-          <td class="clicks">${c.clicks}</td>
-          <td style="color:var(--text-muted);font-size:.75rem">${date}</td>
-          <td style="color:var(--text-muted);font-size:.75rem">${last}</td>
-          <td><div class="actions">
-            <button class="copy-link" data-link="${escapeHtml(c.redirectUrl)}">Copy link</button>
-            <button class="btn btn-danger btn-sm" data-code="${c.code}">Delete</button>
-          </div></td>
-        </tr>`;
-      });
-      dash.innerHTML = `<div style="overflow-x:auto"><table class="qr-table">
-        <thead><tr><th>Label</th><th>Destination</th><th>Scans</th><th>Created</th><th>Last scan</th><th></th></tr></thead>
-        <tbody>${rows}</tbody></table></div>`;
 
-      dash.querySelectorAll('.copy-link').forEach((b) => {
-        b.addEventListener('click', () => {
-          navigator.clipboard.writeText(b.dataset.link).then(() => {
-            b.textContent = 'Copied!';
-            setTimeout(() => { b.textContent = 'Copy link'; }, 1500);
-          }).catch(() => {});
+      const totalScans = data.codes.reduce((s, c) => s + c.clicks, 0);
+      const totalLinks = data.codes.length;
+      const lastActive = data.codes.reduce((acc, c) => {
+        if (!acc || (c.lastClickedAt && c.lastClickedAt > acc)) return c.lastClickedAt || acc;
+        return acc;
+      }, null);
+      strip.style.display = 'grid';
+      strip.innerHTML = `
+        <div class="summary-card"><div class="num">${totalLinks}</div><div class="lbl">QR codes</div></div>
+        <div class="summary-card"><div class="num accent">${totalScans}</div><div class="lbl">Total scans</div></div>
+        <div class="summary-card"><div class="num blue">${timeAgo(lastActive)}</div><div class="lbl">Last scan</div></div>
+      `;
+
+      // Load thumbnails lazily for cards
+      const codes = data.codes;
+      const missing = codes.filter((c) => !qrThumbs[c.code]);
+      await Promise.all(missing.map(async (c) => {
+        try {
+          const img = await api('/api/qr/' + c.code + '/image');
+          qrThumbs[c.code] = img.qrDataUrl;
+        } catch { qrThumbs[c.code] = null; }
+      }));
+
+      dash.innerHTML = '<div class="qr-grid">' + codes.map((c) => `
+        <article class="qr-card" data-code="${c.code}">
+          <div class="card-top">
+            <div class="thumb">${qrThumbs[c.code] ? `<img src="${qrThumbs[c.code]}" alt="">` : '<span style="font-size:1.4rem">📱</span>'}</div>
+            <div class="card-info">
+              <h3>${escapeHtml(c.label || 'Untitled')}</h3>
+              <div class="dest" title="${escapeHtml(c.destination)}">${escapeHtml(c.destination)}</div>
+            </div>
+          </div>
+          <div class="card-stats">
+            <div class="stat"><span class="v">${c.clicks}</span><span class="k">Scans</span></div>
+            <div class="stat"><span class="v">${timeAgo(c.lastClickedAt)}</span><span class="k">Last</span></div>
+            <div class="stat"><span class="v">${new Date(c.createdAt).toLocaleDateString()}</span><span class="k">Created</span></div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-ghost btn-sm detail-btn" data-code="${c.code}">Details</button>
+            <button class="btn btn-danger btn-sm del-btn" data-code="${c.code}">Delete</button>
+          </div>
+        </article>`).join('') + '</div>';
+
+      dash.querySelectorAll('.qr-card').forEach((card) => {
+        card.addEventListener('click', (e) => {
+          if (e.target.closest('.del-btn')) return;
+          openDetail(card.dataset.code);
         });
       });
-      dash.querySelectorAll('[data-code]').forEach((b) => {
-        b.addEventListener('click', async () => {
-          if (!confirm('Delete this QR code? Its tracking history will be lost.')) return;
+      dash.querySelectorAll('.detail-btn').forEach((b) => {
+        b.addEventListener('click', (e) => { e.stopPropagation(); openDetail(b.dataset.code); });
+      });
+      dash.querySelectorAll('.del-btn').forEach((b) => {
+        b.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          if (!confirm('Delete this QR code? Its scan history will be lost.')) return;
           try {
             await fetch('/api/qr/' + b.dataset.code, { method: 'DELETE', credentials: 'same-origin' });
+            delete qrThumbs[b.dataset.code];
+            toast('Deleted');
             loadDashboard();
-          } catch { /* ignore */ }
+          } catch { toast('Delete failed', true); }
         });
       });
     } catch (e) {
-      // session expired mid-use
       if (e.message.includes('Not logged in')) {
         currentUser = null;
         authView.style.display = 'block';
@@ -352,7 +489,152 @@ footer a{color:var(--accent-glow)}
     }
   }
 
-  // ── Boot: restore session if present ────────────────────────────────
+  $('refresh-btn').addEventListener('click', loadDashboard);
+
+  // ── Detail modal ────────────────────────────────────────────────────
+  let detailCode = null;
+
+  function openDetail(code) {
+    detailCode = code;
+    $('modal-overlay').classList.add('show');
+    $('modal-body').innerHTML = '<p style="color:var(--text-muted)">Loading…</p>';
+    $('modal-title').textContent = 'Loading…';
+    $('modal-dest').textContent = '';
+    loadDetail(code);
+  }
+
+  async function loadDetail(code) {
+    try {
+      const d = await api('/api/qr/' + code);
+      $('modal-title').textContent = d.label || 'Untitled QR';
+      $('modal-dest').textContent = d.destination;
+
+      const img = qrThumbs[code] || (await api('/api/qr/' + code + '/image')).qrDataUrl;
+      qrThumbs[code] = img;
+      const stats = d.stats || {};
+      const history = d.history || [];
+
+      // ── Chart (last 14 days) ──
+      const days = [];
+      const now = new Date();
+      for (let i = 13; i >= 0; i--) {
+        const dt = new Date(now);
+        dt.setDate(dt.getDate() - i);
+        const key = dt.toISOString().slice(0, 10);
+        const lbl = dt.toLocaleDateString(undefined, { month: 'numeric', day: 'numeric' });
+        days.push({ key, lbl, count: stats.byDay?.[key] || 0 });
+      }
+      const maxDay = Math.max(1, ...days.map((d) => d.count));
+      const chartHtml = days.map((d) =>
+        `<div class="bar" style="height:${Math.max(2, (d.count / maxDay) * 100)}%" title="${d.lbl}: ${d.count} scans"><span class="bar-label">${d.lbl}</span></div>`
+      ).join('');
+
+      // ── Click table ──
+      let tableHtml;
+      if (history.length === 0) {
+        tableHtml = '<p class="no-scans">No scans yet. Share your QR link and watch them appear here with location and device info.</p>';
+      } else {
+        tableHtml = `<div class="click-table-wrap"><table class="click-table"><thead><tr><th>Time</th><th>IP</th><th>Location</th><th>Device</th><th>Referrer</th></tr></thead><tbody>` +
+          history.slice().reverse().map((h) => {
+            const geo = h.geo || {};
+            const loc = geo.city ? `${geo.city}${geo.countryCode ? ', ' + geo.countryCode : ''}` : (geo.country || '—');
+            const dev = [h.device, h.browser, h.os].filter(Boolean).join(' · ');
+            return `<tr>
+              <td style="white-space:nowrap">${new Date(h.t).toLocaleString()}</td>
+              <td class="ip">${escapeHtml(h.ip)}</td>
+              <td class="loc"><span class="flag">${flagEmoji(geo.countryCode)}</span>${escapeHtml(loc || '—')}</td>
+              <td class="dev">${escapeHtml(dev || '—')}</td>
+              <td class="ref" title="${escapeHtml(h.ref)}">${escapeHtml(h.ref ? h.ref.replace(/^https?:\/\//, '').slice(0, 40) : '—')}</td>
+            </tr>`;
+          }).join('') + '</tbody></table></div>';
+      }
+
+      // ── Geo breakdown ──
+      const countryRows = (stats.topCountries || []).map(([k, v]) => `<li><span>${flagEmoji(k)} ${escapeHtml(k)}</span><span class="cnt">${v}</span></li>`).join('') || '<li><span style="color:var(--text-muted)">No location data yet</span></li>';
+      const cityRows = (stats.topCities || []).map(([k, v]) => `<li><span>${escapeHtml(k)}</span><span class="cnt">${v}</span></li>`).join('') || '<li><span style="color:var(--text-muted)">No location data yet</span></li>';
+
+      $('modal-body').innerHTML = `
+        <div class="qr-big">
+          <img src="${img}" alt="QR code">
+          <div class="qr-actions">
+            <a class="btn" href="${img}" download="qr-${code}.png">Download PNG</a>
+            <button class="btn btn-ghost" id="copy-link-btn">Copy link</button>
+          </div>
+        </div>
+        <div>
+          <div class="stat-grid">
+            <div class="stat-tile"><div class="v">${stats.totalClicks ?? d.clicks}</div><div class="k">Scans</div></div>
+            <div class="stat-tile"><div class="v">${stats.uniqueIps ?? 0}</div><div class="k">Unique IPs</div></div>
+            <div class="stat-tile"><div class="v">${timeAgo(d.lastClickedAt)}</div><div class="k">Last scan</div></div>
+          </div>
+
+          <div class="section-label">Scans — last 14 days</div>
+          <div class="chart">${chartHtml}</div>
+          <div class="chart-labels"><span>14 days ago</span><span>today</span></div>
+
+          <div class="section-label">Location breakdown</div>
+          <div class="geo-breakdown">
+            <div><div style="font-size:.8rem;color:var(--text-secondary);margin-bottom:4px">Countries</div><ul class="geo-list">${countryRows}</ul></div>
+            <div><div style="font-size:.8rem;color:var(--text-secondary);margin-bottom:4px">Cities</div><ul class="geo-list">${cityRows}</ul></div>
+          </div>
+
+          <div class="section-label">Recent scans</div>
+          ${tableHtml}
+
+          <div class="section-label">Edit</div>
+          <div class="modal-edit">
+            <div class="modal-edit-row">
+              <div class="field"><label>Label</label><input type="text" id="edit-label" value="${escapeHtml(d.label || '')}"></div>
+              <div class="field"><label>Destination</label><input type="url" id="edit-dest" value="${escapeHtml(d.destination || '')}"></div>
+              <button class="btn btn-sm" id="save-edit-btn" style="white-space:nowrap">Save</button>
+            </div>
+          </div>
+
+          <div class="danger-zone">
+            <span class="hint">Permanently delete this QR code and all scan history.</span>
+            <button class="btn btn-danger btn-sm" id="modal-delete-btn">Delete QR code</button>
+          </div>
+        </div>`;
+
+      $('copy-link-btn').addEventListener('click', () => {
+        navigator.clipboard.writeText(d.redirectUrl).then(() => toast('Link copied'));
+      });
+      $('save-edit-btn').addEventListener('click', async () => {
+        try {
+          const upd = await api('/api/qr/' + code, {
+            method: 'PATCH',
+            body: JSON.stringify({ label: $('edit-label').value, destination: $('edit-dest').value })
+          });
+          $('modal-title').textContent = upd.label || 'Untitled QR';
+          $('modal-dest').textContent = upd.destination;
+          toast('Saved');
+          loadDashboard();
+        } catch (e) { toast(e.message, true); }
+      });
+      $('modal-delete-btn').addEventListener('click', async () => {
+        if (!confirm('Permanently delete this QR code and its scan history?')) return;
+        try {
+          await fetch('/api/qr/' + code, { method: 'DELETE', credentials: 'same-origin' });
+          delete qrThumbs[code];
+          closeModal();
+          toast('Deleted');
+          loadDashboard();
+        } catch { toast('Delete failed', true); }
+      });
+    } catch (e) {
+      $('modal-body').innerHTML = `<p style="color:var(--err)">${escapeHtml(e.message)}</p>`;
+    }
+  }
+
+  function closeModal() {
+    $('modal-overlay').classList.remove('show');
+    detailCode = null;
+  }
+  $('modal-close').addEventListener('click', closeModal);
+  $('modal-overlay').addEventListener('click', (e) => { if (e.target === $('modal-overlay')) closeModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+  // ── Boot ────────────────────────────────────────────────────────────
   (async function boot() {
     setMode('signup');
     try {
@@ -360,7 +642,7 @@ footer a{color:var(--accent-glow)}
       currentUser = data.user;
       showApp();
     } catch {
-      // not logged in — show auth
+      // not logged in
     }
   })();
 })();
