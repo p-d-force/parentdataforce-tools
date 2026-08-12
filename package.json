@@ -1,0 +1,19 @@
+{
+  "name": "parentdataforce-tools",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Parent Data Force privacy-first public utility tools hub",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch server.mjs",
+    "start": "node server.mjs",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "qrcode": "^1.5.4"
+  }
+}
