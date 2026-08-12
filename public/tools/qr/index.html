@@ -588,6 +588,11 @@ footer a{color:var(--accent-glow)}
               <div class="field"><label>Destination</label><input type="url" id="edit-dest" value="${escapeHtml(d.destination || '')}"></div>
               <button class="btn btn-sm" id="save-edit-btn" style="white-space:nowrap">Save</button>
             </div>
+            <div class="field" style="margin-top:12px">
+              <label>Scan notification webhook (Discord) — optional</label>
+              <input type="url" id="edit-webhook" placeholder="https://discord.com/api/webhooks/..." value="${escapeHtml(d.webhookUrl || '')}">
+              <div style="color:var(--text-muted);font-size:.72rem;margin-top:5px">Every scan POSTs a message with location, IP, device, and referrer. Leave blank to disable.</div>
+            </div>
           </div>
 
           <div class="danger-zone">
@@ -603,11 +608,15 @@ footer a{color:var(--accent-glow)}
         try {
           const upd = await api('/api/qr/' + code, {
             method: 'PATCH',
-            body: JSON.stringify({ label: $('edit-label').value, destination: $('edit-dest').value })
+            body: JSON.stringify({
+              label: $('edit-label').value,
+              destination: $('edit-dest').value,
+              webhookUrl: $('edit-webhook').value.trim()
+            })
           });
           $('modal-title').textContent = upd.label || 'Untitled QR';
           $('modal-dest').textContent = upd.destination;
-          toast('Saved');
+          toast(upd.webhookUrl ? 'Saved — scans will notify the webhook' : 'Saved');
           loadDashboard();
         } catch (e) { toast(e.message, true); }
       });

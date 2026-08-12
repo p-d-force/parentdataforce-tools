@@ -186,4 +186,45 @@ export class Tracker {
       }
     } catch { /* best effort */ }
   }
+
+  // ── Webhook notifications ───────────────────────────────────────────
+  // Fires after redirect + geo enrichment. Discord webhooks are plain
+  // POST JSON endpoints; works with any compatible receiver.
+  async notifyWebhook(item, code, entry, destination) {
+    const webhookUrl = item.webhookUrl;
+    if (!webhookUrl) return;
+
+    const geo = entry.geo || {};
+    const loc = geo.city
+      ? `${geo.city}${geo.countryCode ? ', ' + geo.countryCode : ''}`
+      : (geo.country || 'Unknown location');
+
+    const payload = {
+      username: 'QR Studio',
+      embeds: [{
+        title: `🔗 QR code scanned — ${item.label || 'Untitled'}`,
+        color: 0xff5a1f,
+        fields: [
+          { name: 'Code', value: `\`${code}\``, inline: true },
+          { name: 'Scan count', value: String(item.clicks || 0), inline: true },
+          { name: 'Destination', value: destination.slice(0, 1024) },
+          { name: 'Location', value: loc, inline: true },
+          { name: 'IP', value: entry.ip || '—', inline: true },
+          { name: 'Device', value: [entry.device, entry.browser, entry.os].filter(Boolean).join(' · ') || '—', inline: true },
+          { name: 'Referrer', value: entry.ref ? entry.ref.slice(0, 1024) : '—' },
+        ],
+        timestamp: entry.t || new Date().toISOString(),
+        footer: { text: 'Parent Data Force — first-party scan tracking' }
+      }]
+    };
+
+    try {
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(5000)
+      });
+    } catch { /* webhook failures are silent — never break the redirect */ }
+  }
 }

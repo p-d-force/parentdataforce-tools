@@ -112,6 +112,7 @@ app.post('/api/qr', async (request, response) => {
     const destination = normalizeHttpUrl(request.body?.destination);
     const label = String(request.body?.label || '').trim().slice(0, 80);
     const tracking = Boolean(request.body?.tracking);
+    const webhookUrl = String(request.body?.webhookUrl || '').trim().slice(0, 500);
     const cookies = auth.parseCookies(request);
     const user = auth.getUserBySessionToken(cookies.pdf_session);
     const store = readStore();
@@ -126,7 +127,8 @@ app.post('/api/qr', async (request, response) => {
         userId: user ? user.id : null,
         createdAt: new Date().toISOString(),
         clicks: 0,
-        lastClickedAt: null
+        lastClickedAt: null,
+        ...(webhookUrl ? { webhookUrl } : {})
       };
       writeStore(store);
       encodedValue = `${publicBaseUrl.replace(/\/$/, '')}/r/${code}`;
@@ -255,6 +257,7 @@ app.get('/api/qr/:code', (request, response) => {
     clicks: item.clicks,
     lastClickedAt: item.lastClickedAt,
     redirectUrl: `${publicBaseUrl.replace(/\/$/, '')}/r/${request.params.code}`,
+    webhookUrl: (isOwner || isPublicView) ? (item.webhookUrl || null) : null,
     // Full detail (history + stats) only for owner or anonymous codes
     stats: (isOwner || isPublicView) ? summarizeStats(item) : null,
     history: (isOwner || isPublicView) ? sanitizeHistory(item.history) : null
@@ -280,8 +283,13 @@ app.patch('/api/qr/:code', (request, response) => {
     if (typeof request.body?.destination === 'string') {
       item.destination = normalizeHttpUrl(request.body.destination);
     }
+    if (typeof request.body?.webhookUrl === 'string') {
+      const w = request.body.webhookUrl.trim().slice(0, 500);
+      if (w === '') delete item.webhookUrl;
+      else item.webhookUrl = w;
+    }
     writeStore(store);
-    response.json({ ok: true, label: item.label, destination: item.destination });
+    response.json({ ok: true, label: item.label, destination: item.destination, webhookUrl: item.webhookUrl || null });
   } catch (error) {
     response.status(400).json({ error: error.message || 'Unable to update.' });
   }
@@ -319,7 +327,9 @@ app.get('/r/:code', async (request, response) => {
 
   // Geo enrichment happens AFTER the redirect is sent (never blocks)
   response.redirect(302, item.destination);
-  tracker.enrichWithGeo(item, entry).catch(() => {});
+  tracker.enrichWithGeo(item, entry)
+    .then(() => tracker.notifyWebhook(item, request.params.code, entry, item.destination))
+    .catch(() => {});
 });
 
 // ─── YouTube Transcript Routes ───────────────────────────────────────────────
