@@ -8,3 +8,5 @@ npm-debug.log*
 data-*
 .gmail-token.json
 ADS-CODES-local.md
+adtest/
+qr-misalignment-proof.png
