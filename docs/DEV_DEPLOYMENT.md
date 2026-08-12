@@ -12,7 +12,7 @@ Internet
   → existing Nginx + existing Basic Auth + noindex header
   → 127.0.0.1:3101 (systemd service)
   → Node/Express app
-  → /var/lib/parentdataforce-tools/links.json (root-owned data directory)
+  → /var/lib/parentdataforce-tools/links.json (service-owned aggregate data directory)
 ```
 
 Nginx owns the external TLS/authentication boundary. Node binds to loopback only and is not exposed in UFW.
@@ -30,7 +30,7 @@ Nginx owns the external TLS/authentication boundary. Node binds to loopback only
 # The loopback-only service runs as www-data and must atomically update its own
 # aggregate link store; directory ownership is intentionally assigned to that service user.
 install -d -m 0750 -o www-data -g www-data /var/lib/parentdataforce-tools
-install -m 0640 -o www-data -g www-data /dev/null /var/lib/parentdataforce-tools/links.json
+printf '{}\n' | install -m 0640 -o www-data -g www-data /dev/stdin /var/lib/parentdataforce-tools/links.json
 ```
 
 ## Systemd service

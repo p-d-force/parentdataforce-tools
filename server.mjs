@@ -16,7 +16,8 @@ fs.mkdirSync(dataDirectory, { recursive: true });
 
 function readStore() {
   try {
-    const contents = fs.readFileSync(linkStorePath, 'utf8');
+    const contents = fs.readFileSync(linkStorePath, 'utf8').trim();
+    if (!contents) return {};
     const parsed = JSON.parse(contents);
     return parsed && typeof parsed === 'object' ? parsed : {};
   } catch (error) {
