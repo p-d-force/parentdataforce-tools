@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="description" content="Bad redactions leak sensitive information from public records. Learn why PDF redaction fails and how to spot, fix, and handle it.">
+<title>Why bad PDF redactions happen (and how to spot them) | Parent Data Force</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="/" aria-label="Parent Data Force Tools home">
+    <img src="/logo.png" alt="Parent Data Force logo">
+    <span><strong>PARENT DATA FORCE</strong><em>ARTICLES &amp; GUIDES</em></span>
+  </a>
+  <nav aria-label="Primary navigation">
+    <a href="/">Tools</a>
+    <a href="https://www.parentdataforce.com/" target="_blank" rel="noreferrer">Parent Data Force ↗</a>
+  </nav>
+</header>
+
+<main>
+  <article class="article">
+    <div class="meta">
+      <span class="cat-tag">Document Privacy</span>
+      <span>Aug 2026</span>
+      <span>· 5 min read</span>
+    </div>
+
+    <h1>Why bad PDF redactions happen (and how to spot them)</h1>
+
+    <p>A black box over text in a PDF is not a lock. Failed redactions in public records are a well-documented problem: text that appears permanently covered can often be copied, searched, or extracted straight out of the file. This guide explains why redaction fails, how to check your own PDFs before you share them, and what to do when a record you receive arrives badly redacted.</p>
+
+    <h2>The black-box illusion</h2>
+    <p>When someone "redacts" a PDF by drawing a black rectangle over text, the text underneath usually stays in the file. It is like putting a sticky note over a sentence in a printed book — the words are still there, just covered. A PDF is a container that stores text, images, and fonts as data, and covering content is not the same as removing it. Any tool that can read the underlying content layer can often still find the original words, no matter how solid the black box looks on screen.</p>
+
+    <blockquote>
+      <p>A redaction is only real when the underlying content is gone from the file — not when it's merely covered up. If you can copy it, it isn't redacted.</p>
+    </blockquote>
+
+    <h2>Why redaction fails</h2>
+    <p>Failures come in a few recurring flavors.</p>
+
+    <h3>Drawing boxes instead of removing content</h3>
+    <p>The most common failure by far. Some editors' "redaction" features simply paint a rectangle over the page, leaving the text layer untouched. Search, copy, and text-extraction tools read right through it.</p>
+
+    <h3>Re-encoding artifacts</h3>
+    <p>Even when text is genuinely deleted, re-encoding can leave fragments behind. PDFs saved incrementally keep old versions of pages in the file, and deleted objects can linger where repair tools can resurrect them.</p>
+
+    <h3>Metadata leaks</h3>
+    <p>Author names, email addresses, software names, and the original document title often survive in the PDF's metadata — invisible in normal viewing but readable in file properties or any metadata tool. This is a classic, easy-to-miss leak.</p>
+
+    <h3>Hidden layers</h3>
+    <p>Layers, annotations, comments, and "invisible" text set in white or zero-size fonts can all carry content that never appears on screen — but is still part of the file.</p>
+
+    <h2>How to check your own redacted PDFs</h2>
+    <p>Run all three checks before you share anything.</p>
+
+    <h3>The copy-paste test</h3>
+    <p>Open the PDF, select the area where the black box is, and copy. Paste into a text editor. If the hidden text appears, the redaction failed. This test catches most bad redactions.</p>
+
+    <h3>Extract the text</h3>
+    <p>Pull every scrap of text out of the file and search the output for names, addresses, and anything else you meant to hide. Free options include <code>pdftotext</code> (part of the Poppler tools) on the command line, or any PDF reader's search function.</p>
+
+    <h3>Check the metadata</h3>
+    <p>Open the file's properties (File → Properties, or Details in your OS) and look at the author, title, keywords, and comments fields. If anything sensitive appears there, it is still in the file — and it will travel with every copy.</p>
+
+    <h2>How to redact properly</h2>
+    <p>Use a real redaction tool, not a drawing tool. Proper redaction removes the underlying content permanently rather than covering it up. Adobe Acrobat's Redact tool (with "remove hidden information" enabled) and dedicated open-source redaction tools do this correctly. Redact a copy, keep your original intact, and always verify with the three checks above before sharing. When in doubt, don't send the file at all.</p>
+
+    <h2>What to do if you receive a badly redacted public record</h2>
+    <p>First, document the finding: save a copy and note the date and what you were able to recover, before the agency can pull or "fix" the file. Treat the leak as real — the information is now in the record you hold. Report the failure to the agency's records-access officer — they need to know their redaction process is broken. You are not obligated to publish what you found; documenting it protects you and everyone else. If you see the same failure across multiple records, that is a systemic privacy problem worth raising with oversight bodies.</p>
+
+    <div class="article-cta">
+      <p>These guides are free because families shouldn't have to pay to understand their rights. If this helped, consider a coffee to keep the server running.</p>
+      <a class="donate-btn donate-kofi" href="https://ko-fi.com/parentdataforce" target="_blank" rel="noreferrer">☕ Buy us a coffee</a>
+    </div>
+
+    <div class="related">
+      <h3>Related guides</h3>
+      <a href="../special-ed/how-to-read-an-iep.html">How to read a Massachusetts IEP</a>
+      <a href="../tech/free-tools-special-ed-parents.html">Free tools every special-ed parent should know</a>
+    </div>
+  </article>
+</main>
+
+<footer>
+  <span>© Parent Data Force — guides are informational, not legal advice.</span>
+  <a href="https://www.parentdataforce.com/donate/" target="_blank" rel="noreferrer">Support the watchdog ↗</a>
+</footer>
+</body>
+</html>
