@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>Link Tracker | Parent Data Force</title>
+<link rel="stylesheet" href="/styles.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@400;500;600;700;800&display=swap');
+:root{--bg-primary:#0b0b0b;--bg-secondary:#161616;--bg-elevated:#1d1d1d;--bg-card:rgba(255,255,255,.03);--accent:#ff5a1f;--accent-hot:#ff3b1f;--accent-glow:#ffa366;--text-primary:#f5f5f5;--text-secondary:#a0a0a0;--text-muted:#767676;--border:#2a2a2a;--ok:#4ade80;--err:#ff8e8e;--blue:#4da3ff}
+*{box-sizing:border-box}
+body{margin:0;color:var(--text-primary);background:radial-gradient(circle at 92% 0%,rgba(255,59,31,.12),transparent 26%),var(--bg-primary);font-family:Outfit,Arial,sans-serif;line-height:1.55}
+a{color:inherit}
+.site-header{max-width:1280px;min-height:88px;padding:16px 30px;margin:auto;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;letter-spacing:.05em}
+.brand img{width:48px;height:48px;object-fit:contain}
+.brand strong{display:block;font-size:.9rem;letter-spacing:.11em}
+.brand em{display:block;margin-top:1px;color:var(--accent-glow);font-size:.63rem;font-style:normal;font-family:'DM Mono',monospace;letter-spacing:.13em}
+nav{display:flex;align-items:center;gap:24px;font-size:.88rem;color:var(--text-secondary)}
+nav a{text-decoration:none}nav a:hover{color:var(--accent-glow)}
+main{max-width:1100px;margin:auto;padding:0 30px 72px}
+.hero{padding:52px 0 30px}
+.eyebrow{margin:0 0 13px;color:var(--accent-glow);font:500 .7rem 'DM Mono',monospace;letter-spacing:.16em}
+.hero h1{margin:0;font-size:clamp(2rem,5vw,3.4rem);line-height:1;letter-spacing:-.055em}
+.lede{max-width:640px;margin:16px 0 0;color:var(--text-secondary);font-size:1.02rem}
+
+.userbar{display:flex;align-items:center;gap:14px;justify-content:flex-end;padding:14px 0 0;font-size:.85rem}
+.userbar .email{color:var(--text-secondary)}
+.userbar .plan{color:var(--accent-glow);font-family:'DM Mono',monospace;font-size:.7rem;border:1px solid rgba(255,90,31,.4);padding:2px 8px;border-radius:3px}
+.userbar .upgrade{color:var(--accent-glow);text-decoration:underline;text-underline-offset:3px;font-size:.78rem;cursor:pointer}
+.btn{display:inline-block;cursor:pointer;border:0;padding:11px 18px;background:linear-gradient(100deg,var(--accent-hot),var(--accent));color:#fff;font:600 .85rem Outfit,sans-serif;text-decoration:none;border-radius:3px}
+.btn:hover{opacity:.9}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-ghost{background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-primary)}
+.btn-ghost:hover{border-color:var(--accent)}
+.btn-sm{padding:6px 12px;font-size:.78rem}
+.btn-danger{background:transparent;border:1px solid rgba(255,59,31,.5);color:var(--err)}
+.btn-lg{width:100%;padding:13px 18px;font-size:.9rem}
+
+.auth-box{max-width:420px;margin:0 auto 56px;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:32px}
+.auth-box h2{margin:0 0 6px;font-size:1.4rem;letter-spacing:-.02em}
+.auth-box p.sub{color:var(--text-secondary);font-size:.85rem;margin:0 0 24px}
+.field{margin-bottom:16px}
+.field label{display:block;color:var(--text-secondary);font-size:.78rem;margin-bottom:6px}
+.field input,.field textarea{width:100%;padding:11px;color:var(--text-primary);background:#101010;border:1px solid #393939;font:400 .85rem 'DM Mono',monospace;border-radius:3px}
+.field textarea{min-height:140px;resize:vertical}
+.field input:focus,.field textarea:focus{outline:1px solid var(--accent-glow);border-color:var(--accent-glow)}
+.auth-switch{margin-top:18px;font-size:.82rem;color:var(--text-secondary);text-align:center}
+.auth-switch a{color:var(--accent-glow);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.form-error{display:none;background:rgba(255,59,31,.1);border:1px solid rgba(255,59,31,.35);color:var(--err);border-radius:4px;padding:10px 14px;font-size:.82rem;margin-bottom:16px}
+.form-error.show{display:block}
+
+.generator{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:28px;margin-bottom:40px}
+.generator h2{margin:0 0 16px;font-size:1.2rem}
+.gen-form label{display:block;color:var(--text-secondary);font-size:.78rem;margin:0 0 6px}
+.gen-form input[type=url],.gen-form input[type=text]{width:100%;padding:11px;color:var(--text-primary);background:#101010;border:1px solid #393939;font:400 .85rem 'DM Mono',monospace;border-radius:3px;margin-bottom:14px}
+.gen-form input:focus{outline:1px solid var(--accent-glow);border-color:var(--accent-glow)}
+.link-result{display:none;margin-top:18px;padding-top:18px;border-top:1px solid var(--border)}
+.link-result.show{display:block}
+.link-result .link-url{display:block;overflow-wrap:anywhere;color:var(--accent-glow);font:.82rem 'DM Mono',monospace;background:#101010;border:1px solid var(--border);border-radius:4px;padding:10px 12px;margin-bottom:10px}
+.bulk-box{margin-top:26px;padding-top:20px;border-top:1px solid var(--border)}
+.bulk-box h3{margin:0 0 6px;font-size:.95rem}
+.bulk-box p.hint{color:var(--text-muted);font-size:.76rem;margin:0 0 12px}
+
+.dash-head{display:flex;align-items:center;justify-content:space-between;margin:30px 0 16px;flex-wrap:wrap;gap:10px}
+.dash-head h2{margin:0;font-size:1.2rem}
+.summary-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:26px}
+.summary-card{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:18px 20px}
+.summary-card .num{font-size:1.8rem;font-weight:700;letter-spacing:-.03em}
+.summary-card .lbl{color:var(--text-muted);font-size:.72rem;font-family:'DM Mono',monospace;letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
+.summary-card .num.accent{color:var(--accent-glow)}
+.summary-card .num.blue{color:var(--blue)}
+.qr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.qr-card{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color .15s,transform .15s;cursor:pointer;display:flex;flex-direction:column}
+.qr-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.card-top{display:flex;gap:16px;padding:18px 18px 14px;align-items:center}
+.link-ico{width:72px;height:72px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(255,90,31,.08);border:1px solid rgba(255,90,31,.25);font-size:2rem}
+.card-info{min-width:0;flex:1}
+.card-info h3{margin:0 0 4px;font-size:1.02rem;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card-info .dest{color:var(--text-muted);font-size:.76rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card-stats{display:flex;gap:22px;padding:12px 18px;border-top:1px solid var(--border);background:rgba(0,0,0,.15)}
+.stat{display:flex;flex-direction:column}
+.stat .v{font-size:1.05rem;font-weight:600;color:var(--accent-glow)}
+.stat .k{font-size:.64rem;color:var(--text-muted);font-family:'DM Mono',monospace;letter-spacing:.06em;text-transform:uppercase}
+.card-actions{display:flex;gap:8px;padding:0 18px 16px;justify-content:flex-end}
+.empty-state{text-align:center;padding:56px 20px;color:var(--text-muted);border:1px dashed var(--border);border-radius:8px}
+.empty-state .big{font-size:2.4rem;margin-bottom:10px}
+.empty-state .hint{font-size:.85rem;color:var(--text-secondary);margin-top:6px}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:100;overflow-y:auto}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;max-width:760px;width:100%;padding:32px;position:relative}
+.modal .close{position:absolute;top:16px;right:18px;background:none;border:none;color:var(--text-muted);font-size:1.4rem;cursor:pointer;line-height:1}
+.modal .close:hover{color:var(--accent-glow)}
+.modal h2{margin:0 0 4px;font-size:1.4rem;letter-spacing:-.02em}
+.modal .dest-line{color:var(--text-muted);font-size:.82rem;margin:0 0 20px;overflow-wrap:anywhere}
+.modal-body{display:grid;grid-template-columns:1fr;gap:26px}
+.link-big{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:20px;align-self:start}
+.link-big .link-url-big{overflow-wrap:anywhere;color:var(--accent-glow);font:.82rem 'DM Mono',monospace;background:#101010;border:1px solid var(--border);border-radius:4px;padding:10px 12px;margin-bottom:12px}
+.link-actions{display:flex;gap:8px;flex-wrap:wrap}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.stat-tile{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:12px 14px}
+.stat-tile .v{font-size:1.35rem;font-weight:700;color:var(--accent-glow)}
+.stat-tile .k{font-size:.66rem;color:var(--text-muted);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em}
+.section-label{font:500 .68rem 'DM Mono',monospace;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;margin:20px 0 10px;border-top:1px solid var(--border);padding-top:16px}
+.chart{display:flex;align-items:flex-end;gap:4px;height:110px;padding:10px 0;border-bottom:1px solid var(--border)}
+.chart-col{flex:1;display:flex;align-items:flex-end;justify-content:center;gap:2px;height:100%;position:relative}
+.chart-col .bar{width:45%;border-radius:3px 3px 0 0;min-height:2px;transition:opacity .2s}
+.chart-col .bar.total{background:linear-gradient(180deg,var(--accent),var(--accent-hot))}
+.chart-col .bar.unique{background:linear-gradient(180deg,var(--blue),#2b6fb0)}
+.chart-col:hover .bar{opacity:.8}
+.chart-col .bar-label{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font:500 .58rem 'DM Mono',monospace;color:var(--text-muted);white-space:nowrap}
+.chart-legend{display:flex;justify-content:flex-end;gap:18px;margin-top:26px;font-size:.72rem;color:var(--text-secondary)}
+.chart-legend .lg-total::before{content:"■";color:var(--accent);margin-right:5px}
+.chart-legend .lg-unique::before{content:"■";color:var(--blue);margin-right:5px}
+.geo-breakdown{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.geo-list{list-style:none;margin:0;padding:0}
+.geo-list li{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:.84rem}
+.geo-list li .cnt{color:var(--accent-glow);font-family:'DM Mono',monospace;font-size:.78rem}
+.click-table-wrap{overflow-x:auto}
+.click-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.click-table th{text-align:left;padding:8px 10px;color:var(--text-muted);font:500 .64rem 'DM Mono',monospace;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid var(--border)}
+.click-table td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+.click-table .ip{font-family:'DM Mono',monospace;font-size:.76rem}
+.click-table .loc{color:var(--text-secondary)}
+.click-table .flag{font-size:1rem;margin-right:4px}
+.click-table .dev{color:var(--text-muted);font-size:.74rem}
+.click-table .ref{color:var(--text-muted);font-size:.72rem;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.modal-edit{margin-top:6px}
+.modal-edit .field{margin-bottom:10px}
+.modal-edit-row{display:flex;gap:10px;align-items:flex-end}
+.modal-edit-row .field{flex:1;margin-bottom:0}
+.danger-zone{margin-top:22px;padding-top:16px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.danger-zone .hint{color:var(--text-muted);font-size:.78rem;max-width:320px}
+.no-scans{color:var(--text-muted);padding:20px 0;font-size:.85rem}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg-elevated);border:1px solid var(--border);border-left:3px solid var(--ok);border-radius:6px;padding:13px 18px;font-size:.85rem;z-index:200;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none;max-width:320px}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.error{border-left-color:var(--err)}
+
+.donation-section{padding:46px 0;border-top:1px solid var(--border);text-align:center}
+.donation-section h2{font-size:1.6rem;letter-spacing:-.03em;margin-bottom:10px}
+.donation-section p{color:var(--text-secondary);max-width:560px;margin:0 auto 22px;font-size:.92rem}
+.donation-buttons{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.donate-btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:4px;text-decoration:none;font-weight:600;font-size:.88rem;transition:transform .15s}
+.donate-btn:hover{transform:translateY(-2px)}
+.donate-kofi{background:#41729f;color:#fff}
+.donate-paypal{background:#0070ba;color:#fff}
+.donate-venmo{background:#3d95ce;color:#fff}
+footer{max-width:1280px;margin:auto;padding:24px 30px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:12px;color:var(--text-muted);font-size:.75rem;flex-wrap:wrap}
+footer a{color:var(--accent-glow)}
+@media(max-width:768px){.site-header,main,footer{padding-left:18px;padding-right:18px}.site-header{flex-direction:column;align-items:flex-start}.stat-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="/" aria-label="Parent Data Force Tools home">
+    <img src="/logo.png" alt="Parent Data Force logo">
+    <span><strong>PARENT DATA FORCE</strong><em>LINK TRACKER</em></span>
+  </a>
+  <nav aria-label="Primary navigation">
+    <a href="/">Tools</a>
+    <a href="https://www.parentdataforce.com/" target="_blank" rel="noreferrer">Parent Data Force ↗</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <p class="eyebrow">FREE • PRIVATE • CLICK ANALYTICS</p>
+    <h1>Link Tracker</h1>
+    <p class="lede">Turn any URL into a tracked link. See every click — location, device, and time — without invisible tracking pixels or third-party scripts.</p>
+    <div class="userbar" id="userbar" style="display:none"></div>
+  </section>
+
+  <section id="auth-view">
+    <div class="auth-box">
+      <div class="form-error" id="auth-error"></div>
+      <h2 id="auth-title">Create your free account</h2>
+      <p class="sub" id="auth-sub">Save tracked links and watch click analytics.</p>
+      <div class="field">
+        <label for="auth-email">Email address</label>
+        <input type="email" id="auth-email" autocomplete="email" placeholder="you@example.org">
+      </div>
+      <div class="field">
+        <label for="auth-password">Password</label>
+        <input type="password" id="auth-password" autocomplete="current-password" placeholder="At least 8 characters">
+      </div>
+      <button class="btn btn-lg" id="auth-submit">Create account</button>
+      <div class="auth-switch" id="auth-switch-line">Already have an account? <a id="auth-switch">Log in</a></div>
+    </div>
+  </section>
+
+  <section id="app-view" style="display:none">
+    <div class="generator">
+      <h2>Create a tracked link</h2>
+      <div class="gen-form">
+        <label for="destination">Destination URL</label>
+        <input type="url" id="destination" placeholder="https://example.org/page" required maxlength="2048">
+        <label for="label">Label (optional)</label>
+        <input type="text" id="label" placeholder="Newsletter CTA" maxlength="80">
+        <button class="btn" id="gen-btn">Create tracked link</button>
+        <div class="link-result" id="link-result">
+          <span class="link-url" id="link-url"></span>
+          <button class="btn btn-ghost btn-sm" id="copy-new-btn">Copy link</button>
+        </div>
+      </div>
+      <div class="bulk-box">
+        <h3>Bulk import (Pro)</h3>
+        <p class="hint">One per line: <code>label,destination</code>. Up to 100 links per import.</p>
+        <div class="field">
+          <textarea id="bulk-csv" placeholder="Event Flyer,https://example.org/flyer&#10;Donation,https://ko-fi.com/parentdataforce&#10;Resource,https://example.org/resource"></textarea>
+        </div>
+        <button class="btn btn-ghost" id="bulk-btn">Import links</button>
+        <div id="bulk-status" style="margin-top:10px;font-size:.82rem;color:var(--text-secondary)"></div>
+      </div>
+    </div>
+
+    <div class="dash-head">
+      <h2>Your tracked links</h2>
+      <button class="btn btn-ghost btn-sm" id="refresh-btn">Refresh</button>
+    </div>
+    <div class="summary-strip" id="summary-strip" style="display:none"></div>
+    <div id="dashboard"></div>
+  </section>
+</main>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <button class="close" id="modal-close" aria-label="Close">✕</button>
+    <h2 id="modal-title">Link details</h2>
+    <p class="dest-line" id="modal-dest"></p>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<section class="donation-section">
+  <h2>Keep the tools free</h2>
+  <p>Link Tracker is free for everyone. If it saved you time, consider a coffee — it covers our server costs.</p>
+  <div class="donation-buttons">
+    <a class="donate-btn donate-kofi" href="https://ko-fi.com/parentdataforce" target="_blank" rel="noreferrer">☕ Buy us a coffee</a>
+    <a class="donate-btn donate-paypal" href="https://paypal.me/parentdataforce" target="_blank" rel="noreferrer">💳 PayPal</a>
+    <a class="donate-btn donate-venmo" href="https://venmo.com/parentdataforce" target="_blank" rel="noreferrer">📱 Venmo</a>
+  </div>
+</section>
+
+<footer>
+  <span>© Parent Data Force — click analytics stores IP and approximate location for reporting; unique visitors estimated via a pseudonymous hash. No invisible tracking pixels, ever.</span>
+  <a href="https://www.parentdataforce.com/donate/" target="_blank" rel="noreferrer">Support the watchdog ↗</a>
+</footer>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const authView = $('auth-view');
+  const appView = $('app-view');
+  const userbar = $('userbar');
+  const authError = $('auth-error');
+  let mode = 'signup';
+  let currentUser = null;
+
+  async function api(path, options = {}) {
+    const res = await fetch(path, {
+      headers: { 'content-type': 'application/json' },
+      credentials: 'same-origin',
+      ...options
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'Request failed.');
+    return data;
+  }
+
+  let toastTimer;
+  function toast(msg, isError = false) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.className = 'toast show' + (isError ? ' error' : '');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function timeAgo(iso) {
+    if (!iso) return '—';
+    const secs = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+    if (secs < 60) return 'just now';
+    if (secs < 3600) return Math.floor(secs / 60) + 'm ago';
+    if (secs < 86400) return Math.floor(secs / 3600) + 'h ago';
+    if (secs < 86400 * 7) return Math.floor(secs / 86400) + 'd ago';
+    return new Date(iso).toLocaleDateString();
+  }
+  function flagEmoji(cc) {
+    if (!cc) return '';
+    return String.fromCodePoint(...cc.toUpperCase().split('').map((c) => 127397 + c.charCodeAt(0)));
+  }
+  function copyText(text) {
+    navigator.clipboard.writeText(text).then(() => toast('Copied')).catch(() => {});
+  }
+
+  function setMode(m) {
+    mode = m;
+    $('auth-title').textContent = m === 'signup' ? 'Create your free account' : 'Welcome back';
+    $('auth-sub').textContent = m === 'signup'
+      ? 'Save tracked links and watch click analytics.'
+      : 'Log in to manage your tracked links.';
+    $('auth-submit').textContent = m === 'signup' ? 'Create account' : 'Log in';
+    $('auth-password').autocomplete = m === 'signup' ? 'new-password' : 'current-password';
+    $('auth-switch-line').innerHTML = m === 'signup'
+      ? 'Already have an account? <a id="auth-switch">Log in</a>'
+      : 'New here? <a id="auth-switch">Create an account</a>';
+    $('auth-switch').addEventListener('click', () => setMode(mode === 'signup' ? 'login' : 'signup'));
+    authError.classList.remove('show');
+  }
+
+  function showError(msg) {
+    authError.textContent = msg;
+    authError.classList.add('show');
+  }
+
+  async function submitAuth() {
+    const email = $('auth-email').value.trim();
+    const password = $('auth-password').value;
+    if (!email || !password) return showError('Enter your email and password.');
+    const btn = $('auth-submit');
+    btn.disabled = true;
+    btn.textContent = mode === 'signup' ? 'Creating…' : 'Logging in…';
+    try {
+      const data = await api('/api/auth/' + (mode === 'signup' ? 'signup' : 'login'), {
+        method: 'POST',
+        body: JSON.stringify({ email, password })
+      });
+      currentUser = data.user;
+      showApp();
+    } catch (e) {
+      showError(e.message);
+    }
+    btn.disabled = false;
+    btn.textContent = mode === 'signup' ? 'Create account' : 'Log in';
+  }
+
+  $('auth-submit').addEventListener('click', submitAuth);
+  $('auth-password').addEventListener('keydown', (e) => { if (e.key === 'Enter') submitAuth(); });
+
+  function showApp() {
+    authView.style.display = 'none';
+    appView.style.display = 'block';
+    userbar.style.display = 'flex';
+    const plan = currentUser.plan === 'pro' ? 'PRO' : 'FREE';
+    const upgrade = currentUser.plan === 'pro' ? '' : '<a class="upgrade" href="https://ko-fi.com/parentdataforce" target="_blank" rel="noreferrer">Upgrade →</a>';
+    userbar.innerHTML = `<span class="email">${escapeHtml(currentUser.email)}</span><span class="plan">${plan}</span>${upgrade}<button class="btn btn-ghost btn-sm" id="logout-btn">Log out</button>`;
+    $('logout-btn').addEventListener('click', async () => {
+      await api('/api/auth/logout', { method: 'POST' });
+      currentUser = null;
+      authView.style.display = 'block';
+      appView.style.display = 'none';
+      userbar.style.display = 'none';
+      setMode('login');
+    });
+    loadDashboard();
+  }
+
+  $('gen-btn').addEventListener('click', async () => {
+    const destination = $('destination').value.trim();
+    if (!destination) { toast('Enter a destination URL.', true); return; }
+    const btn = $('gen-btn');
+    btn.disabled = true;
+    btn.textContent = 'Creating…';
+    try {
+      const data = await api('/api/links', {
+        method: 'POST',
+        body: JSON.stringify({ destination, label: $('label').value.trim() })
+      });
+      const box = $('link-result');
+      box.classList.add('show');
+      $('link-url').textContent = data.redirectUrl;
+      $('copy-new-btn').onclick = () => copyText(data.redirectUrl);
+      $('destination').value = '';
+      $('label').value = '';
+      toast('Tracked link created');
+      loadDashboard();
+    } catch (e) {
+      toast(e.message, true);
+    }
+    btn.disabled = false;
+    btn.textContent = 'Create tracked link';
+  });
+
+  $('bulk-btn').addEventListener('click', async () => {
+    const csv = $('bulk-csv').value.trim();
+    if (!csv) { toast('Paste some CSV first.', true); return; }
+    if (currentUser.plan !== 'pro') { toast('Bulk import is a Pro feature.', true); return; }
+    const btn = $('bulk-btn');
+    btn.disabled = true;
+    try {
+      const data = await api('/api/links/bulk', { method: 'POST', body: JSON.stringify({ csv }) });
+      $('bulk-status').textContent = `Created ${data.created} link${data.created === 1 ? '' : 's'}${data.skipped ? ` (${data.skipped} skipped)` : ''}.`;
+      $('bulk-csv').value = '';
+      toast(`Imported ${data.created} links`);
+      loadDashboard();
+    } catch (e) {
+      $('bulk-status').textContent = e.message;
+    }
+    btn.disabled = false;
+  });
+
+  async function loadDashboard() {
+    try {
+      const data = await api('/api/my/qrs');
+      const dash = $('dashboard');
+      const strip = $('summary-strip');
+      const links = (data.codes || []).filter((c) => c.kind !== 'qr');
+
+      if (links.length === 0) {
+        strip.style.display = 'none';
+        dash.innerHTML = '<div class="empty-state"><div class="big">🔗</div><p>No tracked links yet. Create one above — it will appear here.</p><p class="hint">Tracked links show click location, device, and time.</p></div>';
+        return;
+      }
+
+      const totalClicks = links.reduce((s, c) => s + c.clicks, 0);
+      const totalUnique = links.reduce((s, c) => s + (c.uniqueScans || 0), 0);
+      const lastActive = links.reduce((acc, c) => {
+        if (!acc || (c.lastClickedAt && c.lastClickedAt > acc)) return c.lastClickedAt || acc;
+        return acc;
+      }, null);
+      strip.style.display = 'grid';
+      strip.innerHTML = `
+        <div class="summary-card"><div class="num">${links.length}</div><div class="lbl">Links</div></div>
+        <div class="summary-card"><div class="num accent">${totalClicks}</div><div class="lbl">Total clicks</div></div>
+        <div class="summary-card"><div class="num blue">${totalUnique}</div><div class="lbl">Unique visitors</div></div>
+        <div class="summary-card"><div class="num blue">${timeAgo(lastActive)}</div><div class="lbl">Last click</div></div>
+      `;
+
+      dash.innerHTML = '<div class="qr-grid">' + links.map((c) => `
+        <article class="qr-card" data-code="${c.code}">
+          <div class="card-top">
+            <div class="link-ico">🔗</div>
+            <div class="card-info">
+              <h3>${escapeHtml(c.label || 'Untitled')}</h3>
+              <div class="dest" title="${escapeHtml(c.destination)}">${escapeHtml(c.destination)}</div>
+            </div>
+          </div>
+          <div class="card-stats">
+            <div class="stat"><span class="v">${c.clicks}</span><span class="k">Clicks</span></div>
+            <div class="stat"><span class="v">${c.uniqueScans ?? '—'}</span><span class="k">Unique</span></div>
+            <div class="stat"><span class="v">${timeAgo(c.lastClickedAt)}</span><span class="k">Last</span></div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-ghost btn-sm detail-btn" data-code="${c.code}">Details</button>
+            <button class="btn btn-danger btn-sm del-btn" data-code="${c.code}">Delete</button>
+          </div>
+        </article>`).join('') + '</div>';
+
+      dash.querySelectorAll('.qr-card').forEach((card) => {
+        card.addEventListener('click', (e) => {
+          if (e.target.closest('.del-btn')) return;
+          openDetail(card.dataset.code);
+        });
+      });
+      dash.querySelectorAll('.detail-btn').forEach((b) => {
+        b.addEventListener('click', (e) => { e.stopPropagation(); openDetail(b.dataset.code); });
+      });
+      dash.querySelectorAll('.del-btn').forEach((b) => {
+        b.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          if (!confirm('Delete this link? Its click history will be lost.')) return;
+          try {
+            await fetch('/api/qr/' + b.dataset.code, { method: 'DELETE', credentials: 'same-origin' });
+            toast('Deleted');
+            loadDashboard();
+          } catch { toast('Delete failed', true); }
+        });
+      });
+    } catch (e) {
+      if (e.message.includes('Not logged in')) {
+        currentUser = null;
+        authView.style.display = 'block';
+        appView.style.display = 'none';
+        setMode('login');
+      }
+    }
+  }
+
+  $('refresh-btn').addEventListener('click', loadDashboard);
+
+  let detailCode = null;
+  function openDetail(code) {
+    detailCode = code;
+    $('modal-overlay').classList.add('show');
+    $('modal-body').innerHTML = '<p style="color:var(--text-muted)">Loading…</p>';
+    $('modal-title').textContent = 'Loading…';
+    $('modal-dest').textContent = '';
+    loadDetail(code);
+  }
+
+  async function loadDetail(code) {
+    try {
+      const d = await api('/api/qr/' + code);
+      $('modal-title').textContent = d.label || 'Untitled link';
+      $('modal-dest').textContent = d.destination;
+      const stats = d.stats || {};
+      const history = d.history || [];
+
+      const days = [];
+      const now = new Date();
+      for (let i = 13; i >= 0; i--) {
+        const dt = new Date(now);
+        dt.setDate(dt.getDate() - i);
+        const key = dt.toISOString().slice(0, 10);
+        const lbl = dt.toLocaleDateString(undefined, { month: 'numeric', day: 'numeric' });
+        days.push({
+          key, lbl,
+          total: stats.byDay?.[key] || 0,
+          unique: stats.uniqueByDay?.[key]?.new || 0
+        });
+      }
+      const maxDay = Math.max(1, ...days.map((d) => d.total));
+      const chartHtml = days.map((d) =>
+        `<div class="chart-col" title="${d.lbl} — ${d.total} clicks, ${d.unique} new unique">
+           <div class="bar total" style="height:${Math.max(2, (d.total / maxDay) * 100)}%"></div>
+           <div class="bar unique" style="height:${Math.max(2, (d.unique / maxDay) * 100)}%"></div>
+           <span class="bar-label">${d.lbl}</span>
+         </div>`
+      ).join('');
+
+      let tableHtml;
+      if (history.length === 0) {
+        tableHtml = '<p class="no-scans">No clicks yet. Share your link and watch them appear here with location and device info.</p>';
+      } else {
+        tableHtml = `<div class="click-table-wrap"><table class="click-table"><thead><tr><th>Time</th><th>IP</th><th>Location</th><th>Device</th><th>Referrer</th></tr></thead><tbody>` +
+          history.slice().reverse().map((h) => {
+            const geo = h.geo || {};
+            const loc = geo.city ? `${geo.city}${geo.countryCode ? ', ' + geo.countryCode : ''}` : (geo.country || '—');
+            const dev = [h.device, h.browser, h.os].filter(Boolean).join(' · ');
+            return `<tr>
+              <td style="white-space:nowrap">${new Date(h.t).toLocaleString()}</td>
+              <td class="ip">${escapeHtml(h.ip)}</td>
+              <td class="loc"><span class="flag">${flagEmoji(geo.countryCode)}</span>${escapeHtml(loc || '—')}</td>
+              <td class="dev">${escapeHtml(dev || '—')}</td>
+              <td class="ref" title="${escapeHtml(h.ref)}">${escapeHtml(h.ref ? h.ref.replace(/^https?:\/\//, '').slice(0, 40) : '—')}</td>
+            </tr>`;
+          }).join('') + '</tbody></table></div>';
+      }
+
+      const countryRows = (stats.topCountries || []).map(([k, v]) => `<li><span>${flagEmoji(k)} ${escapeHtml(k)}</span><span class="cnt">${v}</span></li>`).join('') || '<li><span style="color:var(--text-muted)">No location data yet</span></li>';
+      const cityRows = (stats.topCities || []).map(([k, v]) => `<li><span>${escapeHtml(k)}</span><span class="cnt">${v}</span></li>`).join('') || '<li><span style="color:var(--text-muted)">No location data yet</span></li>';
+
+      $('modal-body').innerHTML = `
+        <div>
+          <div class="link-big">
+            <div class="link-url-big" id="detail-link-url">${escapeHtml(d.redirectUrl)}</div>
+            <div class="link-actions">
+              <button class="btn btn-ghost btn-sm" id="copy-link-btn">Copy link</button>
+              <button class="btn btn-danger btn-sm" id="modal-delete-btn">Delete</button>
+            </div>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat-tile"><div class="v">${stats.totalClicks ?? d.clicks}</div><div class="k">Clicks (net)</div></div>
+            <div class="stat-tile"><div class="v">${stats.uniqueScans ?? 0}</div><div class="k">Unique visitors</div></div>
+            <div class="stat-tile"><div class="v">${stats.returnRate ?? 0}%</div><div class="k">Return rate</div></div>
+            <div class="stat-tile"><div class="v">${timeAgo(d.lastClickedAt)}</div><div class="k">Last click</div></div>
+          </div>
+
+          <div class="section-label">Clicks — last 14 days</div>
+          <div class="chart">${chartHtml}</div>
+          <div class="chart-legend"><span class="lg-total">■ Total clicks</span><span class="lg-unique">■ New unique</span></div>
+
+          <div class="section-label">Location breakdown</div>
+          <div class="geo-breakdown">
+            <div><div style="font-size:.8rem;color:var(--text-secondary);margin-bottom:4px">Countries</div><ul class="geo-list">${countryRows}</ul></div>
+            <div><div style="font-size:.8rem;color:var(--text-secondary);margin-bottom:4px">Cities</div><ul class="geo-list">${cityRows}</ul></div>
+          </div>
+
+          <div class="section-label">Recent clicks</div>
+          ${tableHtml}
+
+          <div class="section-label">Edit</div>
+          <div class="modal-edit">
+            <div class="modal-edit-row">
+              <div class="field"><label>Label</label><input type="text" id="edit-label" value="${escapeHtml(d.label || '')}"></div>
+              <div class="field"><label>Destination</label><input type="url" id="edit-dest" value="${escapeHtml(d.destination || '')}"></div>
+              <button class="btn btn-sm" id="save-edit-btn" style="white-space:nowrap">Save</button>
+            </div>
+            <div class="field" style="margin-top:12px">
+              <label>Click notification webhook (Discord) — Pro</label>
+              <input type="url" id="edit-webhook" placeholder="https://discord.com/api/webhooks/..." value="${escapeHtml(d.webhookUrl || '')}" ${currentUser.plan !== 'pro' ? 'disabled' : ''}>
+              <div style="color:var(--text-muted);font-size:.72rem;margin-top:5px">${currentUser.plan === 'pro' ? 'Every click POSTs a message with location, IP, device, and referrer.' : 'Upgrade to Pro to receive webhook alerts on every click.'}</div>
+            </div>
+          </div>
+
+          <div class="danger-zone">
+            <span class="hint">Permanently delete this link and all click history.</span>
+            <button class="btn btn-danger btn-sm" id="modal-delete-btn2">Delete link</button>
+          </div>
+        </div>`;
+
+      $('copy-link-btn').addEventListener('click', () => copyText(d.redirectUrl));
+      const doDelete = async () => {
+        if (!confirm('Permanently delete this link and its click history?')) return;
+        try {
+          await fetch('/api/qr/' + code, { method: 'DELETE', credentials: 'same-origin' });
+          closeModal();
+          toast('Deleted');
+          loadDashboard();
+        } catch { toast('Delete failed', true); }
+      };
+      $('modal-delete-btn').addEventListener('click', doDelete);
+      $('modal-delete-btn2').addEventListener('click', doDelete);
+      $('save-edit-btn').addEventListener('click', async () => {
+        try {
+          const upd = await api('/api/qr/' + code, {
+            method: 'PATCH',
+            body: JSON.stringify({
+              label: $('edit-label').value,
+              destination: $('edit-dest').value,
+              webhookUrl: currentUser.plan === 'pro' ? $('edit-webhook').value.trim() : ''
+            })
+          });
+          $('modal-title').textContent = upd.label || 'Untitled link';
+          $('modal-dest').textContent = upd.destination;
+          toast('Saved');
+          loadDashboard();
+        } catch (e) { toast(e.message, true); }
+      });
+    } catch (e) {
+      $('modal-body').innerHTML = `<p style="color:var(--err)">${escapeHtml(e.message)}</p>`;
+    }
+  }
+
+  function closeModal() {
+    $('modal-overlay').classList.remove('show');
+    detailCode = null;
+  }
+  $('modal-close').addEventListener('click', closeModal);
+  $('modal-overlay').addEventListener('click', (e) => { if (e.target === $('modal-overlay')) closeModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+  (async function boot() {
+    setMode('signup');
+    try {
+      const data = await api('/api/auth/me');
+      currentUser = data.user;
+      showApp();
+    } catch {
+      // not logged in
+    }
+  })();
+})();
+</script>
+</body>
+</html>
