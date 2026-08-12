@@ -204,6 +204,12 @@ footer a{color:var(--accent-glow)}
         <div class="link-result" id="link-result">
           <span class="link-url" id="link-url"></span>
           <button class="btn btn-ghost btn-sm" id="copy-new-btn">Copy link</button>
+          <div class="sig-box" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+            <div style="font-size:.82rem;color:var(--text-secondary);margin-bottom:6px">Email signature snippet — paste into Gmail/Outlook signature settings:</div>
+            <textarea id="sig-snippet" readonly onclick="this.select()" style="width:100%;min-height:76px;padding:10px;background:#101010;border:1px solid #393939;border-radius:4px;color:var(--text-secondary);font:400 .72rem 'DM Mono',monospace;resize:vertical"></textarea>
+            <button class="btn btn-ghost btn-sm" id="copy-sig-btn">Copy signature snippet</button>
+            <div style="color:var(--text-muted);font-size:.7rem;margin-top:6px">Badge is a static image; the link it wraps is tracked. No invisible pixels.</div>
+          </div>
         </div>
       </div>
       <div class="bulk-box">
@@ -379,6 +385,11 @@ footer a{color:var(--accent-glow)}
       box.classList.add('show');
       $('link-url').textContent = data.redirectUrl;
       $('copy-new-btn').onclick = () => copyText(data.redirectUrl);
+      const base = window.location.origin;
+      const badgeUrl = base + '/sig-badge.svg';
+      const snippet = `<a href="${data.redirectUrl}" style="text-decoration:none"><img src="${badgeUrl}" width="300" height="60" alt="Parent Data Force — free tools for special-ed families" style="display:block;border:0"></a>`;
+      $('sig-snippet').value = snippet;
+      $('copy-sig-btn').onclick = () => copyText(snippet);
       $('destination').value = '';
       $('label').value = '';
       toast('Tracked link created');

@@ -118,10 +118,10 @@ details.style-picker summary{cursor:pointer;color:var(--accent-glow);font-size:.
 .modal .close:hover{color:var(--accent-glow)}
 .modal h2{margin:0 0 4px;font-size:1.4rem;letter-spacing:-.02em}
 .modal .dest-line{color:var(--text-muted);font-size:.82rem;margin:0 0 20px;overflow-wrap:anywhere}
-.modal-body{display:grid;grid-template-columns:200px 1fr;gap:26px}
+.modal-body{display:grid;grid-template-columns:230px 1fr;gap:26px}
 @media(max-width:720px){.modal-body{grid-template-columns:1fr}}
 .qr-big{background:#fff;border-radius:8px;padding:10px;align-self:start;text-align:center}
-.qr-big img{width:100%;height:auto;display:block}
+.qr-big img,.qr-big canvas{max-width:100%;height:auto;display:block;margin:0 auto}
 .qr-big .qr-actions{display:flex;flex-direction:column;gap:8px;margin-top:12px}
 .qr-big .qr-actions .btn{font-size:.75rem;padding:8px 10px;text-align:center}
 .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}

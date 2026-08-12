@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="60" viewBox="0 0 300 60">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0b0b0b"/>
+      <stop offset="1" stop-color="#1d1d1d"/>
+    </linearGradient>
+  </defs>
+  <rect width="300" height="60" rx="8" fill="url(#bg)"/>
+  <rect x="0.5" y="0.5" width="299" height="59" rx="8" fill="none" stroke="#ff5a1f" stroke-width="1.5"/>
+  <circle cx="34" cy="30" r="16" fill="#ff5a1f"/>
+  <text x="34" y="36" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#0b0b0b" text-anchor="middle">PDF</text>
+  <text x="62" y="26" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#f5f5f5" letter-spacing="0.5">PARENT DATA FORCE</text>
+  <text x="62" y="42" font-family="Arial, sans-serif" font-size="10" fill="#ffa366" letter-spacing="1">Free tools for special-ed families</text>
+  <text x="62" y="53" font-family="Arial, sans-serif" font-size="8" fill="#767676" letter-spacing="0.5">parentdataforce.org</text>
+</svg>
