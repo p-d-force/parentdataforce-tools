@@ -214,12 +214,35 @@ function summarizeStats(item) {
       cities[key] = (cities[key] || 0) + 1;
     }
   });
+
+  // Unique-scanner buckets: new unique per day (from registry first-seen)
+  const fpFirst = item.uniqueFp || {};
+  const uniqueByDay = {};
+  Object.entries(fpFirst).forEach(([fp, firstSeen]) => {
+    const day = String(firstSeen).slice(0, 10);
+    if (!uniqueByDay[day]) uniqueByDay[day] = { new: 0, existing: 0 };
+    uniqueByDay[day].new += 1;
+  });
+  history.forEach((h) => {
+    const day = (h.t || '').slice(0, 10);
+    if (!uniqueByDay[day]) uniqueByDay[day] = { new: 0, existing: 0 };
+    const isNew = h.fp && fpFirst[h.fp] === h.t;
+    uniqueByDay[day][isNew ? 'new' : 'existing'] += 1;
+  });
+
+  const uniqueScans = Object.keys(fpFirst).length;
+  const totalClicks = item.clicks || 0;
   return {
-    totalClicks: item.clicks || 0,
+    totalClicks,
+    uniqueScans,
+    returnRate: totalClicks > 0
+      ? Math.round((1 - uniqueScans / Math.max(1, totalClicks)) * 100)
+      : 0,
     uniqueIps: uniqueIps.size,
     firstClickAt: history.length ? history[0].t : null,
     lastClickAt: item.lastClickedAt || null,
     byDay,
+    uniqueByDay,
     byDevice,
     topCountries: Object.entries(countries).sort((a, b) => b[1] - a[1]).slice(0, 6),
     topCities: Object.entries(cities).sort((a, b) => b[1] - a[1]).slice(0, 6)
