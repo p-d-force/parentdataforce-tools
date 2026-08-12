@@ -147,9 +147,7 @@ main{max-width:1100px;margin:auto;padding:0 30px 72px}
 .donation-buttons{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 .donate-btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:4px;text-decoration:none;font-weight:600;font-size:.88rem;transition:transform .15s}
 .donate-btn:hover{transform:translateY(-2px)}
-.donate-kofi{background:#41729f;color:#fff}
-.donate-paypal{background:#0070ba;color:#fff}
-.donate-venmo{background:#3d95ce;color:#fff}
+.donate-gofundme{background:#ff5a5f;color:#fff}
 footer{max-width:1280px;margin:auto;padding:24px 30px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:12px;color:var(--text-muted);font-size:.75rem;flex-wrap:wrap}
 footer a{color:var(--accent-glow)}
 @media(max-width:768px){.site-header,main,footer{padding-left:18px;padding-right:18px}.site-header{flex-direction:column;align-items:flex-start}.stat-grid{grid-template-columns:repeat(2,1fr)}}
@@ -239,7 +237,7 @@ footer a{color:var(--accent-glow)}
         <h3>Bulk import (Pro)</h3>
         <p class="hint">One per line: <code>label,destination</code>. Up to 100 links per import.</p>
         <div class="field">
-          <textarea id="bulk-csv" placeholder="Event Flyer,https://example.org/flyer&#10;Donation,https://ko-fi.com/parentdataforce&#10;Resource,https://example.org/resource"></textarea>
+          <textarea id="bulk-csv" placeholder="Event Flyer,https://example.org/flyer&#10;Donation,https://www.gofundme.com/f/support-parent-data-force-advocacy&#10;Resource,https://example.org/resource"></textarea>
         </div>
         <button class="btn btn-ghost" id="bulk-btn">Import links</button>
         <div id="bulk-status" style="margin-top:10px;font-size:.82rem;color:var(--text-secondary)"></div>
@@ -270,9 +268,7 @@ footer a{color:var(--accent-glow)}
   <h2>Keep the tools free</h2>
   <p>Link Tracker is free for everyone. If it saved you time, consider a coffee — it covers our server costs.</p>
   <div class="donation-buttons">
-    <a class="donate-btn donate-kofi" href="https://ko-fi.com/parentdataforce" target="_blank" rel="noreferrer">☕ Buy us a coffee</a>
-    <a class="donate-btn donate-paypal" href="https://paypal.me/parentdataforce" target="_blank" rel="noreferrer">💳 PayPal</a>
-    <a class="donate-btn donate-venmo" href="https://venmo.com/parentdataforce" target="_blank" rel="noreferrer">📱 Venmo</a>
+    <a class="donate-btn donate-gofundme" href="https://www.gofundme.com/f/support-parent-data-force-advocacy" target="_blank" rel="noreferrer">❤ Donate on GoFundMe</a>
   </div>
 </section>
 
@@ -483,7 +479,7 @@ footer a{color:var(--accent-glow)}
     appView.style.display = 'block';
     userbar.style.display = 'flex';
     const plan = currentUser.plan === 'pro' ? 'PRO' : 'FREE';
-    const upgrade = currentUser.plan === 'pro' ? '' : '<a class="upgrade" href="https://ko-fi.com/parentdataforce" target="_blank" rel="noreferrer">Upgrade →</a>';
+    const upgrade = currentUser.plan === 'pro' ? '' : '<a class="upgrade" href="https://www.gofundme.com/f/support-parent-data-force-advocacy" target="_blank" rel="noreferrer">Upgrade →</a>';
     userbar.innerHTML = `<span class="email">${escapeHtml(currentUser.email)}</span><span class="plan">${plan}</span>${upgrade}<button class="btn btn-ghost btn-sm" id="logout-btn">Log out</button>`;
     $('logout-btn').addEventListener('click', async () => {
       await api('/api/auth/logout', { method: 'POST' });
