@@ -4,6 +4,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 
 const HISTORY_CAP = 200;
 
@@ -147,6 +148,13 @@ export class Tracker {
     return { browser, os, device };
   }
 
+  // ── Unique-scanner fingerprint ──────────────────────────────────────
+  // Stable pseudonymous hash of IP + UA. Never exposed raw; only used
+  // to distinguish "same scanner again" from "new scanner".
+  fingerprint(ip, ua) {
+    return crypto.createHash('sha256').update(`${ip}|${String(ua || '')}`).digest('hex').slice(0, 32);
+  }
+
   // ── Click history ───────────────────────────────────────────────────
   recordClick(item, req) {
     const ip = this.clientIp(req);
@@ -161,6 +169,18 @@ export class Tracker {
     entry.device = device;
     entry.os = os;
     entry.browser = browser;
+
+    // Unique registry: fp -> firstSeen ISO. Capped to bound file size.
+    entry.fp = this.fingerprint(entry.ip, entry.ua);
+    if (!item.uniqueFp) item.uniqueFp = {};
+    if (!item.uniqueFp[entry.fp]) item.uniqueFp[entry.fp] = entry.t;
+    const fpKeys = Object.keys(item.uniqueFp);
+    if (fpKeys.length > 5000) {
+      fpKeys
+        .sort((a, b) => (item.uniqueFp[a] < item.uniqueFp[b] ? -1 : 1))
+        .slice(0, fpKeys.length - 5000)
+        .forEach((k) => delete item.uniqueFp[k]);
+    }
 
     if (!Array.isArray(item.history)) item.history = [];
     item.history.push(entry);
