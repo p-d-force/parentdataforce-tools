@@ -694,6 +694,162 @@ app.post('/api/youtube/transcript', express.json({ limit: '4kb' }), async (reque
   }
 });
 
+// ── Docling Lab API (AI document conversion + PDF forensics) ──────────
+// Backends: docling-serve on 127.0.0.1:5001 (FastAPI), pdf-lab on 127.0.0.1:5100.
+// Both stay localhost-only; nginx + this server are the only entry points.
+const DOCLING_SERVE_URL = process.env.DOCLING_SERVE_URL || 'http://127.0.0.1:5001';
+const DOCLING_SERVE_API_KEY = process.env.DOCLING_SERVE_API_KEY || '';
+const PDF_LAB_URL = process.env.PDF_LAB_URL || 'http://127.0.0.1:5100';
+const DOCLING_TIMEOUT_MS = Number(process.env.DOCLING_TIMEOUT_MS || 600000);
+
+function dlAuthHeaders(extra = {}) {
+  const headers = { ...extra };
+  if (DOCLING_SERVE_API_KEY) headers['X-Api-Key'] = DOCLING_SERVE_API_KEY;
+  return headers;
+}
+
+function parseJsonHeader(value, fallback) {
+  if (!value) return fallback;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return fallback;
+  }
+}
+
+function safeFilename(value) {
+  const base = String(value || 'document.pdf');
+  const name = base.split(/[\\/]/).pop().trim();
+  return name && name.length <= 255 ? name : 'document.pdf';
+}
+
+async function proxyJsonError(error, response, label) {
+  console.error(`Docling Lab ${label} error:`, error);
+  if (response.headersSent) return;
+  response.status(502).json({ error: `${label} failed: ${String(error.message || error)}` });
+}
+
+// Health — reports both backends
+app.get('/api/docling/health', async (_request, response) => {
+  const status = { docling: 'down', lab: 'down', time: new Date().toISOString() };
+  try {
+    const r = await fetch(`${DOCLING_SERVE_URL}/health`, { headers: dlAuthHeaders(), signal: AbortSignal.timeout(8000) });
+    status.docling = r.ok ? 'up' : `error:${r.status}`;
+  } catch (e) { status.docling = `down:${e.message}`; }
+  try {
+    const r = await fetch(`${PDF_LAB_URL}/health`, { signal: AbortSignal.timeout(5000) });
+    status.lab = r.ok ? 'up' : `error:${r.status}`;
+  } catch (e) { status.lab = `down:${e.message}`; }
+  response.json(status);
+});
+
+// Convert an uploaded file (raw binary body). The browser sends the file bytes
+// with Content-Type + X-Filename + X-Options headers; we forward to docling-serve
+// as a base64 file_sources payload (no multipart parsing needed).
+app.post('/api/docling/convert',
+  express.raw({ type: () => true, limit: process.env.DOCLING_MAX_UPLOAD || '60mb' }),
+  async (request, response) => {
+    try {
+      const filename = safeFilename(request.get('x-filename'));
+      const options = parseJsonHeader(request.get('x-options'), {});
+      if (!request.body || request.body.length === 0) {
+        return response.status(400).json({ error: 'Empty upload body.' });
+      }
+      const payload = {
+        options: {
+          from_formats: ['pdf', 'docx', 'pptx', 'html', 'image', 'asciidoc', 'md', 'xlsx'],
+          to_formats: ['md', 'json', 'text', 'html', 'doctags'],
+          pdf_backend: 'dlparse_v2',
+          do_ocr: true,
+          abort_on_error: false,
+          ...options,
+        },
+        file_sources: [{ base64_string: request.body.toString('base64'), filename }],
+      };
+      const r = await fetch(`${DOCLING_SERVE_URL}/v1/convert/source`, {
+        method: 'POST',
+        headers: dlAuthHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(DOCLING_TIMEOUT_MS),
+      });
+      const bodyText = await r.text();
+      if (!r.ok) {
+        return response.status(r.status).json({ error: `docling-serve ${r.status}`, detail: bodyText.slice(0, 2000) });
+      }
+      let data = null;
+      try { data = JSON.parse(bodyText); } catch { data = { raw: bodyText.slice(0, 20000) }; }
+      response.json({ ok: true, filename, options, data });
+    } catch (error) {
+      await proxyJsonError(error, response, 'convert');
+    }
+  });
+
+// Convert a remote URL (http/https only).
+app.post('/api/docling/convert-url', express.json({ limit: '16kb' }), async (request, response) => {
+  try {
+    const { url, options } = request.body || {};
+    if (!url || !/^https?:\/\//i.test(String(url))) {
+      return response.status(400).json({ error: 'A valid http(s) URL is required.' });
+    }
+    const payload = {
+      options: {
+        from_formats: ['pdf', 'docx', 'pptx', 'html', 'image', 'asciidoc', 'md', 'xlsx'],
+        to_formats: ['md', 'json', 'text', 'html', 'doctags'],
+        pdf_backend: 'dlparse_v2',
+        do_ocr: true,
+        abort_on_error: false,
+        ...(options || {}),
+      },
+      http_sources: [{ url: String(url) }],
+    };
+    const r = await fetch(`${DOCLING_SERVE_URL}/v1/convert/source`, {
+      method: 'POST',
+      headers: dlAuthHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(DOCLING_TIMEOUT_MS),
+    });
+    const bodyText = await r.text();
+    if (!r.ok) {
+      return response.status(r.status).json({ error: `docling-serve ${r.status}`, detail: bodyText.slice(0, 2000) });
+    }
+    let data = null;
+    try { data = JSON.parse(bodyText); } catch { data = { raw: bodyText.slice(0, 20000) }; }
+    response.json({ ok: true, url, options: options || {}, data });
+  } catch (error) {
+    await proxyJsonError(error, response, 'convert-url');
+  }
+});
+
+// Forensic scan of an uploaded file (raw binary body) — forwards to pdf-lab.
+app.post('/api/docling/scan',
+  express.raw({ type: () => true, limit: process.env.DOCLING_MAX_UPLOAD || '60mb' }),
+  async (request, response) => {
+    try {
+      const filename = safeFilename(request.get('x-filename'));
+      if (!request.body || request.body.length === 0) {
+        return response.status(400).json({ error: 'Empty upload body.' });
+      }
+      const r = await fetch(`${PDF_LAB_URL}/scan`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': request.get('content-type') || 'application/octet-stream',
+          'X-Filename': filename,
+        },
+        body: request.body,
+        signal: AbortSignal.timeout(DOCLING_TIMEOUT_MS),
+      });
+      const bodyText = await r.text();
+      if (!r.ok) {
+        return response.status(r.status).json({ error: `pdf-lab ${r.status}`, detail: bodyText.slice(0, 2000) });
+      }
+      let data = null;
+      try { data = JSON.parse(bodyText); } catch { data = { raw: bodyText.slice(0, 20000) }; }
+      response.json({ ok: true, filename, data });
+    } catch (error) {
+      await proxyJsonError(error, response, 'scan');
+    }
+  });
+
 app.use((error, _request, response, _next) => {
   console.error(error);
   response.status(500).json({ error: 'Internal server error.' });

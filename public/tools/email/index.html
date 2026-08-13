@@ -7,6 +7,12 @@
 <title>Link Tracker | Parent Data Force</title>
 <link rel="stylesheet" href="/styles.css">
 <style>
+/* UNIFORM ad frames */
+.ad-slot-tool{min-height:300px;margin:14px 0;padding:10px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.ad-slot-tool .ad-copy{display:flex;justify-content:center;align-items:center;min-height:280px}
+.ad-slot{min-height:90px;background:var(--bg-elevated);border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:.75rem;font-family:'DM Mono',monospace;margin:20px 0;border-radius:4px}
+</style>
+<style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@400;500;600;700;800&display=swap');
 :root{--bg-primary:#0b0b0b;--bg-secondary:#161616;--bg-elevated:#1d1d1d;--bg-card:rgba(255,255,255,.03);--accent:#ff5a1f;--accent-hot:#ff3b1f;--accent-glow:#ffa366;--text-primary:#f5f5f5;--text-secondary:#a0a0a0;--text-muted:#767676;--border:#2a2a2a;--ok:#4ade80;--err:#ff8e8e;--blue:#4da3ff}
 *{box-sizing:border-box}
@@ -167,12 +173,17 @@ footer a{color:var(--accent-glow)}
 </header>
 
 <main>
+  <!-- Top banner ad -->
+  <div class="ad-slot ad-slot-tool" data-ad-slot="email-top">Ad space reserved</div>
   <section class="hero">
-    <p class="eyebrow">FREE • PRIVATE • CLICK ANALYTICS</p>
+    <p class="eyebrow">FREE • PRIVATE • CLIENT-SIDE ONLY</p>
     <h1>Link Tracker</h1>
-    <p class="lede">Turn any URL into a tracked link. See every click — location, device, and time — without invisible tracking pixels or third-party scripts.</p>
+    <p class="lede">Turn any URL into a tracked link — see every click, location, and device. Clean, private, client-side.</p>
     <div class="userbar" id="userbar" style="display:none"></div>
   </section>
+
+  <!-- Mid-hero ad -->
+  <div class="ad-slot ad-slot-tool" data-ad-slot="email-1">Ad space reserved</div>
 
   <section id="auth-view">
     <div class="auth-box">
@@ -222,7 +233,8 @@ footer a{color:var(--accent-glow)}
         <label for="label">Label (optional)</label>
         <input type="text" id="label" placeholder="Newsletter CTA" maxlength="80">
         <button class="btn" id="gen-btn">Create tracked link</button>
-<div class="ad-slot" data-ad-slot="email-detail" style="margin:20px 0;min-height:90px;background:var(--bg-elevated);border:1px dashed var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:.75rem;font-family:'DM Mono',monospace">Ad space reserved</div>
+        <div class="ad-slot ad-slot-tool" data-ad-slot="email-2">Ad space reserved</div>
+        <div class="ad-slot ad-slot-tool" data-ad-slot="email-3">Ad space reserved</div>
         <div class="link-result" id="link-result">
           <span class="link-url" id="link-url"></span>
           <button class="btn btn-ghost btn-sm" id="copy-new-btn">Copy link</button>
@@ -252,6 +264,9 @@ footer a{color:var(--accent-glow)}
     <div class="summary-strip" id="summary-strip" style="display:none"></div>
     <div id="dashboard"></div>
   </section>
+
+  <!-- Bottom ad -->
+  <div class="ad-slot ad-slot-tool" data-ad-slot="email-bottom">Ad space reserved</div>
 </main>
 
 <div class="modal-overlay" id="modal-overlay">

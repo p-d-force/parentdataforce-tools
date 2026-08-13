@@ -7,6 +7,12 @@
 <title>QR Studio | Parent Data Force</title>
 <link rel="stylesheet" href="/styles.css">
 <style>
+/* UNIFORM ad frames */
+.ad-slot-tool{min-height:300px;margin:14px 0;padding:10px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.ad-slot-tool .ad-copy{display:flex;justify-content:center;align-items:center;min-height:280px}
+.ad-slot{min-height:90px;background:var(--bg-elevated);border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:.75rem;font-family:'DM Mono',monospace;margin:20px 0;border-radius:4px}
+</style>
+<style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@400;500;600;700;800&display=swap');
 :root{--bg-primary:#0b0b0b;--bg-secondary:#161616;--bg-elevated:#1d1d1d;--bg-card:rgba(255,255,255,.03);--accent:#ff5a1f;--accent-hot:#ff3b1f;--accent-glow:#ffa366;--text-primary:#f5f5f5;--text-secondary:#a0a0a0;--text-muted:#767676;--border:#2a2a2a;--ok:#4ade80;--err:#ff8e8e;--blue:#4da3ff}
 *{box-sizing:border-box}
@@ -198,12 +204,17 @@ footer a{color:var(--accent-glow)}
 </header>
 
 <main>
+  <!-- Top banner ad -->
+  <div class="ad-slot ad-slot-tool" data-ad-slot="qr-top">Ad space reserved</div>
   <section class="hero">
-    <p class="eyebrow">FREE • PRIVATE • CLICK ANALYTICS</p>
+    <p class="eyebrow">FREE • PRIVATE • CLIENT-SIDE ONLY</p>
     <h1>QR Studio</h1>
-    <p class="lede">Create QR codes with tracked redirect links. See every scan — location, device, and time — from one dashboard.</p>
+    <p class="lede">Generate, style, and track QR codes — all in your browser. No uploads, no tracking, just clean codes.</p>
     <div class="userbar" id="userbar" style="display:none"></div>
   </section>
+
+  <!-- Mid-hero ad -->
+  <div class="ad-slot ad-slot-tool" data-ad-slot="qr-1">Ad space reserved</div>
 
   <!-- AUTH VIEW -->
   <section id="auth-view">
@@ -295,7 +306,8 @@ footer a{color:var(--accent-glow)}
           </details>
         </div>
         <div class="qr-result" id="qr-result"></div>
-        <div class="ad-slot" data-ad-slot="qr-modal" style="margin-top:20px;min-height:90px;background:var(--bg-elevated);border:1px dashed var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:.75rem;font-family:'DM Mono',monospace">Ad space reserved</div>
+        <div class="ad-slot ad-slot-tool" data-ad-slot="qr-2">Ad space reserved</div>
+        <div class="ad-slot ad-slot-tool" data-ad-slot="qr-3">Ad space reserved</div>
       </div>
     </div>
 
@@ -306,9 +318,12 @@ footer a{color:var(--accent-glow)}
     <div class="summary-strip" id="summary-strip" style="display:none"></div>
     <div id="dashboard"></div>
   </section>
-</main>
+  </main>
 
-<!-- DETAIL MODAL -->
+    <!-- Bottom ad -->
+    <div class="ad-slot ad-slot-tool" data-ad-slot="qr-bottom">Ad space reserved</div>
+
+  <!-- DETAIL MODAL -->
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <button class="close" id="modal-close" aria-label="Close">✕</button>

@@ -1,0 +1,15 @@
+[Unit]
+Description=PDF Forensics Lab (Parent Data Force)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/pdf-lab
+Environment=UVICORN_HOST=127.0.0.1
+Environment=UVICORN_PORT=5100
+ExecStart=/opt/pdf-lab/venv/bin/uvicorn app:app --host 127.0.0.1 --port 5100
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

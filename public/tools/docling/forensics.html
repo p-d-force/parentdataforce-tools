@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>PDF Forensics Lab | Docling Lab | Parent Data Force</title>
+<link rel="stylesheet" href="/styles.css">
+<style>
+/* UNIFORM per-tool ad frame */
+.ad-slot-tool{min-height:250px;margin:14px 0;padding:10px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.ad-slot-tool .ad-copy{display:flex;justify-content:center;align-items:center;min-height:230px}
+</style>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@400;500;600;700;800&display=swap');
+:root{--bg-primary:#0b0b0b;--bg-secondary:#161616;--bg-elevated:#1d1d1d;--bg-card:rgba(255,255,255,.03);--accent:#ff5a1f;--accent-hot:#ff3b1f;--accent-glow:#ffa366;--text-primary:#f5f5f5;--text-secondary:#a0a0a0;--text-muted:#767676;--border:#2a2a2a;--ok:#4ade80;--warn:#fbbf24;--crit:#ff5a5f}
+*{box-sizing:border-box}
+body{margin:0;color:var(--text-primary);background:radial-gradient(circle at 92% 0%,rgba(255,59,31,.12),transparent 26%),var(--bg-primary);font-family:Outfit,Arial,sans-serif;line-height:1.55}
+a{color:inherit}
+.site-header{max-width:1280px;min-height:88px;padding:16px 30px;margin:auto;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;letter-spacing:.05em}
+.brand img{width:48px;height:48px;object-fit:contain}
+.brand strong{display:block;font-size:.9rem;letter-spacing:.11em}
+.brand em{display:block;margin-top:1px;color:var(--accent-glow);font-size:.63rem;font-style:normal;font-family:'DM Mono',monospace;letter-spacing:.13em}
+nav{display:flex;align-items:center;gap:24px;font-size:.88rem;color:var(--text-secondary)}
+nav a{text-decoration:none}nav a:hover{color:var(--accent-glow)}
+main{max-width:1280px;margin:auto;padding:0 30px 72px}
+.hero{max-width:860px;padding:48px 0 26px}
+.eyebrow{margin:0 0 13px;color:var(--accent-glow);font:500 .7rem 'DM Mono',monospace;letter-spacing:.16em}
+.hero h1{margin:0;font-size:clamp(1.8rem,4vw,2.8rem);line-height:1;letter-spacing:-.05em}
+.lede{max-width:680px;margin:16px 0 0;color:var(--text-secondary);font-size:1rem}
+.ad-slot{min-height:90px;background:var(--bg-elevated);border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:.75rem;font-family:'DM Mono',monospace;margin:20px 0;border-radius:4px}
+.upload-zone{border:2px dashed var(--border);border-radius:6px;padding:44px 30px;text-align:center;transition:border-color .2s,background .2s;cursor:pointer}
+.upload-zone:hover,.upload-zone.dragover{border-color:var(--accent);background:rgba(255,90,31,.04)}
+.upload-zone .upload-icon{font-size:2.2rem;color:var(--text-muted);margin-bottom:12px}
+.upload-zone p{color:var(--text-secondary);margin:5px 0}
+.upload-zone .file-types{color:var(--text-muted);font-size:.78rem;font-family:'DM Mono',monospace}
+.file-chip{display:inline-flex;align-items:center;gap:10px;margin-top:16px;padding:10px 16px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:4px;font-size:.85rem}
+.file-chip .file-size{color:var(--text-muted);font-family:'DM Mono',monospace;font-size:.75rem}
+.file-chip button{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:.9rem;padding:0 2px}
+.file-chip button:hover{color:var(--accent-hot)}
+.btn{display:inline-block;cursor:pointer;border:0;padding:13px 26px;background:linear-gradient(100deg,var(--accent-hot),var(--accent));color:#fff;font:600 .9rem Outfit,sans-serif;text-decoration:none;border-radius:3px;margin-top:22px}
+.btn:hover{opacity:.9}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-secondary{background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-primary);margin-top:0}
+.btn-sm{padding:7px 12px;font-size:.78rem;margin:4px 6px 0 0}
+.status-msg{padding:16px 20px;border-radius:4px;font-size:.88rem;margin-top:20px}
+.status-msg.success{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:#4ade80}
+.status-msg.error{background:rgba(255,59,31,.1);border:1px solid rgba(255,59,31,.3);color:#ff8e8e}
+.status-msg.info{background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-secondary)}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px;margin-right:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.report{margin-top:26px;display:grid;gap:18px}
+.panel{background:var(--bg-secondary);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.panel-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.panel-head h2{margin:0;font-size:.78rem;font-family:'DM Mono',monospace;letter-spacing:.13em;text-transform:uppercase;color:var(--text-secondary)}
+.panel-body{padding:18px 20px}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px 22px}
+.kv .k{color:var(--text-muted);font-size:.72rem;font-family:'DM Mono',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px}
+.kv .v{color:var(--text-primary);font-size:.86rem;font-family:'DM Mono',monospace;word-break:break-all}
+.badge{display:inline-block;padding:4px 12px;border-radius:20px;font:600 .72rem 'DM Mono',monospace;letter-spacing:.06em}
+.badge.ok{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.35);color:var(--ok)}
+.badge.warn{background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.35);color:var(--warn)}
+.badge.crit{background:rgba(255,90,95,.12);border:1px solid rgba(255,90,95,.4);color:var(--crit)}
+.badge.info{background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-muted)}
+table.tbl{width:100%;border-collapse:collapse;font-size:.82rem}
+table.tbl th,table.tbl td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+table.tbl th{color:var(--text-muted);font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase}
+table.tbl td{color:var(--text-secondary);word-break:break-word}
+table.tbl td .mono{font-family:'DM Mono',monospace;font-size:.76rem}
+pre.out{white-space:pre-wrap;word-break:break-word;font:400 .76rem 'DM Mono',monospace;color:var(--text-secondary);background:#101010;border:1px solid var(--border);border-radius:4px;padding:14px;max-height:340px;overflow:auto;margin:0}
+.finding{border:1px solid var(--border);border-left:3px solid var(--crit);background:var(--bg-card);border-radius:4px;padding:12px 14px;margin-bottom:10px}
+.finding .f-page{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--crit)}
+.finding .f-text{color:var(--text-primary);font-size:.85rem;margin-top:6px;word-break:break-word}
+.finding .f-bbox{color:var(--text-muted);font-size:.7rem;font-family:'DM Mono',monospace;margin-top:4px}
+.donation-section{padding:50px 0;border-top:1px solid var(--border);text-align:center}
+.donation-section h2{font-size:1.8rem;letter-spacing:-.03em;margin-bottom:12px}
+.donation-section p{color:var(--text-secondary);max-width:600px;margin:0 auto 24px}
+.donation-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.donate-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:4px;text-decoration:none;font-weight:600;font-size:.9rem;transition:transform .15s}
+.donate-btn:hover{transform:translateY(-2px)}
+.donate-venmo{background:#3d95ce;color:#fff}
+.donate-gofundme{background:#ff5a5f;color:#fff}
+footer{max-width:1280px;margin:auto;padding:24px 30px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:12px;color:var(--text-muted);font-size:.75rem;flex-wrap:wrap}
+footer a{color:var(--accent-glow)}
+@media(max-width:768px){
+  .site-header,main,footer{padding-left:18px;padding-right:18px}
+  .site-header{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="/" aria-label="Parent Data Force Tools home">
+    <img src="/logo.png" alt="Parent Data Force logo">
+    <span><strong>PARENT DATA FORCE</strong><em>TOOLS &amp; RESOURCES</em></span>
+  </a>
+  <nav aria-label="Primary navigation">
+    <a href="/">Tools</a>
+    <a href="index.html">Docling Lab</a>
+    <a href="convert.html">Converter</a>
+    <a href="https://www.parentdataforce.com/" target="_blank" rel="noreferrer">Parent Data Force ↗</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <p class="eyebrow">FORENSICS • EVIDENCE-GRADE • FILES DELETED AFTER SCAN</p>
+    <h1>PDF Forensics Lab</h1>
+    <p class="lede">Before you trust a document, check it. Hash it for your evidence log, see what's hiding in its metadata and structure, detect failed redactions, and flag malicious-PDF indicators. Files are processed on our server and deleted immediately afterwards.</p>
+  </section>
+
+  <div class="ad-slot" data-ad-slot="dl-top">Ad space reserved</div>
+
+  <div class="upload-zone" id="upload-zone">
+    <div class="upload-icon">🔬</div>
+    <p><strong>Drop a PDF here</strong> or click to browse</p>
+    <p class="file-types">PDF preferred • up to 50 MB</p>
+    <input type="file" id="file-input" accept=".pdf,.docx,.pptx,.png,.jpg,.jpeg,.webp" hidden>
+  </div>
+  <div id="file-area"></div>
+
+  <button class="btn" id="scan-btn" disabled>Run Forensic Scan</button>
+  <div id="status"></div>
+
+  <div class="report" id="report" style="display:none"></div>
+
+  <div class="ad-slot ad-slot-tool" data-ad-slot="dl-for-1">Ad space reserved</div>
+  <div class="ad-slot ad-slot-tool" data-ad-slot="dl-for-2">Ad space reserved</div>
+  <div class="ad-slot ad-slot-tool" data-ad-slot="dl-for-3">Ad space reserved</div>
+
+  <div class="ad-slot" data-ad-slot="dl-side" style="margin:20px 30px">Ad space reserved</div>
+</main>
+
+<section class="donation-section">
+  <h2>Support Our Work</h2>
+  <p>Free forensic tooling for advocates and journalists. If a scan saved you from a bad redaction — or helped you prove one — please support the work.</p>
+  <div class="donation-buttons">
+    <a class="donate-btn donate-gofundme" href="https://www.gofundme.com/f/support-parent-data-force-advocacy" target="_blank" rel="noreferrer">❤ Donate on GoFundMe</a>
+    <a class="donate-btn donate-venmo" href="https://venmo.com/?txn=pay&audience=public&recipients=ParentDataForce" target="_blank" rel="noreferrer">💙 Venmo</a>
+  </div>
+</section>
+
+<footer>
+  <span>© Parent Data Force — Files are uploaded for forensic processing and deleted afterwards. We never sell or share your documents.</span>
+  <a href="https://www.parentdataforce.com/donate/" target="_blank" rel="noreferrer">Support the watchdog ↗</a>
+</footer>
+
+<script>
+let currentFile = null;
+let lastReport = null;
+function $(id){ return document.getElementById(id); }
+
+function setupDrop(zoneId, inputId, callback){
+  const zone = $(zoneId), input = $(inputId);
+  ['dragover','dragenter'].forEach(ev => zone.addEventListener(ev, e => { e.preventDefault(); zone.classList.add('dragover'); }));
+  ['dragleave','drop'].forEach(ev => zone.addEventListener(ev, e => { e.preventDefault(); zone.classList.remove('dragover'); }));
+  zone.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (f) callback(f); });
+  zone.addEventListener('click', () => input.click());
+  input.addEventListener('change', () => { if (input.files[0]) callback(input.files[0]); });
+}
+function formatBytes(b){ if (b < 1024) return b + ' B'; if (b < 1048576) return (b/1024).toFixed(1) + ' KB'; return (b/1048576).toFixed(1) + ' MB'; }
+
+setupDrop('upload-zone', 'file-input', file => {
+  currentFile = file;
+  $('file-area').innerHTML = `<div class="file-chip">🔬 <span>${file.name}</span><span class="file-size">${formatBytes(file.size)}</span><button onclick="clearFile()" title="Remove">✕</button></div>`;
+  $('scan-btn').disabled = false;
+  $('status').innerHTML = '';
+  $('report').style.display = 'none';
+});
+window.clearFile = () => { currentFile = null; $('file-area').innerHTML = ''; $('scan-btn').disabled = true; };
+
+function showStatus(msg, type){ $('status').innerHTML = `<div class="status-msg ${type}">${msg}</div>`; }
+
+function escapeHtml(s){
+  return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+$('scan-btn').addEventListener('click', async () => {
+  if (!currentFile) return;
+  const btn = $('scan-btn');
+  btn.disabled = true;
+  btn.textContent = 'Scanning…';
+  showStatus('<span class="spinner"></span>Running forensic scan (hash, metadata, structure, redaction X-Ray, malware indicators)…', 'info');
+  try {
+    const resp = await fetch('/api/docling/scan', {
+      method: 'POST',
+      headers: {
+        'Content-Type': currentFile.type || 'application/octet-stream',
+        'X-Filename': currentFile.name,
+      },
+      body: currentFile,
+    });
+    const json = await resp.json();
+    if (!resp.ok) throw new Error(json.error || json.detail || `HTTP ${resp.status}`);
+    lastReport = json;
+    renderReport(json);
+    showStatus('✅ Scan complete. Your file has already been deleted from our server.', 'success');
+  } catch (e) {
+    console.error(e);
+    showStatus('❌ Scan failed: ' + e.message, 'error');
+  }
+  btn.disabled = false;
+  btn.textContent = 'Run Forensic Scan';
+});
+
+function badge(text, cls){ return `<span class="badge ${cls}">${text}</span>`; }
+function panel(title, bodyHtml, extraHead){
+  return `<section class="panel"><div class="panel-head"><h2>${title}</h2><div>${extraHead || ''}</div></div><div class="panel-body">${bodyHtml}</div></section>`;
+}
+
+function renderReport(json){
+  const d = json.data || json;
+  const ev = d.evidence || {};
+  const meta = d.metadata || {};
+  const struct = d.structure || {};
+  const red = d.redaction || {};
+  const ind = d.indicators || {};
+  const emb = d.embedded || [];
+  const tc = d.text_coverage || [];
+  const tools = d.tools || {};
+  let html = '';
+
+  // Evidence
+  const evRows = [
+    ['Filename', ev.filename || json.filename || '—'],
+    ['Size (bytes)', ev.size !== undefined ? String(ev.size) : '—'],
+    ['MIME', ev.mime || '—'],
+    ['Pages', ev.page_count !== undefined ? String(ev.page_count) : '—'],
+    ['SHA-256', ev.sha256 || '—'],
+    ['SHA-1', ev.sha1 || '—'],
+    ['MD5', ev.md5 || '—'],
+    ['Scanned at', ev.scanned_at || '—'],
+  ].map(r => `<div><div class="k">${r[0]}</div><div class="v">${escapeHtml(r[1])}</div></div>`).join('');
+  html += panel('1 · Evidence (hashes &amp; manifest)', `<div class="kv">${evRows}</div>`);
+
+  // Metadata
+  const metaRows = ['title','author','subject','keywords','creator','producer','creation_date','mod_date','encrypted','needs_password']
+    .filter(k => meta[k] !== undefined && meta[k] !== null && meta[k] !== '')
+    .map(k => `<div><div class="k">${k.replace(/_/g,' ')}</div><div class="v">${escapeHtml(typeof meta[k] === 'boolean' ? (meta[k] ? 'yes' : 'no') : meta[k])}</div></div>`).join('');
+  html += panel('2 · Metadata', metaRows ? `<div class="kv">${metaRows}</div>` : '<p style="color:var(--text-muted);font-size:.85rem;margin:0">No metadata exposed.</p>',
+    struct.qpdf_exit === 0 ? badge('Structure OK', 'ok') : (struct.qpdf_exit ? badge('Structure issues', 'warn') : ''));
+
+  // Structure
+  if (struct.qpdf_output){
+    const qh = struct.qpdf_ok ? badge('QPDF: no errors', 'ok') : badge('QPDF: issues found', 'warn');
+    html += panel('3 · Structure check (qpdf --check)', `<pre class="out">${escapeHtml(struct.qpdf_output)}</pre>`, qh);
+  }
+
+  // Redaction X-Ray
+  const findings = red.pages || [];
+  if (red.available === false){
+    html += panel('4 · Redaction X-Ray', '<p style="color:var(--text-muted);font-size:.85rem;margin:0">X-Ray scanner not available for this file type.</p>', badge('Skipped', 'info'));
+  } else {
+    let body;
+    if (!findings.length){
+      body = '<p style="color:var(--text-muted);font-size:.85rem;margin:0">No extractable text found under redaction overlays. A clean result does not prove the PDF is safely redacted — always confirm visually.</p>';
+      html += panel('4 · Redaction X-Ray (FreeLaw X-Ray v' + escapeHtml(tools.xray || '?') + ')', body, badge('Clean', 'ok'));
+    } else {
+      body = findings.map(f => `<div class="finding"><div class="f-page">PAGE ${f.page}${f.severity ? ' · ' + escapeHtml(f.severity) : ''}</div><div class="f-text">${escapeHtml(f.text)}</div>${f.bbox ? `<div class="f-bbox">bbox ${f.bbox.join(', ')}</div>` : ''}</div>`).join('');
+      html += panel('4 · Redaction X-Ray (FreeLaw X-Ray v' + escapeHtml(tools.xray || '?') + ')', `<p style="margin:0 0 12px;font-size:.82rem;color:var(--crit)">⚠ ${findings.length} finding(s) — text is extractable beneath a redaction overlay. Treat as CRITICAL until visually confirmed.</p>${body}`, badge(findings.length + ' findings', 'crit'));
+    }
+  }
+
+  // Indicators
+  const pdfid = ind.pdfid || {};
+  const riskyKeys = Object.keys(pdfid).filter(k => !['Version','Pages','Encrypt','ObjStm','Stream'].includes(k));
+  const risky = riskyKeys.map(k => [k, pdfid[k]]);
+  const riskyCount = risky.filter(r => r[1] > 0).length;
+  const riskBadge = riskyCount ? badge(riskyCount + ' indicator(s)', 'warn') : badge('No indicators', 'ok');
+  let indBody = '';
+  if (risky.length){
+    indBody += '<table class="tbl"><thead><tr><th>Object / signal</th><th>Count</th></tr></thead><tbody>' +
+      risky.map(r => `<tr><td class="mono">${escapeHtml(r[0])}</td><td class="mono">${escapeHtml(String(r[1]))}</td></tr>`).join('') + '</tbody></table>';
+  }
+  if (ind.peepdf_summary){
+    indBody += '<p style="margin:14px 0 6px;font-size:.72rem;color:var(--text-muted);font-family:\'DM Mono\',monospace;letter-spacing:.1em;text-transform:uppercase">peepdf analysis</p><pre class="out">' + escapeHtml(ind.peepdf_summary) + '</pre>';
+  }
+  html += panel('5 · Malicious-PDF indicators (pdfid + peepdf)', indBody || '<p style="color:var(--text-muted);font-size:.85rem;margin:0">No indicator data available.</p>', riskBadge);
+
+  // Embedded files
+  if (emb.length){
+    const embRows = emb.map(e => `<tr><td class="mono">${escapeHtml(e.name)}</td><td class="mono">${escapeHtml(String(e.size ?? ''))}</td><td class="mono">${escapeHtml(e.sha256 || '')}</td></tr>`).join('');
+    html += panel('6 · Embedded files (' + emb.length + ')', '<table class="tbl"><thead><tr><th>Name</th><th>Size (bytes)</th><th>SHA-256</th></tr></thead><tbody>' + embRows + '</tbody></table>');
+  } else if (ev.page_count !== undefined){
+    html += panel('6 · Embedded files', '<p style="color:var(--text-muted);font-size:.85rem;margin:0">No embedded file attachments.</p>', badge('None', 'ok'));
+  }
+
+  // Text coverage
+  if (tc.length){
+    const imgPages = tc.filter(p => p.image_only).length;
+    const covRows = tc.map(p => `<tr><td class="mono">${p.page}</td><td class="mono">${p.chars}</td><td class="mono">${p.images}</td><td>${p.image_only ? badge('image-only', 'warn') : '—'}</td></tr>`).join('');
+    html += panel('7 · Text-layer coverage (' + imgPages + ' image-only page' + (imgPages === 1 ? '' : 's') + ')',
+      '<table class="tbl"><thead><tr><th>Page</th><th>Text chars</th><th>Images</th><th>Flag</th></tr></thead><tbody>' + covRows + '</tbody></table>' +
+      '<p style="margin:12px 0 0;font-size:.78rem;color:var(--text-muted)">Image-only pages have no text layer — they need OCR (use the AI Document Converter with OCR enabled).</p>',
+      imgPages ? badge(imgPages + ' need OCR', 'warn') : badge('Full text layer', 'ok'));
+  }
+
+  // Tools + download
+  const toolNames = Object.keys(tools).filter(k => tools[k]).join(', ');
+  html += panel('8 · Tool versions &amp; report', `<div class="kv"><div><div class="k">Tools used</div><div class="v">${escapeHtml(toolNames || '—')}</div></div><div><div class="k">Raw report</div><div class="v">See buttons</div></div></div>
+    <div style="margin-top:14px"><button class="btn btn-secondary btn-sm" onclick="downloadReport('json')">Download report (JSON)</button>
+    <button class="btn btn-secondary btn-sm" onclick="downloadReport('manifest')">Copy evidence manifest</button></div>`);
+
+  $('report').innerHTML = html;
+  $('report').style.display = 'grid';
+  $('report').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function downloadReport(kind){
+  if (!lastReport) return;
+  const d = lastReport.data || lastReport;
+  const name = (d.evidence && d.evidence.filename) || lastReport.filename || 'report';
+  if (kind === 'json'){
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(lastReport, null, 2)], { type: 'application/json' }));
+    a.download = name.replace(/\.[^.]+$/, '') + '.forensics.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  } else {
+    const ev = d.evidence || {};
+    const lines = [
+      'Parent Data Force — PDF Forensics Manifest',
+      'file=' + (ev.filename || name),
+      'sha256=' + (ev.sha256 || ''),
+      'sha1=' + (ev.sha1 || ''),
+      'md5=' + (ev.md5 || ''),
+      'size=' + (ev.size !== undefined ? ev.size : ''),
+      'pages=' + (ev.page_count !== undefined ? ev.page_count : ''),
+      'scanned_at=' + (ev.scanned_at || ''),
+      'tools=' + (d.tools ? Object.keys(d.tools).filter(k => d.tools[k]).join(',') : ''),
+    ];
+    if (navigator.clipboard) navigator.clipboard.writeText(lines.join('\n')).then(() => showStatus('✅ Evidence manifest copied to clipboard.', 'success'));
+    else showStatus('⚠ Clipboard unavailable — download the JSON report instead.', 'error');
+  }
+}
+</script>
+<script src="/ads.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>Docling Lab | Parent Data Force</title>
+<link rel="stylesheet" href="/styles.css">
+<style>
+.tool-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin-top:20px}
+.tool-card{display:block;padding:26px 24px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:6px;text-decoration:none;transition:transform .15s,border-color .15s}
+.tool-card:hover{transform:translateY(-2px);border-color:var(--accent)}
+.tool-card .tool-icon{font:600 .7rem 'DM Mono',monospace;letter-spacing:.14em;color:var(--accent-glow);margin-bottom:14px}
+.tool-card h3{margin:0 0 8px;font-size:1.15rem;color:var(--text-primary);letter-spacing:-.02em}
+.tool-card p{margin:0 0 16px;color:var(--text-secondary);font-size:.86rem}
+.tool-card .pill{display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(255,90,31,.12);border:1px solid rgba(255,90,31,.35);color:var(--accent-glow);font:500 .68rem 'DM Mono',monospace;margin:0 6px 8px 0;letter-spacing:.06em}
+.tool-card-cta{color:var(--accent-glow);font-size:.8rem;font-family:'DM Mono',monospace}
+.feature-list{margin:34px 0 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.feature-list .feat{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:16px 18px}
+.feature-list .feat h4{margin:0 0 6px;font-size:.85rem;color:var(--text-primary)}
+.feature-list .feat p{margin:0;font-size:.78rem;color:var(--text-secondary)}
+</style>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@400;500;600;700;800&display=swap');
+:root{--bg-primary:#0b0b0b;--bg-secondary:#161616;--bg-elevated:#1d1d1d;--bg-card:rgba(255,255,255,.03);--accent:#ff5a1f;--accent-hot:#ff3b1f;--accent-glow:#ffa366;--text-primary:#f5f5f5;--text-secondary:#a0a0a0;--text-muted:#767676;--border:#2a2a2a}
+*{box-sizing:border-box}
+body{margin:0;color:var(--text-primary);background:radial-gradient(circle at 92% 0%,rgba(255,59,31,.12),transparent 26%),var(--bg-primary);font-family:Outfit,Arial,sans-serif;line-height:1.55}
+a{color:inherit}
+.site-header{max-width:1280px;min-height:88px;padding:16px 30px;margin:auto;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;letter-spacing:.05em}
+.brand img{width:48px;height:48px;object-fit:contain}
+.brand strong{display:block;font-size:.9rem;letter-spacing:.11em}
+.brand em{display:block;margin-top:1px;color:var(--accent-glow);font-size:.63rem;font-style:normal;font-family:'DM Mono',monospace;letter-spacing:.13em}
+nav{display:flex;align-items:center;gap:24px;font-size:.88rem;color:var(--text-secondary)}
+nav a{text-decoration:none}nav a:hover{color:var(--accent-glow)}
+main{max-width:1280px;margin:auto;padding:0 30px 72px}
+.hero{max-width:860px;padding:60px 0 34px}
+.eyebrow{margin:0 0 13px;color:var(--accent-glow);font:500 .7rem 'DM Mono',monospace;letter-spacing:.16em}
+.hero h1{margin:0;font-size:clamp(2rem,5vw,3.4rem);line-height:1;letter-spacing:-.055em}
+.lede{max-width:680px;margin:20px 0 0;color:var(--text-secondary);font-size:1.05rem}
+.ad-slot{min-height:90px;background:var(--bg-elevated);border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:.75rem;font-family:'DM Mono',monospace;margin:20px 0;border-radius:4px}
+.donation-section{padding:50px 0;border-top:1px solid var(--border);text-align:center}
+.donation-section h2{font-size:1.8rem;letter-spacing:-.03em;margin-bottom:12px}
+.donation-section p{color:var(--text-secondary);max-width:600px;margin:0 auto 24px}
+.donation-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.donate-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:4px;text-decoration:none;font-weight:600;font-size:.9rem;transition:transform .15s}
+.donate-btn:hover{transform:translateY(-2px)}
+.donate-venmo{background:#3d95ce;color:#fff}
+.donate-gofundme{background:#ff5a5f;color:#fff}
+footer{max-width:1280px;margin:auto;padding:24px 30px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:12px;color:var(--text-muted);font-size:.75rem;flex-wrap:wrap}
+footer a{color:var(--accent-glow)}
+@media(max-width:768px){
+  .site-header,main,footer{padding-left:18px;padding-right:18px}
+  .site-header{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="/" aria-label="Parent Data Force Tools home">
+    <img src="/logo.png" alt="Parent Data Force logo">
+    <span><strong>PARENT DATA FORCE</strong><em>TOOLS &amp; RESOURCES</em></span>
+  </a>
+  <nav aria-label="Primary navigation">
+    <a href="/">Tools</a>
+    <a href="/tools/pdf/">PDF Tools</a>
+    <a href="https://www.parentdataforce.com/" target="_blank" rel="noreferrer">Parent Data Force ↗</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <p class="eyebrow">SERVER-SIDE AI • FILES DELETED AFTER PROCESSING</p>
+    <h1>Docling Lab</h1>
+    <p class="lede">IBM's open-source Docling engine, wrapped for special-education advocacy. Convert messy IEPs, DESE filings, and meeting documents into clean Markdown and structured JSON — then run them through a full PDF forensics workbench.</p>
+  </section>
+
+  <div class="ad-slot" data-ad-slot="dl-top">Ad space reserved</div>
+
+  <section class="tool-grid">
+    <a class="tool-card" href="convert.html">
+      <div class="tool-icon">AI CONVERT</div>
+      <span class="pill">Markdown</span><span class="pill">JSON</span><span class="pill">HTML</span><span class="pill">Text</span>
+      <h3>AI Document Converter</h3>
+      <p>Upload a PDF, scan, Word doc, PowerPoint, or spreadsheet and get clean Markdown, structured JSON, text, and HTML — with OCR for scanned files, table extraction, and page-by-page control.</p>
+      <span class="tool-card-cta">Open converter →</span>
+    </a>
+    <a class="tool-card" href="forensics.html">
+      <div class="tool-icon">FORENSICS</div>
+      <span class="pill">Redaction X-Ray</span><span class="pill">Malware Scan</span><span class="pill">Metadata</span>
+      <h3>PDF Forensics Lab</h3>
+      <p>Evidence-grade analysis: SHA-256 hashing, metadata extraction, redaction failure detection (FreeLaw X-Ray), embedded file inventory, structure checks, and malicious-PDF indicators.</p>
+      <span class="tool-card-cta">Open forensics lab →</span>
+    </a>
+  </section>
+
+  <section class="feature-list">
+    <div class="feat"><h4>OCR for scanned documents</h4><p>Force OCR on image-only pages using EasyOCR or Tesseract — handwriting and print both.</p></div>
+    <div class="feat"><h4>Table extraction</h4><p>Fast or accurate TableFormer modes turn messy government tables into real Markdown tables.</p></div>
+    <div class="feat"><h4>Layout understanding</h4><p>Docling's layout model keeps headings, lists, and reading order intact instead of a text dump.</p></div>
+    <div class="feat"><h4>Redaction failure scan</h4><p>The same X-Ray detection used in journalism to find text extractable under black boxes.</p></div>
+    <div class="feat"><h4>Evidence-grade hashing</h4><p>Every scan records SHA-256, SHA-1, MD5, page count, and tool versions — defensible provenance.</p></div>
+    <div class="feat"><h4>Malicious PDF indicators</h4><p>JavaScript, auto-open actions, embedded files, launch actions — the signature of weaponized PDFs.</p></div>
+  </section>
+
+  <div class="ad-slot" data-ad-slot="dl-hub-1">Ad space reserved</div>
+  <div class="ad-slot" data-ad-slot="dl-hub-2">Ad space reserved</div>
+  <div class="ad-slot" data-ad-slot="dl-hub-3">Ad space reserved</div>
+
+  <div class="ad-slot" data-ad-slot="dl-side" style="margin:20px 30px">Ad space reserved</div>
+</main>
+
+<section class="donation-section">
+  <h2>Support Our Work</h2>
+  <p>Docling Lab is free for advocates and families. Server-side AI processing costs real money to run — every conversion is a GPU/CPU hour we pay for out of pocket. If these tools helped you, please chip in.</p>
+  <div class="donation-buttons">
+    <a class="donate-btn donate-gofundme" href="https://www.gofundme.com/f/support-parent-data-force-advocacy" target="_blank" rel="noreferrer">❤ Donate on GoFundMe</a>
+    <a class="donate-btn donate-venmo" href="https://venmo.com/?txn=pay&audience=public&recipients=ParentDataForce" target="_blank" rel="noreferrer">💙 Venmo</a>
+  </div>
+</section>
+
+<footer>
+  <span>© Parent Data Force — Files are uploaded to our server for AI processing and deleted afterwards. We never sell or share your documents.</span>
+  <a href="https://www.parentdataforce.com/donate/" target="_blank" rel="noreferrer">Support the watchdog ↗</a>
+</footer>
+
+<script src="/ads.js" defer></script>
+</body>
+</html>

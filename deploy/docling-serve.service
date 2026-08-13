@@ -1,0 +1,24 @@
+[Unit]
+Description=Docling Serve (Parent Data Force AI conversion)
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/docling-serve.env
+Environment=HF_HOME=/var/lib/docling/hf
+Environment=HOME=/var/lib/docling
+Environment=UVICORN_HOST=127.0.0.1
+Environment=UVICORN_PORT=5001
+ExecStart=/opt/docling/venv/bin/docling-serve run
+Restart=always
+RestartSec=5
+# 8-core CPU box: keep 2 parallel conversion jobs max so OCR doesn't saturate
+Environment=DOCLING_SERVE_MAX_SYNC_WAIT=600
+Environment=DOCLING_SERVE_MAX_FILE_SIZE=52428800
+Environment=DOCLING_SERVE_MAX_NUM_PAGES=400
+Environment=DOCLING_SERVE_LOG_LEVEL=INFO
+# Results are single-use and auto-removed (privacy: nothing persists)
+
+[Install]
+WantedBy=multi-user.target
