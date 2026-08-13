@@ -701,6 +701,9 @@ const DOCLING_SERVE_URL = process.env.DOCLING_SERVE_URL || 'http://127.0.0.1:500
 const DOCLING_SERVE_API_KEY = process.env.DOCLING_SERVE_API_KEY || '';
 const PDF_LAB_URL = process.env.PDF_LAB_URL || 'http://127.0.0.1:5100';
 const DOCLING_TIMEOUT_MS = Number(process.env.DOCLING_TIMEOUT_MS || 600000);
+// Caps mirrored from docling-serve env so nginx/Node reject early with a clear 413
+const DOCLING_MAX_UPLOAD = Number(process.env.DOCLING_MAX_UPLOAD || 50 * 1024 * 1024);
+const DOCLING_MAX_PAGES = Number(process.env.DOCLING_MAX_PAGES || 400);
 
 function dlAuthHeaders(extra = {}) {
   const headers = { ...extra };
@@ -747,13 +750,16 @@ app.get('/api/docling/health', async (_request, response) => {
 // with Content-Type + X-Filename + X-Options headers; we forward to docling-serve
 // as a base64 file_sources payload (no multipart parsing needed).
 app.post('/api/docling/convert',
-  express.raw({ type: () => true, limit: process.env.DOCLING_MAX_UPLOAD || '60mb' }),
+  express.raw({ type: () => true, limit: DOCLING_MAX_UPLOAD + (1024 * 1024) }),
   async (request, response) => {
     try {
       const filename = safeFilename(request.get('x-filename'));
       const options = parseJsonHeader(request.get('x-options'), {});
       if (!request.body || request.body.length === 0) {
         return response.status(400).json({ error: 'Empty upload body.' });
+      }
+      if (request.body.length > DOCLING_MAX_UPLOAD) {
+        return response.status(413).json({ error: `File exceeds ${Math.round(DOCLING_MAX_UPLOAD / 1024 / 1024)}MB limit.` });
       }
       const payload = {
         options: {
@@ -825,13 +831,16 @@ app.post('/api/docling/convert-url', express.json({ limit: '16kb' }), async (req
 // Same payload contract as /convert; docling-serve queues it and the client
 // polls status until done. Keeps long conversions off the HTTP connection.
 app.post('/api/docling/convert-async',
-  express.raw({ type: () => true, limit: process.env.DOCLING_MAX_UPLOAD || '60mb' }),
+  express.raw({ type: () => true, limit: DOCLING_MAX_UPLOAD + (1024 * 1024) }),
   async (request, response) => {
     try {
       const filename = safeFilename(request.get('x-filename'));
       const options = parseJsonHeader(request.get('x-options'), {});
       if (!request.body || request.body.length === 0) {
         return response.status(400).json({ error: 'Empty upload body.' });
+      }
+      if (request.body.length > DOCLING_MAX_UPLOAD) {
+        return response.status(413).json({ error: `File exceeds ${Math.round(DOCLING_MAX_UPLOAD / 1024 / 1024)}MB limit.` });
       }
       const payload = {
         options: {
@@ -910,12 +919,15 @@ app.get('/api/docling/job/:id', async (request, response) => {
 
 // Forensic scan of an uploaded file (raw binary body) — forwards to pdf-lab.
 app.post('/api/docling/scan',
-  express.raw({ type: () => true, limit: process.env.DOCLING_MAX_UPLOAD || '60mb' }),
+  express.raw({ type: () => true, limit: DOCLING_MAX_UPLOAD + (1024 * 1024) }),
   async (request, response) => {
     try {
       const filename = safeFilename(request.get('x-filename'));
       if (!request.body || request.body.length === 0) {
         return response.status(400).json({ error: 'Empty upload body.' });
+      }
+      if (request.body.length > DOCLING_MAX_UPLOAD) {
+        return response.status(413).json({ error: `File exceeds ${Math.round(DOCLING_MAX_UPLOAD / 1024 / 1024)}MB limit.` });
       }
       const r = await fetch(`${PDF_LAB_URL}/scan`, {
         method: 'POST',

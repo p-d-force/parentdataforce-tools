@@ -15,6 +15,7 @@ Restart=always
 RestartSec=5
 # 8-core CPU box: keep 2 parallel conversion jobs max so OCR doesn't saturate
 Environment=DOCLING_SERVE_MAX_SYNC_WAIT=600
+Environment=DOCLING_SERVE_MAX_PARALLEL_JOBS=2
 Environment=DOCLING_SERVE_MAX_FILE_SIZE=52428800
 Environment=DOCLING_SERVE_MAX_NUM_PAGES=400
 Environment=DOCLING_SERVE_LOG_LEVEL=INFO
