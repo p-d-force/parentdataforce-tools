@@ -276,7 +276,7 @@ def redaction_pixel(path):
     return {"available": True, "findings": len(findings), "boxes": findings[:50]}
 
 def _rect_overlap(rect, word):
-    """True if a fitz.Rect overlaps a word tuple (x0,y0,x1,y1,...) by >60% of word area."""
+    """True if a fitz.Rect overlaps a word tuple (x0,y0,x1,y1,...) by >30% of word area."""
     try:
         wx0, wy0, wx1, wy1 = word[0], word[1], word[2], word[3]
     except Exception:
@@ -289,7 +289,7 @@ def _rect_overlap(rect, word):
         return False
     inter = (ix1 - ix0) * (iy1 - iy0)
     warea = (wx1 - wx0) * (wy1 - wy0)
-    return warea > 0 and inter / warea > 0.6
+    return warea > 0 and inter / warea > 0.3
 
 def extract_tables_from_docling(docling_json: dict) -> list:
     """Walk a docling JSON document and return each table as {index, rows:[...]}.
