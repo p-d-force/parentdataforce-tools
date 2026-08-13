@@ -21,7 +21,10 @@ if ! git diff --quiet HEAD; then
 fi
 
 echo "[2/6] git pull on remote"
-"${SSH[@]}" 'git -C /opt/parentdataforce-tools pull --ff-only origin main 2>&1 | tail -2'
+# Drop local untracked files that now exist in the repo (e.g. newly committed
+# deploy scripts) — otherwise `git pull --ff-only` aborts: "untracked working
+# tree files would be overwritten by merge".
+"${SSH[@]}" 'cd /opt/parentdataforce-tools && git clean -fd -- deploy/ live-site/ && git pull --ff-only origin main 2>&1 | tail -2'
 
 echo "[3/6] sync pdf-lab app"
 "${SSH[@]}" 'mkdir -p /opt/pdf-lab && cp /opt/parentdataforce-tools/deploy/pdf-lab/app.py /opt/pdf-lab/app.py && chown -R root:root /opt/pdf-lab'
