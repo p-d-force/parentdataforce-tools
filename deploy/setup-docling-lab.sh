@@ -31,6 +31,8 @@ chmod +x /opt/pdf-lab/tools/*.py
 /opt/pdf-lab/venv/bin/python /opt/pdf-lab/tools/pdfid.py -h >/dev/null 2>&1 && echo "pdfid OK" || echo "pdfid warning"
 
 echo "==> [3/4] app + dirs"
+mkdir -p /opt/pdf-lab
+cp /opt/parentdataforce-tools/deploy/pdf-lab/app.py /opt/pdf-lab/app.py
 mkdir -p /var/lib/pdf-lab/tmp /var/lib/docling
 chmod 700 /var/lib/pdf-lab/tmp
 chown -R root:root /opt/pdf-lab /var/lib/pdf-lab
