@@ -4,13 +4,45 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="index,follow">
-  <meta name="description" content="Worcester Today — reporting on Worcester Public Schools from the source documents: school committee minutes, records, budgets, and filings, written by Parent Data Force.">
+  <meta name="description" content="Worcester Today — public records requests submitted to the City of Worcester and Worcester Public Schools, with status, responsive records, and downloadable source documents, plus the School Choice Decision Dashboard.">
   <title>Worcester Today | Parent Data Force</title>
   <link rel="stylesheet" href="/styles.css">
   <style>
-    /* Worcester page additions on the shared design system */
     .construction-banner { display:flex; align-items:center; justify-content:center; gap:10px; padding:10px 18px; background:rgba(255,90,31,.14); border-bottom:1px solid rgba(255,90,31,.35); color:var(--accent-glow); font:500 .72rem 'DM Mono',monospace; letter-spacing:.1em; text-align:center; }
     .construction-banner .flag { font-size:.9rem; }
+    /* PRR tracker */
+    .prr-table-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:6px; }
+    table.prr { width:100%; border-collapse:collapse; font-size:.88rem; min-width:820px; }
+    table.prr th, table.prr td { padding:13px 14px; text-align:left; border-bottom:1px solid var(--border); vertical-align:top; }
+    table.prr th { background:var(--bg-elevated); color:var(--text-muted); font:600 .68rem 'DM Mono',monospace; letter-spacing:.1em; text-transform:uppercase; position:sticky; top:0; }
+    table.prr tr:hover td { background:rgba(255,90,31,.04); }
+    table.prr .reqid { font:500 .78rem 'DM Mono',monospace; color:var(--accent-glow); white-space:nowrap; }
+    table.prr .scope { color:var(--text-secondary); font-size:.85rem; line-height:1.5; }
+    .status-pill { display:inline-block; padding:3px 10px; border-radius:999px; font:600 .66rem 'DM Mono',monospace; letter-spacing:.05em; text-transform:uppercase; white-space:nowrap; }
+    .st-active { background:rgba(255,90,31,.15); border:1px solid rgba(255,90,31,.4); color:var(--accent-glow); }
+    .st-partial { background:rgba(255,176,0,.12); border:1px solid rgba(255,176,0,.4); color:#ffc966; }
+    .st-closed { background:rgba(52,211,153,.12); border:1px solid rgba(52,211,153,.4); color:#6ee7b7; }
+    .st-appealed { background:rgba(129,140,248,.12); border:1px solid rgba(129,140,248,.4); color:#a5b4fc; }
+    .st-waiting { background:rgba(148,163,184,.12); border:1px solid rgba(148,163,184,.4); color:#cbd5e1; }
+    .doc-list { list-style:none; margin:0; padding:0; }
+    .doc-list li { margin:5px 0; font-size:.8rem; }
+    .doc-list a { color:var(--accent-glow); text-decoration:none; text-underline-offset:3px; }
+    .doc-list a:hover { text-decoration:underline; }
+    .doc-list .size { color:var(--text-muted); font:400 .68rem 'DM Mono',monospace; margin-left:5px; }
+    .timeline { list-style:none; margin:0; padding:0; border-left:2px solid var(--border); margin-left:8px; }
+    .timeline li { position:relative; padding:0 0 16px 22px; font-size:.86rem; color:var(--text-secondary); line-height:1.5; }
+    .timeline li::before { content:""; position:absolute; left:-6px; top:5px; width:10px; height:10px; border-radius:50%; background:var(--accent); }
+    .timeline li b { color:var(--text-primary); font-weight:600; }
+    .timeline .date { color:var(--text-muted); font:400 .72rem 'DM Mono',monospace; }
+    .cyber-card { padding:26px 28px; background:var(--bg-card); border:1px solid var(--border); margin-top:16px; border-left:3px solid var(--accent); }
+    .cyber-card h3 { margin:0 0 8px; font-size:1.15rem; letter-spacing:-.02em; }
+    .cyber-card p { margin:0 0 10px; color:var(--text-secondary); font-size:.9rem; line-height:1.6; }
+    .cyber-card .doc-row { display:flex; flex-wrap:wrap; gap:10px; margin-top:12px; }
+    .cyber-card .doc-row a { padding:7px 13px; background:rgba(255,90,31,.12); border:1px solid rgba(255,90,31,.35); border-radius:4px; font-size:.78rem; color:var(--accent-glow); text-decoration:none; }
+    .cyber-card .doc-row a:hover { background:rgba(255,90,31,.25); }
+    .dash-cta { display:flex; flex-wrap:wrap; gap:18px; align-items:center; justify-content:space-between; padding:26px 28px; background:linear-gradient(135deg,rgba(255,90,31,.1),rgba(255,255,255,.02) 55%); border:1px solid rgba(255,90,31,.4); border-radius:6px; margin-top:16px; }
+    .dash-cta h3 { margin:0 0 6px; font-size:1.3rem; letter-spacing:-.03em; }
+    .dash-cta p { margin:0; color:var(--text-secondary); font-size:.9rem; max-width:640px; }
     .story-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
     .story-card { min-height:200px; padding:28px; background:var(--bg-card); border:1px solid var(--border); display:flex; flex-direction:column; position:relative; transition:border-color .2s; }
     .story-card:hover { border-color:var(--accent); }
@@ -19,16 +51,11 @@
     .story-card p { margin:0 0 16px; color:var(--text-secondary); font-size:.92rem; line-height:1.55; }
     .story-card .source-tag { display:inline-block; margin-top:auto; color:var(--accent-glow); font:500 .68rem 'DM Mono',monospace; letter-spacing:.08em; text-transform:uppercase; }
     .story-card .source-tag::before { content:"📄 "; }
-    .watch-list { padding:26px 28px; background:var(--bg-elevated); border:1px solid var(--border); margin-top:16px; }
-    .watch-list h3 { margin:0 0 10px; font-size:1.1rem; letter-spacing:-.02em; }
-    .watch-list p { margin:0; color:var(--text-secondary); font-size:.9rem; line-height:1.6; }
-    .watch-list ul { margin:14px 0 0; padding-left:20px; color:var(--text-secondary); font-size:.9rem; line-height:1.7; }
-    .empty-state { padding:44px 28px; text-align:center; color:var(--text-muted); font-size:.9rem; border:1px dashed var(--border); border-radius:4px; margin-top:16px; }
-    @media (max-width:720px) { .story-grid { grid-template-columns:1fr; } }
+    @media (max-width:720px) { .story-grid { grid-template-columns:1fr; } table.prr { min-width:640px; } }
   </style>
 </head>
 <body>
-  <div class="construction-banner"><span class="flag">🚧</span> SITE UNDER CONSTRUCTION — Worcester Today is in testing. Stories and sources are being added. <span class="flag">🚧</span></div>
+  <div class="construction-banner"><span class="flag">🚧</span> SITE UNDER CONSTRUCTION — Worcester Today is in testing. Records and sources are being added. <span class="flag">🚧</span></div>
   <header class="site-header">
     <a class="brand" href="/" aria-label="Parent Data Force home">
       <img src="/logo.png" alt="Parent Data Force logo">
@@ -36,10 +63,9 @@
     </a>
     <nav aria-label="Primary navigation">
       <a href="/">Home</a>
-      <a href="#stories">Stories</a>
-      <a href="#sources">Sources</a>
-      <a href="https://tools.parentdataforce.org/" rel="noreferrer">Tools ↗</a>
-      <a href="https://tools.parentdataforce.org/articles/" rel="noreferrer">Articles ↗</a>
+      <a href="#records">Records</a>
+      <a href="#dashboard">Dashboard</a>
+      <a href="#security">Security</a>
       <a href="#support">Support Us</a>
     </nav>
   </header>
@@ -48,57 +74,179 @@
     <section class="hero">
       <p class="eyebrow">WORCESTER • MASSACHUSETTS • SCHOOLS</p>
       <h1>Worcester, on the record.</h1>
-      <p class="lede">Worcester Today reports on Worcester Public Schools from the source documents — school committee minutes, budgets, records, and filings. Every story is written from the primary record and tagged with the document it came from.</p>
+      <p class="lede">Worcester Today reports on Worcester Public Schools from the source documents — public records requests, school committee minutes, budgets, and filings. Every document below is a primary record, hosted here for anyone to read.</p>
       <div class="hero-support-banner">
         <span class="banner-icon">♥</span>
-        <p><strong>From the source.</strong> We don't summarize press releases. We read the minutes, the budgets, and the records — then tell you what's in them. Stories here are written from the reports and source documents themselves.</p>
+        <p><strong>From the source.</strong> We don't summarize press releases. We file the requests, read what the City produces, and publish the responsive records so you can check our work against the primary document.</p>
       </div>
       <div class="actions">
-        <a class="button" href="#stories">Latest from Worcester</a>
-        <a class="text-link" href="#sources">How we source →</a>
+        <a class="button" href="#records">Public records status</a>
+        <a class="text-link" href="#dashboard">School Choice Dashboard →</a>
       </div>
     </section>
 
-    <section id="stories" class="section">
-      <div class="section-heading"><p class="eyebrow">WORCESTER TODAY</p><h2>Latest reporting</h2><p>Stories are written from the source documents of the reports — minutes, filings, and public records.</p></div>
-      <div class="story-grid">
-        <article class="story-card">
-          <span class="story-date">—</span>
-          <h3>First story coming soon</h3>
-          <p>Reporting on Worcester Public Schools starts here. Watch this space for the first piece written from the source documents.</p>
-          <span class="source-tag">Source: pending</span>
-        </article>
+    <section id="records" class="section">
+      <div class="section-heading"><p class="eyebrow">PUBLIC RECORDS TRACKER</p><h2>Requests to the City of Worcester</h2><p>Every public records request submitted under G.L. c. 66, § 10 — with the current status and links to the responsive records, exactly as produced.</p></div>
+
+      <div class="prr-table-wrap">
+        <table class="prr">
+          <thead>
+            <tr>
+              <th>Request</th>
+              <th>Scope</th>
+              <th>Status</th>
+              <th>Responsive records</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div class="reqid">W091663-070926</div>
+                <div class="scope" style="margin-top:4px">Submitted <b>July 9, 2026</b> — School choice / voluntary transfer data, de-identified aggregate by school year, Nelson Place specifics, and all policies/procedures/forms used to process transfer requests.</div>
+              </td>
+              <td class="scope">De-identified aggregate transfer-request data (approved/denied by school and grade); Nelson Place subset; processing policies and procedures; data dictionary.</td>
+              <td><span class="status-pill st-active">IN PRODUCTION</span><div style="margin-top:8px" class="scope">Sample produced Aug 3; rolling production underway. City fee petition SPR26/2850: 30-business-day extension granted, redaction-fee request denied.</div></td>
+              <td>
+                <ul class="doc-list">
+                  <li><a href="docs/w091663-district-wide-sample.xlsx" download>District-wide sample (Excel)</a><span class="size">107 KB</span></li>
+                  <li><a href="docs/w091663-nelson-place-sample.xlsx" download>Nelson Place sample (Excel)</a><span class="size">12 KB</span></li>
+                  <li><a href="docs/school-choice-all-totals.csv" download>All-totals CSV</a><span class="size">23 KB</span></li>
+                  <li><a href="docs/w091663-supplemental-response.pdf" target="_blank" rel="noopener">City supplemental response (Jul 31)</a><span class="size">200 KB</span></li>
+                  <li><a href="docs/spr26-2850-determination.pdf" target="_blank" rel="noopener">SPR26/2850 determination (Jul 31)</a><span class="size">127 KB</span></li>
+                  <li><a href="docs/spr26-2861-determination.pdf" target="_blank" rel="noopener">SPR26/2861 determination (Aug 4)</a><span class="size">87 KB</span></li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="reqid">W092366-072426</div>
+                <div class="scope" style="margin-top:4px">Submitted <b>July 24, 2026</b> — Audit-trail request: how W091663-070926 was routed, handled, and the basis for the City's July 23 fee estimate and statements.</div>
+              </td>
+              <td class="scope">Records showing how the City routed and processed W091663-070926, including the July 23 fee estimate and "no responsive records" determinations for items 4–6.</td>
+              <td><span class="status-pill st-waiting">ACKNOWLEDGED</span><div style="margin-top:8px" class="scope">Acknowledged Jul 24; status update received Aug 7. Awaiting substantive production.</div></td>
+              <td>
+                <ul class="doc-list">
+                  <li><span class="scope">Production pending — no responsive records published yet.</span></li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="reqid">W092610-072926</div>
+                <div class="scope" style="margin-top:4px">Submitted <b>July 29, 2026</b> — Full audit trail for DOC060, the IEP ("SG - IEP.pdf"), the Xerox AltaLink B8270 MFP, and DocuSign envelope C00C81CC-1065-8C72-83F2-9C52D8BD280B.</div>
+              </td>
+              <td class="scope">Audit trail: DOC060 (1).pdf, SG-IEP.pdf, Xerox AltaLink B8270 MFP print/scan/copy logs, and DocuSign envelope activity for the cited envelope ID.</td>
+              <td><span class="status-pill st-waiting">ACKNOWLEDGED</span><div style="margin-top:8px" class="scope">Acknowledged Jul 29. Awaiting substantive production.</div></td>
+              <td>
+                <ul class="doc-list">
+                  <li><a href="docs/doc060.pdf" target="_blank" rel="noopener">DOC060 (referenced record)</a><span class="size">74 KB</span></li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="reqid">Jul 30, 2026 · PRR / Preservation</div>
+                <div class="scope" style="margin-top:4px">Submitted <b>July 30, 2026</b> — Urgent public-records request and preservation notice re the phishing email impersonating Dr. Tammy Murray: message trace, aggregate recipient counts, incident response, and public notification.</div>
+              </td>
+              <td class="scope">Message trace for the authenticated phishing email, aggregate recipient counts, incident-response records, and records of family/systemwide notification.</td>
+              <td><span class="status-pill st-active">PENDING RESPONSE</span><div style="margin-top:8px" class="scope">Submitted with preservation notice. See the Security section below for the supporting analysis.</div></td>
+              <td>
+                <ul class="doc-list">
+                  <li><span class="scope">Supporting reports hosted in the Security section.</span></li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="reqid">Jul 30, 2026 · Netlify PRR</div>
+                <div class="scope" style="margin-top:4px">Submitted <b>July 30, 2026</b> — Any Worcester Public Schools use of or contact with Netlify (the phishing landing page was hosted on murraytammy.netlify.app).</div>
+              </td>
+              <td class="scope">Records of any WPS use of, contact with, or accounts on Netlify; related to the phishing landing-page analysis.</td>
+              <td><span class="status-pill st-active">PENDING RESPONSE</span><div style="margin-top:8px" class="scope">Submitted with the phishing incident package.</div></td>
+              <td>
+                <ul class="doc-list">
+                  <li><span class="scope">Supporting reports hosted in the Security section.</span></li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top:22px">
+        <h3 style="font-size:1.05rem;margin:0 0 12px">W091663-070926 timeline</h3>
+        <ul class="timeline">
+          <li><span class="date">JUL 9, 2026</span><br><b>Request submitted</b> — de-identified aggregate school-choice/transfer data, Nelson Place subset, policies and procedures.</li>
+          <li><span class="date">JUL 23, 2026</span><br><b>City response + fee estimate</b> — City stated no responsive records for items 4–6 and estimated fees for cell-by-cell redaction.</li>
+          <li><span class="date">JUL 24, 2026</span><br><b>City petition SPR26/2850</b> — City sought a time extension and permission to charge for segregation/redaction. Audit-trail request W092366 submitted the same day.</li>
+          <li><span class="date">JUL 31, 2026</span><br><b>SPR26/2850 determination</b> — 30-business-day extension <b>granted</b>; permission to charge for redaction <b>denied</b> (untimely petition). City also issued the supplemental response with a revised fee estimate.</li>
+          <li><span class="date">AUG 3, 2026</span><br><b>Sample production</b> — District-wide and Nelson Place sample datasets delivered; rolling production agreed.</li>
+          <li><span class="date">AUG 4, 2026</span><br><b>SPR26/2861 determination</b> — appeal of the July 23 fee response closed administratively after the Aug 3 further response; substantive response appealable within 90 days.</li>
+          <li><span class="date">AUG 10, 2026</span><br><b>Follow-up</b> — request for the basis of the "no responsive records" determination for item 4 (policies/procedures).</li>
+          <li><span class="date">AUG 13, 2026</span><br><b>Dashboard published</b> — the sample data was normalized, verified, and published as the School Choice Decision Dashboard below.</li>
+        </ul>
       </div>
     </section>
 
-    <section id="sources" class="section">
-      <div class="section-heading"><p class="eyebrow">HOW WE SOURCE</p><h2>From the documents up.</h2><p>Stories are grounded in the primary record. We publish the source so you can check our work.</p></div>
-      <div class="story-grid">
-        <div class="watch-list">
-          <h3>School Committee</h3>
-          <p>Minutes, agendas, and votes of the Worcester School Committee — the public record of every decision.</p>
-          <ul>
-            <li>Agendas and minutes are read cover to cover</li>
-            <li>Votes are checked against the meeting video when available</li>
-            <li>Written by the source documents of the reports</li>
-          </ul>
+    <section id="dashboard" class="section">
+      <div class="section-heading"><p class="eyebrow">SCHOOL CHOICE DATA</p><h2>School Choice Decision Dashboard</h2><p>1,240 transfer decisions from the W091663-070926 sample — approved vs. denied by school, grade, and level, with a school-vs-school comparison tool. Math-verified twice: 798 + 442 = 1,240.</p></div>
+      <div class="dash-cta">
+        <div>
+          <h3>Interactive dashboard</h3>
+          <p>Filter by school level, sort by volume or approval rate, compare any two schools, and export the summary CSV. Built from the responsive records exactly as produced.</p>
         </div>
-        <div class="watch-list">
-          <h3>Public Records</h3>
-          <p>Records requests, DESE filings, budgets, and contracts — the documents districts would rather stay quiet.</p>
-          <ul>
-            <li>Every claim traced to a named document</li>
-            <li>Records requests tracked on the public-records board</li>
-            <li>Redaction and tampering checks on every PDF</li>
-          </ul>
+        <a class="button" href="school-choice-dashboard.html">Open the dashboard →</a>
+      </div>
+      <div style="margin-top:14px" class="story-grid">
+        <div class="story-card">
+          <span class="story-date">SUMMARY</span>
+          <h3>The numbers, quickly</h3>
+          <p><strong>1,240</strong> decisions total — <strong>798 approved (64.4%)</strong>, 442 denied. Elementary requests approve at 69.2%; middle school at 35.9%; high school at 59.3%. City View Discovery, Roosevelt, and West Tatnuck led in volume.</p>
+          <span class="source-tag">Source: W091663-070926 sample</span>
+        </div>
+        <div class="story-card">
+          <span class="story-date">CAVEAT</span>
+          <h3>Read the sample honestly</h3>
+          <p>This is a sample, not the complete universe of decisions. Rates are descriptive; small schools can look extreme because of low counts. Full school-year data is still rolling in production.</p>
+          <span class="source-tag">Source: SPR26/2850 + 2861 determinations</span>
         </div>
       </div>
-      <div class="empty-state">More source categories — budgets, discipline data, and staffing — are being added.</div>
     </section>
 
-    <!-- Donation / Support Section -->
+    <section id="security" class="section">
+      <div class="section-heading"><p class="eyebrow">SECURITY</p><h2>Worcester Public Schools phishing incident</h2><p>On July 30, 2026, Parent Data Force notified Worcester Public Schools of an authenticated phishing email sent through the district's domain, impersonating Dr. Tammy Murray and directing recipients to a Netlify-hosted landing page (murraytammy.netlify.app). The analysis reports below were submitted to the district and are published here for public accountability.</p></div>
+
+      <div class="cyber-card">
+        <h3>Forensic Email Analysis Report</h3>
+        <p><strong>What it found:</strong> the message authenticated as Worcester mail — Gmail recorded it passing SPF/DKIM/DMARC checks — meaning ordinary anti-spoofing controls did not reject it. The message blind-copied a parent address whose source is unknown, and the sending mechanism (active account session, OAuth access, or compromised relay) must be identified by the district. The EML does not establish whole-domain compromise, but it does establish at least one district identity was used to send mail that Gmail treated as legitimate.</p>
+        <p><strong>Why it matters:</strong> if the sending mechanism involved an active account session or broad OAuth access, the risk may extend beyond sending mail to reading messages, reviewing files, and accessing confidential special-education records.</p>
+        <div class="doc-row">
+          <a href="docs/wps-forensic-email-analysis-report.docx" download>Download the forensic report (.docx)</a>
+        </div>
+      </div>
+
+      <div class="cyber-card">
+        <h3>Phishing Landing Page &amp; Public-Risk Analysis</h3>
+        <p><strong>What it found:</strong> the email lured families with a "secure message" pretext to a Netlify-hosted page. The hostname currently does not resolve — consistent with removal, suspension, or expiration — so the exact landing-page fields and data-storage destination cannot be reconstructed from public sources. The deception analysis found the claimed identity, subject, secure-message language, signature, and destination domain all consistent with a credential-harvesting campaign.</p>
+        <p><strong>Why it matters:</strong> families regularly receive confidential special-education records, evaluation materials, and meeting notices from the district — making a spoofed district message a particularly dangerous lure.</p>
+        <div class="doc-row">
+          <a href="docs/wps-phishing-landing-page-risk-analysis.docx" download>Download the landing-page analysis (.docx)</a>
+        </div>
+      </div>
+
+      <div style="margin-top:20px">
+        <h3 style="font-size:1.05rem;margin:0 0 12px">What was sent to the district</h3>
+        <ul class="timeline">
+          <li><span class="date">JUL 30, 2026</span><br><b>Forensic analysis</b> — authenticated phishing email analysis delivered.</li>
+          <li><span class="date">JUL 30, 2026</span><br><b>Good-faith security notifications</b> — multiple notifications including requests for family and systemwide notice, preservation, and independent review.</li>
+          <li><span class="date">JUL 30, 2026</span><br><b>Urgent PRR / preservation notice</b> — message trace, aggregate recipient counts, incident response, and public notification records requested.</li>
+          <li><span class="date">JUL 30, 2026</span><br><b>Netlify records request</b> — any WPS use of or contact with Netlify.</li>
+        </ul>
+      </div>
+    </section>
+
     <section id="support" class="section donation-section">
-      <div class="section-heading"><p class="eyebrow">SUPPORT</p><h2>Keep Worcester reporting funded.</h2><p>Records requests cost money. Your support pays for the documents behind the stories.</p></div>
+      <div class="section-heading"><p class="eyebrow">SUPPORT</p><h2>Keep Worcester reporting funded.</h2><p>Records requests cost money — filing fees, redaction time, and appeal work. Your support pays for the documents behind the stories.</p></div>
       <div class="donation-grid">
         <div class="donation-card">
           <div class="donation-icon">❤️</div>
@@ -124,7 +272,7 @@
     <section class="privacy-note">
       <p class="eyebrow">OUR STANDARD</p>
       <h2>We do not sell family data.</h2>
-      <p>Worcester Today reports from public records and source documents only. We never publish student records or confidential casework.</p>
+      <p>Worcester Today reports from public records and source documents only. We never publish student records or confidential casework — the datasets hosted here are de-identified aggregates exactly as produced by the City.</p>
     </section>
   </main>
 

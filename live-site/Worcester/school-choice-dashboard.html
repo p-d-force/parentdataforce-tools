@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Worcester School Choice Dashboard | Parent Data Force</title>
+<style>
+:root {
+  --bg-primary:#0b0b0b; --bg-secondary:#161616; --bg-elevated:#1d1d1d; --bg-card:rgba(255,255,255,.03);
+  --accent:#ff5a1f; --accent-hot:#ff3b1f; --accent-glow:#ffa366;
+  --text-primary:#f5f5f5; --text-secondary:#a0a0a0; --text-muted:#767676; --border:#2a2a2a;
+  --approved:#2fbf8f; --denied:#e56a73; --soft:#231c15;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 92% 0%,rgba(255,59,31,.12),transparent 26%),var(--bg-primary);color:var(--text-primary);font-family:Outfit,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.55}
+.site-header{max-width:1320px;min-height:80px;padding:16px 24px;margin:auto;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;letter-spacing:.05em}
+.brand img{width:42px;height:42px;object-fit:contain}
+.brand strong{display:block;font-size:.86rem;letter-spacing:.11em}
+.brand em{display:block;margin-top:1px;color:var(--accent-glow);font-size:.62rem;font-style:normal;font-family:'DM Mono',monospace;letter-spacing:.13em}
+nav{display:flex;align-items:center;gap:20px;font-size:.86rem;color:var(--text-secondary)} nav a{color:inherit;text-decoration:none} nav a:hover{color:var(--accent-glow)}
+.wrap{max-width:1320px;margin:0 auto;padding:20px 24px 60px}
+.hero{background:linear-gradient(135deg,#2a1208,#5a2a10 55%,#1d1d1d);border:1px solid rgba(255,90,31,.35);color:#fff;border-radius:16px;padding:26px 28px;margin-bottom:16px}
+.hero h1{margin:0 0 8px;font-size:28px;line-height:1.12;letter-spacing:-.03em}
+.hero p{margin:0;opacity:.9;max-width:980px;font-size:.95rem}
+.hero .badge{display:inline-block;margin-top:12px;padding:6px 11px;border-radius:999px;background:rgba(255,90,31,.2);border:1px solid rgba(255,90,31,.4);font-size:12px;color:var(--accent-glow);font-family:'DM Mono',monospace}
+.controls{display:grid;grid-template-columns:1.2fr 1fr 1fr auto auto;gap:12px;align-items:end;background:var(--bg-elevated);padding:16px;border:1px solid var(--border);border-radius:12px;margin-bottom:16px}
+label{font-size:11px;color:var(--text-muted);display:block;margin-bottom:5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+select,input{width:100%;padding:10px 11px;border-radius:8px;border:1px solid var(--border);background:#101010;color:var(--text-primary);font-size:14px}
+button{border:0;border-radius:8px;padding:10px 13px;background:linear-gradient(100deg,var(--accent-hot),var(--accent));color:#fff;font-weight:700;cursor:pointer;white-space:nowrap;font:600 .85rem Outfit,sans-serif}
+button.secondary{background:#262626;color:#e8e8e8;border:1px solid var(--border)}
+.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
+.metric{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:15px}
+.metric .label{color:var(--text-muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;font-weight:800}
+.metric .value{font-size:27px;font-weight:800;margin-top:4px}
+.metric .sub{font-size:12px;color:var(--text-muted);margin-top:3px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.panel{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:18px;overflow:hidden}
+.panel h2{font-size:16px;margin:0 0 4px;letter-spacing:-.02em}
+.panel .desc{font-size:13px;color:var(--text-muted);margin:0 0 14px}
+.legend{display:flex;gap:14px;align-items:center;font-size:12px;color:var(--text-muted);margin-bottom:10px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+.approved{background:var(--approved)} .denied{background:var(--denied)}
+.school-row{display:grid;grid-template-columns:minmax(180px,1.6fr) minmax(200px,3fr) 86px;gap:10px;align-items:center;margin:8px 0;cursor:pointer}
+.school-row:hover .school-name{color:var(--accent-glow)}
+.school-name{font-size:12px;line-height:1.2}
+.stack{height:18px;background:#202020;border-radius:5px;overflow:hidden;display:flex}
+.stack .a{background:var(--approved);height:100%}
+.stack .d{background:var(--denied);height:100%}
+.rowstat{font-size:12px;text-align:right;color:var(--text-muted);font-variant-numeric:tabular-nums}
+.rate-row{display:grid;grid-template-columns:minmax(180px,1.6fr) minmax(200px,3fr) 60px;gap:10px;align-items:center;margin:8px 0;cursor:pointer}
+.rate-track{height:12px;background:#222;border-radius:999px;overflow:hidden}
+.rate-fill{height:100%;background:linear-gradient(90deg,var(--accent-hot),var(--accent));border-radius:999px}
+.rate-value{font-size:12px;text-align:right;font-weight:800}
+svg{width:100%;height:auto;display:block}
+.axis{stroke:#3a3a3a;stroke-width:1}
+.gridline{stroke:#242424;stroke-width:1}
+.scatter-dot{fill:var(--accent-glow);opacity:.75;cursor:pointer;stroke:#0b0b0b;stroke-width:1.3}
+.scatter-dot:hover{opacity:1;stroke:#fff;stroke-width:1}
+.grade-row{display:grid;grid-template-columns:92px 1fr 84px;gap:10px;align-items:center;margin:8px 0}
+.grade-label{font-size:12px}
+.heat-wrap{overflow:auto;max-width:100%}
+.heat{border-collapse:separate;border-spacing:3px;font-size:11px;min-width:780px}
+.heat th{position:sticky;top:0;background:#161616;padding:6px;z-index:2}
+.heat th:first-child{left:0;z-index:3}
+.heat td{min-width:72px;padding:8px 6px;text-align:center;border-radius:6px;font-variant-numeric:tabular-nums}
+.heat td.name{position:sticky;left:0;min-width:225px;text-align:left;background:#161616;font-weight:700;z-index:1}
+.detail-controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0 14px}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.compare-card{border:1px solid var(--border);border-radius:10px;padding:14px}
+.compare-card h3{margin:0 0 8px;font-size:14px}
+.big-rate{font-size:31px;font-weight:850;color:var(--accent-glow)}
+.peer{font-size:12px;color:var(--text-muted)}
+.callout{margin-top:14px;padding:12px 14px;background:var(--soft);border:1px solid rgba(255,90,31,.3);border-radius:10px;font-size:13px}
+.warning{background:var(--soft);color:#ffd9a8}
+table.data{width:100%;border-collapse:collapse;font-size:12px}
+table.data th, table.data td{border-bottom:1px solid var(--border);padding:9px 8px;text-align:right}
+table.data th:first-child,table.data td:first-child,table.data th:nth-child(2),table.data td:nth-child(2){text-align:left}
+table.data th{color:var(--text-muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;position:sticky;top:0;background:#161616}
+.table-wrap{max-height:560px;overflow:auto;border:1px solid var(--border);border-radius:10px}
+.note-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+.note{font-size:13px;color:#b8bcc8;line-height:1.55}
+.check{font-weight:800;color:var(--approved)}
+.footer{font-size:12px;color:var(--text-muted);margin:20px 2px 0}
+.small{font-size:11px;color:var(--text-muted)}
+.site-footer{max-width:1320px;margin:0 auto;padding:24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--text-muted);font-size:13px}
+@media (max-width:900px){.controls{grid-template-columns:1fr 1fr}.metrics{grid-template-columns:repeat(2,1fr)}.grid2,.compare,.note-grid{grid-template-columns:1fr}}
+@media (max-width:560px){.wrap{padding:12px}.hero{padding:20px}.hero h1{font-size:23px}.controls{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}.school-row,.rate-row{grid-template-columns:130px 1fr 58px}.detail-controls{grid-template-columns:1fr}}
+@media print{body{background:white;color:#111}.controls,.no-print{display:none!important}.panel,.metric{break-inside:avoid}.wrap{max-width:none;padding:0}.hero{border-radius:0}.site-header,.site-footer{display:none}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="/Worcester/" aria-label="Parent Data Force home">
+    <img src="/logo.png" alt="Parent Data Force logo">
+    <span><strong>PARENT DATA FORCE</strong><em>WORCESTER TODAY</em></span>
+  </a>
+  <nav aria-label="Primary navigation">
+    <a href="/Worcester/">Worcester Today</a>
+    <a href="/">Home</a>
+    <a href="https://tools.parentdataforce.org/" rel="noreferrer">Tools ↗</a>
+  </nav>
+</header>
+<div class="wrap">
+  <section class="hero">
+    <h1>School Choice Decision Dashboard</h1>
+    <p>Approved and denied applications by requested school, school level, and entering grade. Use the level selector to compare elementary schools only with elementary peers, middle schools with middle peers, and high schools with high-school peers.</p>
+    <div class="badge" id="verifyBadge">Math verification</div>
+  </section>
+
+  <section class="controls">
+    <div>
+      <label for="levelFilter">School level</label>
+      <select id="levelFilter">
+        <option value="All">All levels</option>
+        <option value="Elementary">Elementary schools</option>
+        <option value="Middle">Middle schools</option>
+        <option value="High">High schools</option>
+      </select>
+    </div>
+    <div>
+      <label for="sortFilter">Sort school charts by</label>
+      <select id="sortFilter">
+        <option value="total">Application volume</option>
+        <option value="rate">Approval rate</option>
+        <option value="approved">Approved count</option>
+        <option value="denied">Denied count</option>
+      </select>
+    </div>
+    <div>
+      <label for="minApps">Minimum applications</label>
+      <input id="minApps" type="number" value="1" min="1" step="1">
+    </div>
+    <button type="button" id="csvBtn">Download summary CSV</button>
+    <button type="button" class="secondary" id="printBtn">Print / Save PDF</button>
+  </section>
+
+  <section class="metrics">
+    <div class="metric"><div class="label">Applications</div><div class="value" id="mTotal">—</div><div class="sub" id="mTotalSub"></div></div>
+    <div class="metric"><div class="label">Approved</div><div class="value" id="mApproved">—</div><div class="sub" id="mApprovedSub"></div></div>
+    <div class="metric"><div class="label">Denied</div><div class="value" id="mDenied">—</div><div class="sub" id="mDeniedSub"></div></div>
+    <div class="metric"><div class="label">Approval rate</div><div class="value" id="mRate">—</div><div class="sub">Approved ÷ total decisions</div></div>
+    <div class="metric"><div class="label">Schools represented</div><div class="value" id="mSchools">—</div><div class="sub">Normalized requested-school names</div></div>
+  </section>
+
+  <section class="grid2">
+    <div class="panel">
+      <h2>Approved vs. denied by school</h2>
+      <p class="desc">Stacked counts. Click a school row to load it into the comparison panel.</p>
+      <div class="legend"><span><span class="dot approved"></span>Approved</span><span><span class="dot denied"></span>Denied</span></div>
+      <div id="schoolBars"></div>
+    </div>
+    <div class="panel">
+      <h2>Approval-rate ranking</h2>
+      <p class="desc">Rates are descriptive; small schools can look extreme because of low application counts.</p>
+      <div id="rateBars"></div>
+    </div>
+  </section>
+
+  <section class="grid2">
+    <div class="panel">
+      <h2>Application volume vs. approval rate</h2>
+      <p class="desc">Each dot is a school. Farther right means more applications; higher means a greater approval rate.</p>
+      <div id="scatter"></div>
+    </div>
+    <div class="panel">
+      <h2>Grade-level breakdown</h2>
+      <p class="desc">Approved and denied applications by entering grade within the selected school level.</p>
+      <div id="gradeBars"></div>
+    </div>
+  </section>
+
+  <section class="panel" style="margin-bottom:16px">
+    <h2>School × grade approval-rate heatmap</h2>
+    <p class="desc">Each cell shows approval rate and application count for that school/grade combination. Blank cells mean no applications in the sample.</p>
+    <div class="heat-wrap"><div id="heatmap"></div></div>
+  </section>
+
+  <section class="grid2">
+    <div class="panel">
+      <h2>Decision activity by month</h2>
+      <p class="desc">Monthly decision volume from the timestamps in the source file.</p>
+      <div id="timeline"></div>
+    </div>
+    <div class="panel">
+      <h2>Level-to-level comparison</h2>
+      <p class="desc">Use this to see how overall approval rates differ across elementary, middle, and high school requests.</p>
+      <div id="levelCompare"></div>
+    </div>
+  </section>
+
+  <section class="panel" style="margin-bottom:16px">
+    <h2>Compare two schools</h2>
+    <p class="desc">Choose schools within the current level filter, or click a school in the charts to set School A.</p>
+    <div class="detail-controls">
+      <div><label for="schoolA">School A</label><select id="schoolA"></select></div>
+      <div><label for="schoolB">School B</label><select id="schoolB"></select></div>
+    </div>
+    <div class="compare">
+      <div class="compare-card" id="detailA"></div>
+      <div class="compare-card" id="detailB"></div>
+    </div>
+    <div class="callout" id="comparisonCallout"></div>
+  </section>
+
+  <section class="panel" style="margin-bottom:16px">
+    <h2>All school numbers</h2>
+    <p class="desc">Complete normalized school summary for the current level. This table remains available even when a chart is filtered by minimum application count.</p>
+    <div class="table-wrap">
+      <table class="data">
+        <thead><tr><th>School</th><th>Level</th><th>Total</th><th>Approved</th><th>Denied</th><th>Approval rate</th><th>Peer rank</th></tr></thead>
+        <tbody id="dataRows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Data notes and math checks</h2>
+    <div class="note-grid">
+      <div class="note">
+        <p><strong>What is being counted:</strong> each row in the workbook is treated as one decision. Approval/denial is attributed to <em>School Interested in Attending</em>, not the student's present school.</p>
+        <p><strong>Level grouping:</strong> elementary, middle, and high schools are compared to their own peer group. Claremont Academy is split by entering grade because the source identifies it as grades 7–12. Obvious grade/building mismatches stay with the requested building's school category and are flagged rather than silently reclassified.</p>
+        <p><strong>Normalization:</strong> long instructional parentheticals were removed from school labels, and the two Worcester Dual Language Magnet labels were merged into one school.</p>
+      </div>
+      <div class="note" id="auditNote"></div>
+    </div>
+    <details style="margin-top:12px">
+      <summary style="cursor:pointer;font-weight:800">Show normalized-name mappings</summary>
+      <div id="normalizationList" class="note" style="margin-top:10px"></div>
+    </details>
+  </section>
+
+  <div class="footer">Source: <span id="sourceFile"></span> (public records request W091663-070926). Dashboard contains aggregate counts only; the present-school text field is not used in the approval/denial calculations.</div>
+</div>
+<footer class="site-footer">
+  <span>© Parent Data Force — Worcester Today</span>
+  <span>Source: W091663-070926 · Parent-run educational watchdog</span>
+</footer>
+<script>
+const CUBE = [{"school":"Belmont Street Elementary School","level":"Elementary","grade":"Kindergarten","month":"Apr 2026","approved":1,"denied":0},{"school":"Belmont Street Elementary School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":0,"denied":1},{"school":"Belmont Street Elementary School","level":"Elementary","grade":"1st Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"Belmont Street Elementary School","level":"Elementary","grade":"2nd Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"Belmont Street Elementary School","level":"Elementary","grade":"3rd Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Belmont Street Elementary School","level":"Elementary","grade":"3rd Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"Belmont Street Elementary School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"Belmont Street Elementary School","level":"Elementary","grade":"4th Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Belmont Street Elementary School","level":"Elementary","grade":"5th Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"Belmont Street Elementary School","level":"Elementary","grade":"5th Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"Belmont Street Elementary School","level":"Elementary","grade":"6th Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Burncoat Street Preparatory Elementary School","level":"Elementary","grade":"Kindergarten","month":"Apr 2026","approved":0,"denied":1},{"school":"Burncoat Street Preparatory Elementary School","level":"Elementary","grade":"Kindergarten","month":"Feb 2026","approved":2,"denied":0},{"school":"Burncoat Street Preparatory Elementary School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":1,"denied":0},{"school":"Burncoat Street Preparatory Elementary School","level":"Elementary","grade":"1st Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Burncoat Street Preparatory Elementary School","level":"Elementary","grade":"1st Grade","month":"Mar 2026","approved":1,"denied":0},{"school":"Burncoat Street Preparatory Elementary School","level":"Elementary","grade":"2nd Grade","month":"Apr 2026","approved":0,"denied":3},{"school":"Burncoat Street Preparatory Elementary School","level":"Elementary","grade":"2nd Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"Burncoat Street Preparatory Elementary School","level":"Elementary","grade":"2nd Grade","month":"Mar 2026","approved":1,"denied":1},{"school":"Burncoat Street Preparatory Elementary School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":1,"denied":1},{"school":"Burncoat Street Preparatory Elementary School","level":"Elementary","grade":"4th Grade","month":"Apr 2026","approved":0,"denied":2},{"school":"Burncoat Street Preparatory Elementary School","level":"Elementary","grade":"4th Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"Burncoat Street Preparatory Elementary School","level":"Elementary","grade":"4th Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"Burncoat Street Preparatory Elementary School","level":"Elementary","grade":"5th Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Burncoat Street Preparatory Elementary School","level":"Elementary","grade":"5th Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"Burncoat Street Preparatory Elementary School","level":"Elementary","grade":"5th Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"Burncoat Street Preparatory Elementary School","level":"Elementary","grade":"6th Grade","month":"Apr 2026","approved":0,"denied":2},{"school":"Burncoat Street Preparatory Elementary School","level":"Elementary","grade":"6th Grade","month":"Mar 2026","approved":0,"denied":2},{"school":"Canterbury Street Elementary School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":0,"denied":1},{"school":"Canterbury Street Elementary School","level":"Elementary","grade":"2nd Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"Canterbury Street Elementary School","level":"Elementary","grade":"2nd Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"Canterbury Street Elementary School","level":"Elementary","grade":"2nd Grade","month":"Mar 2026","approved":1,"denied":0},{"school":"Canterbury Street Elementary School","level":"Elementary","grade":"3rd Grade","month":"Feb 2026","approved":1,"denied":1},{"school":"Canterbury Street Elementary School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":1,"denied":0},{"school":"Canterbury Street Elementary School","level":"Elementary","grade":"5th Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"Chandler Elementary School","level":"Elementary","grade":"Kindergarten","month":"Apr 2026","approved":0,"denied":2},{"school":"Chandler Elementary School","level":"Elementary","grade":"Kindergarten","month":"Feb 2026","approved":0,"denied":1},{"school":"Chandler Elementary School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":0,"denied":1},{"school":"Chandler Elementary School","level":"Elementary","grade":"3rd Grade","month":"Apr 2026","approved":1,"denied":1},{"school":"Chandler Elementary School","level":"Elementary","grade":"5th Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Chandler Elementary School","level":"Elementary","grade":"7th Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"City View Discovery Elementary School","level":"Elementary","grade":"Kindergarten","month":"Apr 2026","approved":2,"denied":0},{"school":"City View Discovery Elementary School","level":"Elementary","grade":"Kindergarten","month":"Feb 2026","approved":1,"denied":0},{"school":"City View Discovery Elementary School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":1,"denied":0},{"school":"City View Discovery Elementary School","level":"Elementary","grade":"1st Grade","month":"Apr 2026","approved":4,"denied":0},{"school":"City View Discovery Elementary School","level":"Elementary","grade":"1st Grade","month":"Mar 2026","approved":9,"denied":0},{"school":"City View Discovery Elementary School","level":"Elementary","grade":"2nd Grade","month":"Apr 2026","approved":5,"denied":0},{"school":"City View Discovery Elementary School","level":"Elementary","grade":"2nd Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"City View Discovery Elementary School","level":"Elementary","grade":"2nd Grade","month":"Mar 2026","approved":9,"denied":1},{"school":"City View Discovery Elementary School","level":"Elementary","grade":"3rd Grade","month":"Apr 2026","approved":10,"denied":0},{"school":"City View Discovery Elementary School","level":"Elementary","grade":"3rd Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"City View Discovery Elementary School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":13,"denied":0},{"school":"City View Discovery Elementary School","level":"Elementary","grade":"4th Grade","month":"Apr 2026","approved":3,"denied":0},{"school":"City View Discovery Elementary School","level":"Elementary","grade":"4th Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"City View Discovery Elementary School","level":"Elementary","grade":"4th Grade","month":"Mar 2026","approved":7,"denied":0},{"school":"City View Discovery Elementary School","level":"Elementary","grade":"5th Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"City View Discovery Elementary School","level":"Elementary","grade":"5th Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"City View Discovery Elementary School","level":"Elementary","grade":"5th Grade","month":"Mar 2026","approved":9,"denied":1},{"school":"City View Discovery Elementary School","level":"Elementary","grade":"6th Grade","month":"Apr 2026","approved":2,"denied":0},{"school":"City View Discovery Elementary School","level":"Elementary","grade":"6th Grade","month":"Mar 2026","approved":5,"denied":0},{"school":"Clark Street Community School","level":"Elementary","grade":"Kindergarten","month":"Feb 2026","approved":1,"denied":0},{"school":"Clark Street Community School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":0,"denied":1},{"school":"Clark Street Community School","level":"Elementary","grade":"2nd Grade","month":"Mar 2026","approved":1,"denied":1},{"school":"Clark Street Community School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":3,"denied":1},{"school":"Clark Street Community School","level":"Elementary","grade":"4th Grade","month":"Mar 2026","approved":0,"denied":2},{"school":"Clark Street Community School","level":"Elementary","grade":"5th Grade","month":"Mar 2026","approved":5,"denied":0},{"school":"Clark Street Community School","level":"Elementary","grade":"6th Grade","month":"Mar 2026","approved":3,"denied":1},{"school":"Columbus Park Elementary School","level":"Elementary","grade":"Kindergarten","month":"Apr 2026","approved":0,"denied":1},{"school":"Columbus Park Elementary School","level":"Elementary","grade":"1st Grade","month":"Mar 2026","approved":2,"denied":0},{"school":"Columbus Park Elementary School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":1,"denied":0},{"school":"Columbus Park Elementary School","level":"Elementary","grade":"4th Grade","month":"Mar 2026","approved":2,"denied":0},{"school":"Columbus Park Elementary School","level":"Elementary","grade":"5th Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"Columbus Park Elementary School","level":"Elementary","grade":"5th Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"Columbus Park Elementary School","level":"Elementary","grade":"6th Grade","month":"Mar 2026","approved":1,"denied":0},{"school":"Elm Park Community Elementary School","level":"Elementary","grade":"Kindergarten","month":"Apr 2026","approved":0,"denied":1},{"school":"Elm Park Community Elementary School","level":"Elementary","grade":"2nd Grade","month":"Apr 2026","approved":1,"denied":1},{"school":"Elm Park Community Elementary School","level":"Elementary","grade":"2nd Grade","month":"Mar 2026","approved":1,"denied":1},{"school":"Elm Park Community Elementary School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":1,"denied":0},{"school":"Elm Park Community Elementary School","level":"Elementary","grade":"4th Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"Elm Park Community Elementary School","level":"Elementary","grade":"5th Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"Elm Park Community Elementary School","level":"Elementary","grade":"5th Grade","month":"Mar 2026","approved":1,"denied":1},{"school":"Elm Park Community Elementary School","level":"Elementary","grade":"6th Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"Flagg Street Elementary School","level":"Elementary","grade":"Kindergarten","month":"Apr 2026","approved":1,"denied":3},{"school":"Flagg Street Elementary School","level":"Elementary","grade":"Kindergarten","month":"Feb 2026","approved":7,"denied":3},{"school":"Flagg Street Elementary School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":5,"denied":7},{"school":"Flagg Street Elementary School","level":"Elementary","grade":"1st Grade","month":"Apr 2026","approved":1,"denied":1},{"school":"Flagg Street Elementary School","level":"Elementary","grade":"1st Grade","month":"Feb 2026","approved":6,"denied":0},{"school":"Flagg Street Elementary School","level":"Elementary","grade":"1st Grade","month":"Mar 2026","approved":4,"denied":0},{"school":"Flagg Street Elementary School","level":"Elementary","grade":"2nd Grade","month":"Feb 2026","approved":9,"denied":0},{"school":"Flagg Street Elementary School","level":"Elementary","grade":"2nd Grade","month":"Mar 2026","approved":4,"denied":1},{"school":"Flagg Street Elementary School","level":"Elementary","grade":"3rd Grade","month":"Feb 2026","approved":9,"denied":0},{"school":"Flagg Street Elementary School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":3,"denied":0},{"school":"Flagg Street Elementary School","level":"Elementary","grade":"4th Grade","month":"Apr 2026","approved":1,"denied":1},{"school":"Flagg Street Elementary School","level":"Elementary","grade":"4th Grade","month":"Feb 2026","approved":5,"denied":0},{"school":"Flagg Street Elementary School","level":"Elementary","grade":"4th Grade","month":"Mar 2026","approved":3,"denied":0},{"school":"Flagg Street Elementary School","level":"Elementary","grade":"5th Grade","month":"Feb 2026","approved":4,"denied":1},{"school":"Flagg Street Elementary School","level":"Elementary","grade":"5th Grade","month":"Mar 2026","approved":3,"denied":0},{"school":"Flagg Street Elementary School","level":"Elementary","grade":"6th Grade","month":"Feb 2026","approved":5,"denied":0},{"school":"Flagg Street Elementary School","level":"Elementary","grade":"6th Grade","month":"Mar 2026","approved":5,"denied":1},{"school":"Francis J. McGrath Elementary School","level":"Elementary","grade":"Kindergarten","month":"Feb 2026","approved":1,"denied":0},{"school":"Francis J. McGrath Elementary School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":0,"denied":1},{"school":"Francis J. McGrath Elementary School","level":"Elementary","grade":"1st Grade","month":"Mar 2026","approved":1,"denied":0},{"school":"Francis J. McGrath Elementary School","level":"Elementary","grade":"2nd Grade","month":"Mar 2026","approved":1,"denied":0},{"school":"Francis J. McGrath Elementary School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":2,"denied":0},{"school":"Francis J. McGrath Elementary School","level":"Elementary","grade":"4th Grade","month":"Mar 2026","approved":1,"denied":0},{"school":"Francis J. McGrath Elementary School","level":"Elementary","grade":"6th Grade","month":"Mar 2026","approved":2,"denied":0},{"school":"Gates Lane Elementary School","level":"Elementary","grade":"Kindergarten","month":"Apr 2026","approved":0,"denied":1},{"school":"Gates Lane Elementary School","level":"Elementary","grade":"Kindergarten","month":"Feb 2026","approved":0,"denied":1},{"school":"Gates Lane Elementary School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":0,"denied":2},{"school":"Gates Lane Elementary School","level":"Elementary","grade":"1st Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Gates Lane Elementary School","level":"Elementary","grade":"1st Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"Gates Lane Elementary School","level":"Elementary","grade":"1st Grade","month":"Mar 2026","approved":0,"denied":2},{"school":"Gates Lane Elementary School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":1,"denied":3},{"school":"Gates Lane Elementary School","level":"Elementary","grade":"4th Grade","month":"Mar 2026","approved":2,"denied":2},{"school":"Gates Lane Elementary School","level":"Elementary","grade":"5th Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"Gates Lane Elementary School","level":"Elementary","grade":"5th Grade","month":"Feb 2026","approved":3,"denied":0},{"school":"Gates Lane Elementary School","level":"Elementary","grade":"5th Grade","month":"Mar 2026","approved":3,"denied":1},{"school":"Gates Lane Elementary School","level":"Elementary","grade":"6th Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"Gates Lane Elementary School","level":"Elementary","grade":"6th Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"Gates Lane Elementary School","level":"Elementary","grade":"6th Grade","month":"Mar 2026","approved":3,"denied":0},{"school":"Gates Lane Elementary School","level":"Elementary","grade":"Unknown","month":"Feb 2026","approved":0,"denied":1},{"school":"Goddard Elementary School of Science & Technology","level":"Elementary","grade":"Kindergarten","month":"Apr 2026","approved":2,"denied":0},{"school":"Goddard Elementary School of Science & Technology","level":"Elementary","grade":"Kindergarten","month":"Feb 2026","approved":1,"denied":0},{"school":"Goddard Elementary School of Science & Technology","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":2,"denied":1},{"school":"Goddard Elementary School of Science & Technology","level":"Elementary","grade":"1st Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"Goddard Elementary School of Science & Technology","level":"Elementary","grade":"1st Grade","month":"Mar 2026","approved":4,"denied":0},{"school":"Goddard Elementary School of Science & Technology","level":"Elementary","grade":"2nd Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Goddard Elementary School of Science & Technology","level":"Elementary","grade":"2nd Grade","month":"Mar 2026","approved":3,"denied":0},{"school":"Goddard Elementary School of Science & Technology","level":"Elementary","grade":"3rd Grade","month":"Apr 2026","approved":2,"denied":0},{"school":"Goddard Elementary School of Science & Technology","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":4,"denied":1},{"school":"Goddard Elementary School of Science & Technology","level":"Elementary","grade":"4th Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"Goddard Elementary School of Science & Technology","level":"Elementary","grade":"4th Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"Goddard Elementary School of Science & Technology","level":"Elementary","grade":"4th Grade","month":"Mar 2026","approved":1,"denied":1},{"school":"Goddard Elementary School of Science & Technology","level":"Elementary","grade":"5th Grade","month":"Mar 2026","approved":9,"denied":0},{"school":"Goddard Elementary School of Science & Technology","level":"Elementary","grade":"6th Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"Goddard Elementary School of Science & Technology","level":"Elementary","grade":"6th Grade","month":"Mar 2026","approved":9,"denied":0},{"school":"Grafton Street Elementary School","level":"Elementary","grade":"4th Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"Grafton Street Elementary School","level":"Elementary","grade":"5th Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"Heard Street Elementary School","level":"Elementary","grade":"Kindergarten","month":"Apr 2026","approved":1,"denied":0},{"school":"Heard Street Elementary School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":2,"denied":0},{"school":"Heard Street Elementary School","level":"Elementary","grade":"1st Grade","month":"Mar 2026","approved":4,"denied":0},{"school":"Heard Street Elementary School","level":"Elementary","grade":"2nd Grade","month":"Mar 2026","approved":2,"denied":0},{"school":"Heard Street Elementary School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":2,"denied":0},{"school":"Heard Street Elementary School","level":"Elementary","grade":"4th Grade","month":"Mar 2026","approved":2,"denied":0},{"school":"Heard Street Elementary School","level":"Elementary","grade":"5th Grade","month":"Mar 2026","approved":2,"denied":0},{"school":"Heard Street Elementary School","level":"Elementary","grade":"6th Grade","month":"Mar 2026","approved":3,"denied":0},{"school":"Jacob Hiatt Elementary School","level":"Elementary","grade":"Kindergarten","month":"Feb 2026","approved":0,"denied":1},{"school":"Jacob Hiatt Elementary School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":0,"denied":1},{"school":"Jacob Hiatt Elementary School","level":"Elementary","grade":"1st Grade","month":"Feb 2026","approved":2,"denied":0},{"school":"Jacob Hiatt Elementary School","level":"Elementary","grade":"2nd Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Jacob Hiatt Elementary School","level":"Elementary","grade":"2nd Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"Jacob Hiatt Elementary School","level":"Elementary","grade":"3rd Grade","month":"Feb 2026","approved":0,"denied":2},{"school":"Jacob Hiatt Elementary School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"Jacob Hiatt Elementary School","level":"Elementary","grade":"4th Grade","month":"Feb 2026","approved":0,"denied":2},{"school":"Jacob Hiatt Elementary School","level":"Elementary","grade":"4th Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"Lake View Elementary School","level":"Elementary","grade":"Kindergarten","month":"Apr 2026","approved":0,"denied":1},{"school":"Lake View Elementary School","level":"Elementary","grade":"Kindergarten","month":"Feb 2026","approved":1,"denied":2},{"school":"Lake View Elementary School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":1,"denied":1},{"school":"Lake View Elementary School","level":"Elementary","grade":"1st Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"Lake View Elementary School","level":"Elementary","grade":"1st Grade","month":"Mar 2026","approved":5,"denied":0},{"school":"Lake View Elementary School","level":"Elementary","grade":"2nd Grade","month":"Mar 2026","approved":2,"denied":0},{"school":"Lake View Elementary School","level":"Elementary","grade":"3rd Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Lake View Elementary School","level":"Elementary","grade":"3rd Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"Lake View Elementary School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":3,"denied":0},{"school":"Lake View Elementary School","level":"Elementary","grade":"5th Grade","month":"Mar 2026","approved":3,"denied":0},{"school":"Lake View Elementary School","level":"Elementary","grade":"6th Grade","month":"Mar 2026","approved":2,"denied":0},{"school":"Lincoln Street Elementary School","level":"Elementary","grade":"Kindergarten","month":"Apr 2026","approved":0,"denied":1},{"school":"Lincoln Street Elementary School","level":"Elementary","grade":"1st Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Lincoln Street Elementary School","level":"Elementary","grade":"1st Grade","month":"Mar 2026","approved":2,"denied":0},{"school":"Lincoln Street Elementary School","level":"Elementary","grade":"2nd Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"Lincoln Street Elementary School","level":"Elementary","grade":"3rd Grade","month":"Feb 2026","approved":2,"denied":0},{"school":"Lincoln Street Elementary School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":1,"denied":0},{"school":"Lincoln Street Elementary School","level":"Elementary","grade":"4th Grade","month":"Mar 2026","approved":1,"denied":0},{"school":"Lincoln Street Elementary School","level":"Elementary","grade":"5th Grade","month":"Mar 2026","approved":1,"denied":0},{"school":"Lincoln Street Elementary School","level":"Elementary","grade":"6th Grade","month":"Mar 2026","approved":1,"denied":0},{"school":"May Street Elementary School","level":"Elementary","grade":"Kindergarten","month":"Feb 2026","approved":1,"denied":1},{"school":"May Street Elementary School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":0,"denied":2},{"school":"May Street Elementary School","level":"Elementary","grade":"1st Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"May Street Elementary School","level":"Elementary","grade":"2nd Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"May Street Elementary School","level":"Elementary","grade":"2nd Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"May Street Elementary School","level":"Elementary","grade":"2nd Grade","month":"Mar 2026","approved":2,"denied":0},{"school":"May Street Elementary School","level":"Elementary","grade":"3rd Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"May Street Elementary School","level":"Elementary","grade":"3rd Grade","month":"Feb 2026","approved":3,"denied":0},{"school":"May Street Elementary School","level":"Elementary","grade":"4th Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"May Street Elementary School","level":"Elementary","grade":"5th Grade","month":"Feb 2026","approved":3,"denied":0},{"school":"May Street Elementary School","level":"Elementary","grade":"6th Grade","month":"Feb 2026","approved":2,"denied":1},{"school":"Midland Street Elementary School","level":"Elementary","grade":"Kindergarten","month":"Feb 2026","approved":0,"denied":1},{"school":"Midland Street Elementary School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":1,"denied":5},{"school":"Midland Street Elementary School","level":"Elementary","grade":"1st Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Midland Street Elementary School","level":"Elementary","grade":"1st Grade","month":"Feb 2026","approved":1,"denied":1},{"school":"Midland Street Elementary School","level":"Elementary","grade":"1st Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"Midland Street Elementary School","level":"Elementary","grade":"2nd Grade","month":"Apr 2026","approved":0,"denied":2},{"school":"Midland Street Elementary School","level":"Elementary","grade":"2nd Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"Midland Street Elementary School","level":"Elementary","grade":"3rd Grade","month":"Apr 2026","approved":1,"denied":2},{"school":"Midland Street Elementary School","level":"Elementary","grade":"3rd Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"Midland Street Elementary School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":1,"denied":1},{"school":"Midland Street Elementary School","level":"Elementary","grade":"4th Grade","month":"Feb 2026","approved":1,"denied":1},{"school":"Midland Street Elementary School","level":"Elementary","grade":"4th Grade","month":"Mar 2026","approved":1,"denied":0},{"school":"Midland Street Elementary School","level":"Elementary","grade":"5th Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"Midland Street Elementary School","level":"Elementary","grade":"5th Grade","month":"Mar 2026","approved":1,"denied":0},{"school":"Midland Street Elementary School","level":"Elementary","grade":"6th Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"Midland Street Elementary School","level":"Elementary","grade":"6th Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"Nelson Place Elementary School","level":"Elementary","grade":"Kindergarten","month":"Apr 2026","approved":0,"denied":1},{"school":"Nelson Place Elementary School","level":"Elementary","grade":"Kindergarten","month":"Feb 2026","approved":1,"denied":7},{"school":"Nelson Place Elementary School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":0,"denied":8},{"school":"Nelson Place Elementary School","level":"Elementary","grade":"1st Grade","month":"Apr 2026","approved":0,"denied":3},{"school":"Nelson Place Elementary School","level":"Elementary","grade":"1st Grade","month":"Feb 2026","approved":1,"denied":1},{"school":"Nelson Place Elementary School","level":"Elementary","grade":"1st Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"Nelson Place Elementary School","level":"Elementary","grade":"2nd Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"Nelson Place Elementary School","level":"Elementary","grade":"2nd Grade","month":"Mar 2026","approved":0,"denied":2},{"school":"Nelson Place Elementary School","level":"Elementary","grade":"3rd Grade","month":"Feb 2026","approved":1,"denied":2},{"school":"Nelson Place Elementary School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":0,"denied":2},{"school":"Nelson Place Elementary School","level":"Elementary","grade":"4th Grade","month":"Mar 2026","approved":2,"denied":1},{"school":"Nelson Place Elementary School","level":"Elementary","grade":"5th Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Nelson Place Elementary School","level":"Elementary","grade":"5th Grade","month":"Feb 2026","approved":2,"denied":0},{"school":"Nelson Place Elementary School","level":"Elementary","grade":"5th Grade","month":"Mar 2026","approved":2,"denied":2},{"school":"Nelson Place Elementary School","level":"Elementary","grade":"6th Grade","month":"Feb 2026","approved":1,"denied":1},{"school":"Nelson Place Elementary School","level":"Elementary","grade":"6th Grade","month":"Mar 2026","approved":2,"denied":1},{"school":"Norrback Avenue Elementary School","level":"Elementary","grade":"Kindergarten","month":"Apr 2026","approved":1,"denied":0},{"school":"Norrback Avenue Elementary School","level":"Elementary","grade":"Kindergarten","month":"Feb 2026","approved":2,"denied":1},{"school":"Norrback Avenue Elementary School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":3,"denied":1},{"school":"Norrback Avenue Elementary School","level":"Elementary","grade":"1st Grade","month":"Feb 2026","approved":3,"denied":0},{"school":"Norrback Avenue Elementary School","level":"Elementary","grade":"2nd Grade","month":"Feb 2026","approved":2,"denied":2},{"school":"Norrback Avenue Elementary School","level":"Elementary","grade":"2nd Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"Norrback Avenue Elementary School","level":"Elementary","grade":"3rd Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Norrback Avenue Elementary School","level":"Elementary","grade":"3rd Grade","month":"Feb 2026","approved":2,"denied":0},{"school":"Norrback Avenue Elementary School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"Norrback Avenue Elementary School","level":"Elementary","grade":"4th Grade","month":"Feb 2026","approved":2,"denied":0},{"school":"Norrback Avenue Elementary School","level":"Elementary","grade":"4th Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"Norrback Avenue Elementary School","level":"Elementary","grade":"5th Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Norrback Avenue Elementary School","level":"Elementary","grade":"5th Grade","month":"Feb 2026","approved":2,"denied":0},{"school":"Norrback Avenue Elementary School","level":"Elementary","grade":"5th Grade","month":"Mar 2026","approved":1,"denied":1},{"school":"Norrback Avenue Elementary School","level":"Elementary","grade":"6th Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"Norrback Avenue Elementary School","level":"Elementary","grade":"6th Grade","month":"Mar 2026","approved":0,"denied":2},{"school":"Quinsigamond Elementary School","level":"Elementary","grade":"Kindergarten","month":"Apr 2026","approved":0,"denied":1},{"school":"Quinsigamond Elementary School","level":"Elementary","grade":"Kindergarten","month":"Feb 2026","approved":1,"denied":1},{"school":"Quinsigamond Elementary School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":2,"denied":0},{"school":"Quinsigamond Elementary School","level":"Elementary","grade":"1st Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"Quinsigamond Elementary School","level":"Elementary","grade":"1st Grade","month":"Mar 2026","approved":2,"denied":1},{"school":"Quinsigamond Elementary School","level":"Elementary","grade":"2nd Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Quinsigamond Elementary School","level":"Elementary","grade":"2nd Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"Quinsigamond Elementary School","level":"Elementary","grade":"2nd Grade","month":"Mar 2026","approved":2,"denied":1},{"school":"Quinsigamond Elementary School","level":"Elementary","grade":"3rd Grade","month":"Apr 2026","approved":2,"denied":0},{"school":"Quinsigamond Elementary School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":2,"denied":0},{"school":"Quinsigamond Elementary School","level":"Elementary","grade":"4th Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Quinsigamond Elementary School","level":"Elementary","grade":"4th Grade","month":"Mar 2026","approved":2,"denied":1},{"school":"Quinsigamond Elementary School","level":"Elementary","grade":"5th Grade","month":"Apr 2026","approved":3,"denied":1},{"school":"Quinsigamond Elementary School","level":"Elementary","grade":"5th Grade","month":"Feb 2026","approved":1,"denied":1},{"school":"Quinsigamond Elementary School","level":"Elementary","grade":"5th Grade","month":"Mar 2026","approved":4,"denied":0},{"school":"Quinsigamond Elementary School","level":"Elementary","grade":"6th Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"Quinsigamond Elementary School","level":"Elementary","grade":"6th Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"Quinsigamond Elementary School","level":"Elementary","grade":"6th Grade","month":"Mar 2026","approved":1,"denied":0},{"school":"Rice Square Elementary School","level":"Elementary","grade":"Kindergarten","month":"Feb 2026","approved":0,"denied":1},{"school":"Rice Square Elementary School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":1,"denied":1},{"school":"Rice Square Elementary School","level":"Elementary","grade":"2nd Grade","month":"Mar 2026","approved":1,"denied":2},{"school":"Rice Square Elementary School","level":"Elementary","grade":"3rd Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"Rice Square Elementary School","level":"Elementary","grade":"5th Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"Roosevelt Elementary School","level":"Elementary","grade":"Kindergarten","month":"Apr 2026","approved":3,"denied":1},{"school":"Roosevelt Elementary School","level":"Elementary","grade":"Kindergarten","month":"Feb 2026","approved":15,"denied":0},{"school":"Roosevelt Elementary School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":4,"denied":4},{"school":"Roosevelt Elementary School","level":"Elementary","grade":"1st Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"Roosevelt Elementary School","level":"Elementary","grade":"1st Grade","month":"Feb 2026","approved":5,"denied":0},{"school":"Roosevelt Elementary School","level":"Elementary","grade":"1st Grade","month":"Mar 2026","approved":4,"denied":6},{"school":"Roosevelt Elementary School","level":"Elementary","grade":"2nd Grade","month":"Apr 2026","approved":4,"denied":0},{"school":"Roosevelt Elementary School","level":"Elementary","grade":"2nd Grade","month":"Feb 2026","approved":10,"denied":1},{"school":"Roosevelt Elementary School","level":"Elementary","grade":"2nd Grade","month":"Mar 2026","approved":3,"denied":2},{"school":"Roosevelt Elementary School","level":"Elementary","grade":"3rd Grade","month":"Apr 2026","approved":3,"denied":0},{"school":"Roosevelt Elementary School","level":"Elementary","grade":"3rd Grade","month":"Feb 2026","approved":2,"denied":0},{"school":"Roosevelt Elementary School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":5,"denied":2},{"school":"Roosevelt Elementary School","level":"Elementary","grade":"4th Grade","month":"Apr 2026","approved":4,"denied":0},{"school":"Roosevelt Elementary School","level":"Elementary","grade":"4th Grade","month":"Feb 2026","approved":8,"denied":0},{"school":"Roosevelt Elementary School","level":"Elementary","grade":"4th Grade","month":"Mar 2026","approved":6,"denied":0},{"school":"Roosevelt Elementary School","level":"Elementary","grade":"5th Grade","month":"Apr 2026","approved":3,"denied":0},{"school":"Roosevelt Elementary School","level":"Elementary","grade":"5th Grade","month":"Feb 2026","approved":7,"denied":1},{"school":"Roosevelt Elementary School","level":"Elementary","grade":"5th Grade","month":"Mar 2026","approved":6,"denied":0},{"school":"Roosevelt Elementary School","level":"Elementary","grade":"6th Grade","month":"Feb 2026","approved":9,"denied":0},{"school":"Roosevelt Elementary School","level":"Elementary","grade":"6th Grade","month":"Mar 2026","approved":6,"denied":1},{"school":"Tatnuck Magnet Elementary School","level":"Elementary","grade":"Kindergarten","month":"Apr 2026","approved":1,"denied":0},{"school":"Tatnuck Magnet Elementary School","level":"Elementary","grade":"Kindergarten","month":"Feb 2026","approved":1,"denied":4},{"school":"Tatnuck Magnet Elementary School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":1,"denied":0},{"school":"Tatnuck Magnet Elementary School","level":"Elementary","grade":"1st Grade","month":"Feb 2026","approved":0,"denied":2},{"school":"Tatnuck Magnet Elementary School","level":"Elementary","grade":"2nd Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Tatnuck Magnet Elementary School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":2,"denied":0},{"school":"Tatnuck Magnet Elementary School","level":"Elementary","grade":"4th Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"Tatnuck Magnet Elementary School","level":"Elementary","grade":"4th Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"Tatnuck Magnet Elementary School","level":"Elementary","grade":"4th Grade","month":"Mar 2026","approved":5,"denied":0},{"school":"Tatnuck Magnet Elementary School","level":"Elementary","grade":"5th Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"Tatnuck Magnet Elementary School","level":"Elementary","grade":"5th Grade","month":"Mar 2026","approved":3,"denied":1},{"school":"Tatnuck Magnet Elementary School","level":"Elementary","grade":"6th Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"Tatnuck Magnet Elementary School","level":"Elementary","grade":"6th Grade","month":"Mar 2026","approved":2,"denied":1},{"school":"Thorndyke Road Elementary School","level":"Elementary","grade":"Kindergarten","month":"Feb 2026","approved":3,"denied":3},{"school":"Thorndyke Road Elementary School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":0,"denied":1},{"school":"Thorndyke Road Elementary School","level":"Elementary","grade":"2nd Grade","month":"Mar 2026","approved":2,"denied":0},{"school":"Thorndyke Road Elementary School","level":"Elementary","grade":"3rd Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Thorndyke Road Elementary School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":2,"denied":0},{"school":"Thorndyke Road Elementary School","level":"Elementary","grade":"4th Grade","month":"Mar 2026","approved":1,"denied":0},{"school":"Thorndyke Road Elementary School","level":"Elementary","grade":"5th Grade","month":"Apr 2026","approved":1,"denied":2},{"school":"Thorndyke Road Elementary School","level":"Elementary","grade":"5th Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"Thorndyke Road Elementary School","level":"Elementary","grade":"5th Grade","month":"Mar 2026","approved":4,"denied":0},{"school":"Thorndyke Road Elementary School","level":"Elementary","grade":"Unknown","month":"Mar 2026","approved":0,"denied":1},{"school":"Union Hill Elementary School","level":"Elementary","grade":"Kindergarten","month":"Apr 2026","approved":1,"denied":0},{"school":"Union Hill Elementary School","level":"Elementary","grade":"1st Grade","month":"Feb 2026","approved":2,"denied":0},{"school":"Union Hill Elementary School","level":"Elementary","grade":"3rd Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"Union Hill Elementary School","level":"Elementary","grade":"4th Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"Vernon Hill Elementary School","level":"Elementary","grade":"Kindergarten","month":"Apr 2026","approved":1,"denied":0},{"school":"Vernon Hill Elementary School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":1,"denied":0},{"school":"Vernon Hill Elementary School","level":"Elementary","grade":"1st Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"Vernon Hill Elementary School","level":"Elementary","grade":"1st Grade","month":"Mar 2026","approved":3,"denied":0},{"school":"Vernon Hill Elementary School","level":"Elementary","grade":"2nd Grade","month":"Mar 2026","approved":1,"denied":0},{"school":"Vernon Hill Elementary School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":3,"denied":0},{"school":"Vernon Hill Elementary School","level":"Elementary","grade":"4th Grade","month":"Mar 2026","approved":4,"denied":0},{"school":"Vernon Hill Elementary School","level":"Elementary","grade":"6th Grade","month":"Mar 2026","approved":2,"denied":0},{"school":"Wawecus Road Elementary School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":1,"denied":1},{"school":"Wawecus Road Elementary School","level":"Elementary","grade":"2nd Grade","month":"Mar 2026","approved":1,"denied":1},{"school":"Wawecus Road Elementary School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":1,"denied":0},{"school":"Wawecus Road Elementary School","level":"Elementary","grade":"5th Grade","month":"Mar 2026","approved":1,"denied":0},{"school":"Wawecus Road Elementary School","level":"Elementary","grade":"6th Grade","month":"Mar 2026","approved":2,"denied":1},{"school":"West Tatnuck Elementary School","level":"Elementary","grade":"Kindergarten","month":"Apr 2026","approved":0,"denied":3},{"school":"West Tatnuck Elementary School","level":"Elementary","grade":"Kindergarten","month":"Feb 2026","approved":3,"denied":4},{"school":"West Tatnuck Elementary School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":0,"denied":7},{"school":"West Tatnuck Elementary School","level":"Elementary","grade":"1st Grade","month":"Apr 2026","approved":2,"denied":0},{"school":"West Tatnuck Elementary School","level":"Elementary","grade":"1st Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"West Tatnuck Elementary School","level":"Elementary","grade":"1st Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"West Tatnuck Elementary School","level":"Elementary","grade":"2nd Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"West Tatnuck Elementary School","level":"Elementary","grade":"3rd Grade","month":"Apr 2026","approved":4,"denied":0},{"school":"West Tatnuck Elementary School","level":"Elementary","grade":"3rd Grade","month":"Feb 2026","approved":1,"denied":4},{"school":"West Tatnuck Elementary School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"West Tatnuck Elementary School","level":"Elementary","grade":"4th Grade","month":"Apr 2026","approved":2,"denied":0},{"school":"West Tatnuck Elementary School","level":"Elementary","grade":"5th Grade","month":"Apr 2026","approved":6,"denied":0},{"school":"West Tatnuck Elementary School","level":"Elementary","grade":"6th Grade","month":"Apr 2026","approved":10,"denied":0},{"school":"West Tatnuck Elementary School","level":"Elementary","grade":"6th Grade","month":"Feb 2026","approved":1,"denied":1},{"school":"West Tatnuck Elementary School","level":"Elementary","grade":"6th Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"Woodland Academy Elementary School","level":"Elementary","grade":"Kindergarten","month":"Apr 2026","approved":1,"denied":0},{"school":"Woodland Academy Elementary School","level":"Elementary","grade":"Kindergarten","month":"Feb 2026","approved":1,"denied":1},{"school":"Woodland Academy Elementary School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":0,"denied":2},{"school":"Woodland Academy Elementary School","level":"Elementary","grade":"1st Grade","month":"Apr 2026","approved":5,"denied":1},{"school":"Woodland Academy Elementary School","level":"Elementary","grade":"1st Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"Woodland Academy Elementary School","level":"Elementary","grade":"1st Grade","month":"Mar 2026","approved":3,"denied":0},{"school":"Woodland Academy Elementary School","level":"Elementary","grade":"2nd Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"Woodland Academy Elementary School","level":"Elementary","grade":"2nd Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"Woodland Academy Elementary School","level":"Elementary","grade":"2nd Grade","month":"Mar 2026","approved":2,"denied":0},{"school":"Woodland Academy Elementary School","level":"Elementary","grade":"3rd Grade","month":"Apr 2026","approved":3,"denied":0},{"school":"Woodland Academy Elementary School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":3,"denied":1},{"school":"Woodland Academy Elementary School","level":"Elementary","grade":"4th Grade","month":"Apr 2026","approved":4,"denied":0},{"school":"Woodland Academy Elementary School","level":"Elementary","grade":"5th Grade","month":"Apr 2026","approved":7,"denied":2},{"school":"Woodland Academy Elementary School","level":"Elementary","grade":"5th Grade","month":"Feb 2026","approved":3,"denied":0},{"school":"Woodland Academy Elementary School","level":"Elementary","grade":"5th Grade","month":"Mar 2026","approved":3,"denied":0},{"school":"Woodland Academy Elementary School","level":"Elementary","grade":"6th Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"Woodland Academy Elementary School","level":"Elementary","grade":"6th Grade","month":"Feb 2026","approved":3,"denied":0},{"school":"Woodland Academy Elementary School","level":"Elementary","grade":"6th Grade","month":"Mar 2026","approved":3,"denied":1},{"school":"Worcester Arts Magnet School","level":"Elementary","grade":"1st Grade","month":"Apr 2026","approved":1,"denied":1},{"school":"Worcester Arts Magnet School","level":"Elementary","grade":"1st Grade","month":"Feb 2026","approved":0,"denied":2},{"school":"Worcester Arts Magnet School","level":"Elementary","grade":"1st Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"Worcester Arts Magnet School","level":"Elementary","grade":"2nd Grade","month":"Apr 2026","approved":0,"denied":2},{"school":"Worcester Arts Magnet School","level":"Elementary","grade":"2nd Grade","month":"Feb 2026","approved":0,"denied":2},{"school":"Worcester Arts Magnet School","level":"Elementary","grade":"2nd Grade","month":"Mar 2026","approved":0,"denied":2},{"school":"Worcester Arts Magnet School","level":"Elementary","grade":"3rd Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Worcester Arts Magnet School","level":"Elementary","grade":"3rd Grade","month":"Feb 2026","approved":0,"denied":2},{"school":"Worcester Arts Magnet School","level":"Elementary","grade":"3rd Grade","month":"Mar 2026","approved":0,"denied":2},{"school":"Worcester Arts Magnet School","level":"Elementary","grade":"4th Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"Worcester Arts Magnet School","level":"Elementary","grade":"5th Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Worcester Arts Magnet School","level":"Elementary","grade":"6th Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"Worcester Dual Language Magnet School","level":"Elementary","grade":"Kindergarten","month":"Mar 2026","approved":1,"denied":0},{"school":"Worcester Dual Language Magnet School","level":"Elementary","grade":"2nd Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Worcester Dual Language Magnet School","level":"Elementary","grade":"3rd Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"Worcester Dual Language Magnet School","level":"Elementary","grade":"4th Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"Worcester Dual Language Magnet School","level":"Elementary","grade":"5th Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Worcester Dual Language Magnet School","level":"Elementary","grade":"7th Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Worcester Dual Language Magnet School","level":"Elementary","grade":"8th Grade","month":"Apr 2026","approved":4,"denied":0},{"school":"Burncoat Middle School","level":"Middle","grade":"6th Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"Burncoat Middle School","level":"Middle","grade":"7th Grade","month":"Apr 2026","approved":0,"denied":3},{"school":"Burncoat Middle School","level":"Middle","grade":"7th Grade","month":"Feb 2026","approved":5,"denied":5},{"school":"Burncoat Middle School","level":"Middle","grade":"7th Grade","month":"Mar 2026","approved":4,"denied":7},{"school":"Burncoat Middle School","level":"Middle","grade":"8th Grade","month":"Apr 2026","approved":2,"denied":0},{"school":"Burncoat Middle School","level":"Middle","grade":"8th Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"Burncoat Middle School","level":"Middle","grade":"8th Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"Burncoat Middle School","level":"Middle","grade":"Unknown","month":"Apr 2026","approved":1,"denied":0},{"school":"Claremont Academy","level":"Middle","grade":"7th Grade","month":"Apr 2026","approved":1,"denied":1},{"school":"Claremont Academy","level":"Middle","grade":"7th Grade","month":"Feb 2026","approved":0,"denied":5},{"school":"Claremont Academy","level":"Middle","grade":"7th Grade","month":"Mar 2026","approved":5,"denied":1},{"school":"Claremont Academy","level":"Middle","grade":"8th Grade","month":"Apr 2026","approved":4,"denied":0},{"school":"Claremont Academy","level":"Middle","grade":"8th Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"Claremont Academy","level":"Middle","grade":"8th Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"Forest Grove Middle School","level":"Middle","grade":"7th Grade","month":"Apr 2026","approved":1,"denied":5},{"school":"Forest Grove Middle School","level":"Middle","grade":"7th Grade","month":"Feb 2026","approved":11,"denied":17},{"school":"Forest Grove Middle School","level":"Middle","grade":"7th Grade","month":"Mar 2026","approved":2,"denied":19},{"school":"Forest Grove Middle School","level":"Middle","grade":"8th Grade","month":"Feb 2026","approved":3,"denied":0},{"school":"Forest Grove Middle School","level":"Middle","grade":"8th Grade","month":"Mar 2026","approved":3,"denied":3},{"school":"Forest Grove Middle School","level":"Middle","grade":"9th Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Sullivan Middle School","level":"Middle","grade":"7th Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"Sullivan Middle School","level":"Middle","grade":"7th Grade","month":"Feb 2026","approved":0,"denied":3},{"school":"Sullivan Middle School","level":"Middle","grade":"7th Grade","month":"Mar 2026","approved":0,"denied":2},{"school":"Sullivan Middle School","level":"Middle","grade":"8th Grade","month":"Feb 2026","approved":0,"denied":2},{"school":"Sullivan Middle School","level":"Middle","grade":"8th Grade","month":"Mar 2026","approved":2,"denied":1},{"school":"Worcester East Middle School","level":"Middle","grade":"7th Grade","month":"Feb 2026","approved":1,"denied":1},{"school":"Worcester East Middle School","level":"Middle","grade":"7th Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"Burncoat High School","level":"High","grade":"9th Grade","month":"Apr 2026","approved":6,"denied":0},{"school":"Burncoat High School","level":"High","grade":"9th Grade","month":"Feb 2026","approved":3,"denied":0},{"school":"Burncoat High School","level":"High","grade":"9th Grade","month":"Mar 2026","approved":12,"denied":3},{"school":"Burncoat High School","level":"High","grade":"10th Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"Burncoat High School","level":"High","grade":"10th Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"Burncoat High School","level":"High","grade":"10th Grade","month":"Mar 2026","approved":1,"denied":0},{"school":"Burncoat High School","level":"High","grade":"11th Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"Burncoat High School","level":"High","grade":"12th Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"Burncoat High School","level":"High","grade":"12th Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"Claremont Academy","level":"High","grade":"9th Grade","month":"Apr 2026","approved":4,"denied":0},{"school":"Claremont Academy","level":"High","grade":"9th Grade","month":"Mar 2026","approved":4,"denied":0},{"school":"Claremont Academy","level":"High","grade":"10th Grade","month":"Mar 2026","approved":5,"denied":0},{"school":"Claremont Academy","level":"High","grade":"11th Grade","month":"Apr 2026","approved":6,"denied":1},{"school":"Claremont Academy","level":"High","grade":"11th Grade","month":"Feb 2026","approved":2,"denied":0},{"school":"Claremont Academy","level":"High","grade":"11th Grade","month":"Mar 2026","approved":1,"denied":0},{"school":"Claremont Academy","level":"High","grade":"12th Grade","month":"Apr 2026","approved":3,"denied":1},{"school":"Claremont Academy","level":"High","grade":"12th Grade","month":"Feb 2026","approved":2,"denied":0},{"school":"Claremont Academy","level":"High","grade":"12th Grade","month":"Mar 2026","approved":2,"denied":0},{"school":"Doherty Memorial High School","level":"High","grade":"8th Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"Doherty Memorial High School","level":"High","grade":"8th Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"Doherty Memorial High School","level":"High","grade":"9th Grade","month":"Apr 2026","approved":1,"denied":9},{"school":"Doherty Memorial High School","level":"High","grade":"9th Grade","month":"Feb 2026","approved":4,"denied":4},{"school":"Doherty Memorial High School","level":"High","grade":"9th Grade","month":"Mar 2026","approved":10,"denied":15},{"school":"Doherty Memorial High School","level":"High","grade":"10th Grade","month":"Apr 2026","approved":0,"denied":8},{"school":"Doherty Memorial High School","level":"High","grade":"10th Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"Doherty Memorial High School","level":"High","grade":"10th Grade","month":"Mar 2026","approved":2,"denied":4},{"school":"Doherty Memorial High School","level":"High","grade":"11th Grade","month":"Feb 2026","approved":1,"denied":2},{"school":"Doherty Memorial High School","level":"High","grade":"12th Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"Doherty Memorial High School","level":"High","grade":"12th Grade","month":"Feb 2026","approved":0,"denied":1},{"school":"Doherty Memorial High School","level":"High","grade":"12th Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"North High School","level":"High","grade":"9th Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"North High School","level":"High","grade":"9th Grade","month":"Mar 2026","approved":0,"denied":2},{"school":"North High School","level":"High","grade":"10th Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"North High School","level":"High","grade":"10th Grade","month":"Mar 2026","approved":0,"denied":2},{"school":"North High School","level":"High","grade":"11th Grade","month":"Apr 2026","approved":0,"denied":1},{"school":"North High School","level":"High","grade":"11th Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"North High School","level":"High","grade":"12th Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"North High School","level":"High","grade":"12th Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"South High School","level":"High","grade":"8th Grade","month":"Mar 2026","approved":0,"denied":1},{"school":"South High School","level":"High","grade":"9th Grade","month":"Apr 2026","approved":1,"denied":0},{"school":"South High School","level":"High","grade":"9th Grade","month":"Mar 2026","approved":3,"denied":1},{"school":"South High School","level":"High","grade":"10th Grade","month":"Apr 2026","approved":2,"denied":1},{"school":"South High School","level":"High","grade":"10th Grade","month":"Feb 2026","approved":1,"denied":0},{"school":"South High School","level":"High","grade":"10th Grade","month":"Mar 2026","approved":3,"denied":2},{"school":"South High School","level":"High","grade":"11th Grade","month":"Apr 2026","approved":3,"denied":2},{"school":"South High School","level":"High","grade":"11th Grade","month":"Feb 2026","approved":3,"denied":2},{"school":"South High School","level":"High","grade":"11th Grade","month":"Mar 2026","approved":3,"denied":1},{"school":"South High School","level":"High","grade":"12th Grade","month":"Apr 2026","approved":5,"denied":1},{"school":"South High School","level":"High","grade":"12th Grade","month":"Feb 2026","approved":1,"denied":1},{"school":"South High School","level":"High","grade":"12th Grade","month":"Mar 2026","approved":8,"denied":0}];
+const META = {"total": 1240, "approved": 798, "denied": 442, "approvalRate": 64.4, "missingGrade": 3, "gradeMismatch": 11, "rawUniqueSchools": 43, "normalizedUniqueSchools": 42, "verified": true, "levelCounts": {"Elementary": {"total": 930, "approved": 644, "denied": 286, "rate": 69.2}, "Middle": {"total": 128, "approved": 46, "denied": 82, "rate": 35.9}, "High": {"total": 182, "approved": 108, "denied": 74, "rate": 59.3}}, "normalizations": [{"from": "Claremont Academy (7th through 12th grades)", "to": "Claremont Academy"}, {"from": "Worcester Arts Magnet School (Grades 1-6, for Kindergarten application please visit the WPS Enrollment Website)", "to": "Worcester Arts Magnet School"}, {"from": "Jacob Hiatt Elementary School(Grades 1-6, for Kindergarten application please visit the WPS Enrollment Website)", "to": "Jacob Hiatt Elementary School"}, {"from": "Worcester Dual Language Magnet School - (Grades pre K- 6 please visit the WPS Enrollment Website)", "to": "Worcester Dual Language Magnet School"}, {"from": "Worcester Dual Language Magnet School - Dual Language Program", "to": "Worcester Dual Language Magnet School"}], "sourceFile": "#W091663-070926- District Wide Sample- V1 (1).xlsx"};
+const gradeOrder = ["Kindergarten", "1st Grade", "2nd Grade", "3rd Grade", "4th Grade", "5th Grade", "6th Grade", "7th Grade", "8th Grade", "9th Grade", "10th Grade", "11th Grade", "12th Grade", "Unknown"];
+const monthOrder = ["Feb 2026","Mar 2026","Apr 2026","Unknown"];
+
+const fmt = new Intl.NumberFormat("en-US");
+const pct = n => Number.isFinite(n) ? n.toFixed(1) + "%" : "—";
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));
+
+function aggregateRows(level="All") {
+  const map = new Map();
+  for (const r of CUBE) {
+    if (level !== "All" && r.level !== level) continue;
+    const key = r.school;
+    if (!map.has(key)) map.set(key, {school:r.school, levels:new Set(), approved:0, denied:0});
+    const o = map.get(key);
+    o.levels.add(r.level);
+    o.approved += r.approved;
+    o.denied += r.denied;
+  }
+  return [...map.values()].map(o => {
+    const total = o.approved + o.denied;
+    return {
+      school:o.school,
+      level:[...o.levels].join(" / "),
+      approved:o.approved,
+      denied:o.denied,
+      total,
+      rate: total ? o.approved / total * 100 : 0
+    };
+  });
+}
+
+function overall(level="All") {
+  let approved=0, denied=0;
+  const schools=new Set();
+  for (const r of CUBE) {
+    if (level !== "All" && r.level !== level) continue;
+    approved += r.approved; denied += r.denied; schools.add(r.school);
+  }
+  const total=approved+denied;
+  return {approved,denied,total,rate: total?approved/total*100:0,schools:schools.size};
+}
+
+function sortSchools(rows, mode) {
+  const copy=[...rows];
+  copy.sort((a,b) => {
+    if (mode === "rate") return b.rate-a.rate || b.total-a.total || a.school.localeCompare(b.school);
+    if (mode === "approved") return b.approved-a.approved || b.total-a.total || a.school.localeCompare(b.school);
+    if (mode === "denied") return b.denied-a.denied || b.total-a.total || a.school.localeCompare(b.school);
+    return b.total-a.total || b.rate-a.rate || a.school.localeCompare(b.school);
+  });
+  return copy;
+}
+
+function setSchoolA(name) {
+  const a=document.getElementById("schoolA");
+  if ([...a.options].some(o=>o.value===name)) {
+    a.value=name;
+    renderDetails();
+    document.getElementById("schoolA").scrollIntoView({behavior:"smooth",block:"center"});
+  }
+}
+
+function renderSchoolBars(rows) {
+  const min=Math.max(1,Number(document.getElementById("minApps").value)||1);
+  const sorted=sortSchools(rows.filter(r=>r.total>=min),document.getElementById("sortFilter").value);
+  const maxTotal=Math.max(1,...sorted.map(r=>r.total));
+  const html=sorted.map(r=>`
+    <div class="school-row" data-school="${esc(r.school)}">
+      <div class="school-name" title="${esc(r.school)}">${esc(r.school)}</div>
+      <div class="stack" title="${r.approved} approved; ${r.denied} denied">
+        <div class="a" style="width:${r.approved/maxTotal*100}%"></div>
+        <div class="d" style="width:${r.denied/maxTotal*100}%"></div>
+      </div>
+      <div class="rowstat">${fmt.format(r.total)} · ${pct(r.rate)}</div>
+    </div>`).join("");
+  const el=document.getElementById("schoolBars");
+  el.innerHTML=html || `<div class="small">No schools meet the current minimum application count.</div>`;
+  el.querySelectorAll(".school-row").forEach(n=>n.addEventListener("click",()=>setSchoolA(n.dataset.school)));
+}
+
+function renderRateBars(rows) {
+  const min=Math.max(1,Number(document.getElementById("minApps").value)||1);
+  const sorted=[...rows].filter(r=>r.total>=min).sort((a,b)=>b.rate-a.rate||b.total-a.total);
+  const html=sorted.map(r=>`
+    <div class="rate-row" data-school="${esc(r.school)}">
+      <div class="school-name">${esc(r.school)}</div>
+      <div class="rate-track"><div class="rate-fill" style="width:${Math.max(0,Math.min(100,r.rate))}%"></div></div>
+      <div class="rate-value">${pct(r.rate)}<div class="small">n=${r.total}</div></div>
+    </div>`).join("");
+  const el=document.getElementById("rateBars");
+  el.innerHTML=html || `<div class="small">No schools meet the current minimum application count.</div>`;
+  el.querySelectorAll(".rate-row").forEach(n=>n.addEventListener("click",()=>setSchoolA(n.dataset.school)));
+}
+
+function renderScatter(rows) {
+  const min=Math.max(1,Number(document.getElementById("minApps").value)||1);
+  rows=rows.filter(r=>r.total>=min);
+  const W=620,H=320,L=52,R=18,T=15,B=44;
+  const maxX=Math.max(1,...rows.map(r=>r.total));
+  const x=v=>L+(v/maxX)*(W-L-R);
+  const y=v=>T+((100-v)/100)*(H-T-B);
+  let svg=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Scatter plot of school application volume versus approval rate">`;
+  for (let p=0;p<=100;p+=25) {
+    svg+=`<line class="gridline" x1="${L}" y1="${y(p)}" x2="${W-R}" y2="${y(p)}"></line>
+          <text x="${L-8}" y="${y(p)+4}" text-anchor="end" font-size="11" fill="#8a8fa0">${p}%</text>`;
+  }
+  svg+=`<line class="axis" x1="${L}" y1="${H-B}" x2="${W-R}" y2="${H-B}"></line>
+        <line class="axis" x1="${L}" y1="${T}" x2="${L}" y2="${H-B}"></line>
+        <text x="${(L+W-R)/2}" y="${H-10}" text-anchor="middle" font-size="11" fill="#8a8fa0">Applications</text>`;
+  const ticks=4;
+  for(let i=0;i<=ticks;i++) {
+    const val=Math.round(maxX*i/ticks);
+    svg+=`<text x="${x(val)}" y="${H-B+18}" text-anchor="middle" font-size="10" fill="#8a8fa0">${val}</text>`;
+  }
+  for(const r of rows) {
+    const radius=4.5+Math.min(7,Math.sqrt(r.total)/2.5);
+    svg+=`<circle class="scatter-dot" data-school="${esc(r.school)}" cx="${x(r.total)}" cy="${y(r.rate)}" r="${radius}">
+      <title>${esc(r.school)} — ${r.total} applications, ${pct(r.rate)} approved</title>
+    </circle>`;
+  }
+  svg+="</svg>";
+  const el=document.getElementById("scatter");
+  el.innerHTML=svg;
+  el.querySelectorAll(".scatter-dot").forEach(n=>n.addEventListener("click",()=>setSchoolA(n.dataset.school)));
+}
+
+function gradeStats(level="All") {
+  const m=new Map();
+  for(const r of CUBE) {
+    if(level!=="All" && r.level!==level) continue;
+    if(!m.has(r.grade)) m.set(r.grade,{grade:r.grade,approved:0,denied:0});
+    const o=m.get(r.grade); o.approved+=r.approved; o.denied+=r.denied;
+  }
+  return [...m.values()].map(o=>({...o,total:o.approved+o.denied,rate:(o.approved+o.denied)?o.approved/(o.approved+o.denied)*100:0}))
+    .sort((a,b)=>gradeOrder.indexOf(a.grade)-gradeOrder.indexOf(b.grade));
+}
+
+function renderGradeBars(level) {
+  const rows=gradeStats(level);
+  const max=Math.max(1,...rows.map(r=>r.total));
+  document.getElementById("gradeBars").innerHTML=rows.map(r=>`
+    <div class="grade-row">
+      <div class="grade-label">${esc(r.grade)}</div>
+      <div class="stack" title="${r.approved} approved; ${r.denied} denied">
+        <div class="a" style="width:${r.approved/max*100}%"></div>
+        <div class="d" style="width:${r.denied/max*100}%"></div>
+      </div>
+      <div class="rowstat">${r.total} · ${pct(r.rate)}</div>
+    </div>`).join("");
+}
+
+function rateColor(rate, total) {
+  if(!total) return "background:#191919;color:#6a6f7d";
+  const alpha=.12+Math.abs(rate-50)/50*.25;
+  if(rate>=50) return `background:rgba(47,191,143,${alpha});color:#9fe8cd`;
+  return `background:rgba(229,106,115,${alpha});color:#f0b9bd`;
+}
+
+function renderHeatmap(level, schools) {
+  let grades=gradeStats(level).filter(g=>g.total>0).map(g=>g.grade);
+  const map=new Map();
+  for(const r of CUBE) {
+    if(level!=="All" && r.level!==level) continue;
+    const key=r.school+"|||"+r.grade;
+    if(!map.has(key)) map.set(key,{a:0,d:0});
+    const o=map.get(key);o.a+=r.approved;o.d+=r.denied;
+  }
+  const sorted=[...schools].sort((a,b)=>b.total-a.total||a.school.localeCompare(b.school));
+  let html=`<table class="heat"><thead><tr><th>School</th>${grades.map(g=>`<th>${esc(g.replace(" Grade",""))}</th>`).join("")}</tr></thead><tbody>`;
+  for(const s of sorted) {
+    html+=`<tr><td class="name">${esc(s.school)}</td>`;
+    for(const g of grades) {
+      const v=map.get(s.school+"|||"+g);
+      if(!v) html+=`<td style="${rateColor(0,0)}">—</td>`;
+      else {
+        const n=v.a+v.d, rate=v.a/n*100;
+        html+=`<td style="${rateColor(rate,n)}" title="${v.a} approved, ${v.d} denied">${pct(rate)}<br><span class="small">n=${n}</span></td>`;
+      }
+    }
+    html+="</tr>";
+  }
+  html+="</tbody></table>";
+  document.getElementById("heatmap").innerHTML=html;
+}
+
+function timelineStats(level) {
+  const m=new Map();
+  for(const r of CUBE) {
+    if(level!=="All" && r.level!==level) continue;
+    if(!m.has(r.month))m.set(r.month,{month:r.month,approved:0,denied:0});
+    const o=m.get(r.month);o.approved+=r.approved;o.denied+=r.denied;
+  }
+  return [...m.values()].sort((a,b)=>monthOrder.indexOf(a.month)-monthOrder.indexOf(b.month));
+}
+
+function renderTimeline(level) {
+  const rows=timelineStats(level), max=Math.max(1,...rows.map(r=>r.approved+r.denied));
+  document.getElementById("timeline").innerHTML=rows.map(r=>{
+    const total=r.approved+r.denied;
+    return `<div class="grade-row">
+      <div class="grade-label">${esc(r.month)}</div>
+      <div class="stack">
+        <div class="a" style="width:${r.approved/max*100}%"></div>
+        <div class="d" style="width:${r.denied/max*100}%"></div>
+      </div>
+      <div class="rowstat">${total} · ${pct(r.approved/total*100)}</div>
+    </div>`;
+  }).join("");
+}
+
+function renderLevelCompare() {
+  const rows=["Elementary","Middle","High"].map(level=>({level,...overall(level)}));
+  document.getElementById("levelCompare").innerHTML=rows.map(r=>`
+    <div class="rate-row">
+      <div class="school-name">${r.level} <span class="small">n=${r.total}</span></div>
+      <div class="rate-track"><div class="rate-fill" style="width:${r.rate}%"></div></div>
+      <div class="rate-value">${pct(r.rate)}</div>
+    </div>`).join("");
+}
+
+function schoolRowsForSelector(level) {
+  return aggregateRows(level).sort((a,b)=>a.school.localeCompare(b.school));
+}
+
+function updateSchoolSelectors(level) {
+  const rows=schoolRowsForSelector(level);
+  const a=document.getElementById("schoolA"), b=document.getElementById("schoolB");
+  const oldA=a.value,oldB=b.value;
+  const options=rows.map(r=>`<option value="${esc(r.school)}">${esc(r.school)}</option>`).join("");
+  a.innerHTML=options;b.innerHTML=options;
+  if(rows.length) {
+    a.value=rows.some(r=>r.school===oldA)?oldA:rows[0].school;
+    b.value=rows.some(r=>r.school===oldB)?oldB:(rows[1]?.school||rows[0].school);
+  }
+}
+
+function oneSchoolStats(name, level) {
+  let approved=0,denied=0;
+  const grades=new Map();
+  const levels=new Set();
+  for(const r of CUBE) {
+    if(r.school!==name) continue;
+    if(level!=="All" && r.level!==level) continue;
+    levels.add(r.level);
+    approved+=r.approved;denied+=r.denied;
+    if(!grades.has(r.grade))grades.set(r.grade,{approved:0,denied:0});
+    const o=grades.get(r.grade);o.approved+=r.approved;o.denied+=r.denied;
+  }
+  const total=approved+denied;
+  return {
+    school:name,level:[...levels].join(" / "),approved,denied,total,rate:total?approved/total*100:0,
+    grades:[...grades.entries()].map(([grade,o])=>({grade,...o,total:o.approved+o.denied,rate:o.approved/(o.approved+o.denied)*100}))
+      .sort((a,b)=>gradeOrder.indexOf(a.grade)-gradeOrder.indexOf(b.grade))
+  };
+}
+
+function detailHtml(s, peerRate) {
+  const delta=s.rate-peerRate;
+  return `<h3>${esc(s.school)}</h3>
+    <div class="big-rate">${pct(s.rate)}</div>
+    <div class="peer">${s.approved} approved · ${s.denied} denied · ${s.total} total</div>
+    <div class="peer" style="margin-top:5px">${delta>=0?"+":""}${delta.toFixed(1)} percentage points vs. current peer-group average</div>
+    <div style="margin-top:12px">${s.grades.map(g=>`
+      <div class="grade-row">
+        <div class="grade-label">${esc(g.grade)}</div>
+        <div class="rate-track"><div class="rate-fill" style="width:${g.rate}%"></div></div>
+        <div class="rowstat">${pct(g.rate)} · n=${g.total}</div>
+      </div>`).join("") || '<div class="small">No grade data.</div>'}</div>`;
+}
+
+function renderDetails() {
+  const level=document.getElementById("levelFilter").value;
+  const aName=document.getElementById("schoolA").value,bName=document.getElementById("schoolB").value;
+  if(!aName||!bName)return;
+  const peer=overall(level);
+  const a=oneSchoolStats(aName,level),b=oneSchoolStats(bName,level);
+  document.getElementById("detailA").innerHTML=detailHtml(a,peer.rate);
+  document.getElementById("detailB").innerHTML=detailHtml(b,peer.rate);
+  const delta=a.rate-b.rate;
+  document.getElementById("comparisonCallout").innerHTML =
+    `<strong>${esc(a.school)}</strong> has an approval rate ${Math.abs(delta).toFixed(1)} percentage points ${delta>=0?"higher":"lower"} than <strong>${esc(b.school)}</strong> in the current view. `+
+    `Application volume is ${a.total} vs. ${b.total}, so rate differences should be read alongside the sample sizes.`;
+}
+
+function renderTable(level) {
+  const rows=aggregateRows(level).sort((a,b)=>b.rate-a.rate||b.total-a.total);
+  const ranks=new Map(rows.map((r,i)=>[r.school,i+1]));
+  document.getElementById("dataRows").innerHTML=rows.map(r=>`
+    <tr><td>${esc(r.school)}</td><td>${esc(r.level)}</td><td>${r.total}</td><td>${r.approved}</td><td>${r.denied}</td><td>${pct(r.rate)}</td><td>${ranks.get(r.school)} of ${rows.length}</td></tr>`).join("");
+}
+
+function renderAudit() {
+  document.getElementById("verifyBadge").textContent = META.verified
+    ? `✓ Math checked twice · ${META.approved} approved + ${META.denied} denied = ${META.total}`
+    : "⚠ Verification discrepancy";
+  document.getElementById("sourceFile").textContent=META.sourceFile;
+  document.getElementById("auditNote").innerHTML=`
+    <p class="${META.verified?"check":""}">${META.verified?"✓ Both independent aggregation passes reconcile exactly.":"⚠ A reconciliation check failed."}</p>
+    <p><strong>Pass 1:</strong> ${fmt.format(META.approved)} approved + ${fmt.format(META.denied)} denied = ${fmt.format(META.total)} decisions.</p>
+    <p><strong>Pass 2:</strong> the school/grade/month grouped totals independently sum back to the same ${fmt.format(META.total)} decisions, with the same approved and denied counts.</p>
+    <p><strong>Grade completeness:</strong> ${fmt.format(META.total-META.missingGrade)} rows have an entering grade; ${META.missingGrade} do not.</p>
+    <p><strong>Quality flags:</strong> ${META.gradeMismatch} rows contain an entering grade that does not match the requested building's normal level. They are retained and flagged rather than deleted.</p>
+    <p><strong>School names:</strong> ${META.rawUniqueSchools} raw target labels became ${META.normalizedUniqueSchools} normalized schools.</p>`;
+  document.getElementById("normalizationList").innerHTML=META.normalizations.map(x=>`<div style="margin:7px 0"><strong>${esc(x.from)}</strong><br>→ ${esc(x.to)}</div>`).join("");
+}
+
+function renderAll() {
+  const level=document.getElementById("levelFilter").value;
+  const o=overall(level);
+  document.getElementById("mTotal").textContent=fmt.format(o.total);
+  document.getElementById("mApproved").textContent=fmt.format(o.approved);
+  document.getElementById("mDenied").textContent=fmt.format(o.denied);
+  document.getElementById("mRate").textContent=pct(o.rate);
+  document.getElementById("mSchools").textContent=fmt.format(o.schools);
+  document.getElementById("mTotalSub").textContent=level==="All"?"All school levels":level+" school requests";
+  document.getElementById("mApprovedSub").textContent=pct(o.approved/o.total*100)+" of decisions";
+  document.getElementById("mDeniedSub").textContent=pct(o.denied/o.total*100)+" of decisions";
+  const rows=aggregateRows(level);
+  renderSchoolBars(rows);
+  renderRateBars(rows);
+  renderScatter(rows);
+  renderGradeBars(level);
+  renderHeatmap(level,rows);
+  renderTimeline(level);
+  renderLevelCompare();
+  updateSchoolSelectors(level);
+  renderDetails();
+  renderTable(level);
+}
+
+function csvEscape(s) {
+  s=String(s??"");
+  return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s;
+}
+function downloadCSV() {
+  const level=document.getElementById("levelFilter").value;
+  const rows=aggregateRows(level).sort((a,b)=>b.total-a.total);
+  const lines=[["School","Level","Total","Approved","Denied","Approval Rate"].join(",")];
+  for(const r of rows) lines.push([r.school,r.level,r.total,r.approved,r.denied,r.rate.toFixed(1)+"%"].map(csvEscape).join(","));
+  const blob=new Blob([lines.join("\n")],{type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download="school_choice_summary_"+level.toLowerCase().replace(/\W+/g,"_")+".csv";
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(a.href);
+}
+
+document.getElementById("levelFilter").addEventListener("change",renderAll);
+document.getElementById("sortFilter").addEventListener("change",renderAll);
+document.getElementById("minApps").addEventListener("input",renderAll);
+document.getElementById("schoolA").addEventListener("change",renderDetails);
+document.getElementById("schoolB").addEventListener("change",renderDetails);
+document.getElementById("csvBtn").addEventListener("click",downloadCSV);
+document.getElementById("printBtn").addEventListener("click",()=>window.print());
+
+renderAudit();
+renderAll();
+</script>
+</body>
+</html>

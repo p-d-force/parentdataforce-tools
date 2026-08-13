@@ -1,0 +1,318 @@
+﻿Section,School Level,School,Entering Grade,Total Applications,Approved,Denied,Approval Rate
+OVERALL,,,,1240,798,442,64.4%
+LEVEL TOTAL,Elementary,,,930,644,286,69.2%
+LEVEL TOTAL,Middle,,,128,46,82,35.9%
+LEVEL TOTAL,High,,,182,108,74,59.3%
+GRADE TOTAL,,,Kindergarten,182,84,98,46.2%
+GRADE TOTAL,,,1st Grade,116,85,31,73.3%
+GRADE TOTAL,,,2nd Grade,119,78,41,65.5%
+GRADE TOTAL,,,3rd Grade,147,108,39,73.5%
+GRADE TOTAL,,,4th Grade,100,77,23,77.0%
+GRADE TOTAL,,,5th Grade,143,114,29,79.7%
+GRADE TOTAL,,,6th Grade,116,94,22,81.0%
+GRADE TOTAL,,,7th Grade,103,30,73,29.1%
+GRADE TOTAL,,,8th Grade,31,19,12,61.3%
+GRADE TOTAL,,,9th Grade,84,48,36,57.1%
+GRADE TOTAL,,,10th Grade,35,16,19,45.7%
+GRADE TOTAL,,,11th Grade,30,19,11,63.3%
+GRADE TOTAL,,,12th Grade,31,25,6,80.6%
+GRADE TOTAL,,,Unknown,3,1,2,33.3%
+LEVEL + GRADE,Elementary,,Kindergarten,182,84,98,46.2%
+LEVEL + GRADE,Elementary,,1st Grade,116,85,31,73.3%
+LEVEL + GRADE,Elementary,,2nd Grade,119,78,41,65.5%
+LEVEL + GRADE,Elementary,,3rd Grade,147,108,39,73.5%
+LEVEL + GRADE,Elementary,,4th Grade,100,77,23,77.0%
+LEVEL + GRADE,Elementary,,5th Grade,143,114,29,79.7%
+LEVEL + GRADE,Elementary,,6th Grade,115,94,21,81.7%
+LEVEL + GRADE,Elementary,,7th Grade,2,0,2,0.0%
+LEVEL + GRADE,Elementary,,8th Grade,4,4,0,100.0%
+LEVEL + GRADE,Elementary,,Unknown,2,0,2,0.0%
+LEVEL + GRADE,Middle,,6th Grade,1,0,1,0.0%
+LEVEL + GRADE,Middle,,7th Grade,101,30,71,29.7%
+LEVEL + GRADE,Middle,,8th Grade,24,15,9,62.5%
+LEVEL + GRADE,Middle,,9th Grade,1,0,1,0.0%
+LEVEL + GRADE,Middle,,Unknown,1,1,0,100.0%
+LEVEL + GRADE,High,,8th Grade,3,0,3,0.0%
+LEVEL + GRADE,High,,9th Grade,83,48,35,57.8%
+LEVEL + GRADE,High,,10th Grade,35,16,19,45.7%
+LEVEL + GRADE,High,,11th Grade,30,19,11,63.3%
+LEVEL + GRADE,High,,12th Grade,31,25,6,80.6%
+SCHOOL TOTAL,Elementary,Belmont Street Elementary School,,11,4,7,36.4%
+SCHOOL TOTAL,High,Burncoat High School,,30,25,5,83.3%
+SCHOOL TOTAL,Middle,Burncoat Middle School,,30,12,18,40.0%
+SCHOOL TOTAL,Elementary,Burncoat Street Preparatory Elementary School,,25,6,19,24.0%
+SCHOOL TOTAL,Elementary,Canterbury Street Elementary School,,8,6,2,75.0%
+SCHOOL TOTAL,Elementary,Chandler Elementary School,,8,1,7,12.5%
+SCHOOL TOTAL,Elementary,City View Discovery Elementary School,,87,81,6,93.1%
+SCHOOL TOTAL,High,Claremont Academy,,31,29,2,93.5%
+SCHOOL TOTAL,Middle,Claremont Academy,,19,11,8,57.9%
+SCHOOL TOTAL,Elementary,Clark Street Community School,,19,13,6,68.4%
+SCHOOL TOTAL,Elementary,Columbus Park Elementary School,,9,6,3,66.7%
+SCHOOL TOTAL,High,Doherty Memorial High School,,66,19,47,28.8%
+SCHOOL TOTAL,Elementary,Elm Park Community Elementary School,,11,7,4,63.6%
+SCHOOL TOTAL,Elementary,Flagg Street Elementary School,,93,75,18,80.6%
+SCHOOL TOTAL,Middle,Forest Grove Middle School,,65,20,45,30.8%
+SCHOOL TOTAL,Elementary,Francis J. McGrath Elementary School,,9,8,1,88.9%
+SCHOOL TOTAL,Elementary,Gates Lane Elementary School,,30,15,15,50.0%
+SCHOOL TOTAL,Elementary,Goddard Elementary School of Science & Technology,,45,41,4,91.1%
+SCHOOL TOTAL,Elementary,Grafton Street Elementary School,,2,1,1,50.0%
+SCHOOL TOTAL,Elementary,Heard Street Elementary School,,18,18,0,100.0%
+SCHOOL TOTAL,Elementary,Jacob Hiatt Elementary School,,12,2,10,16.7%
+SCHOOL TOTAL,Elementary,Lake View Elementary School,,24,18,6,75.0%
+SCHOOL TOTAL,Elementary,Lincoln Street Elementary School,,11,9,2,81.8%
+SCHOOL TOTAL,Elementary,May Street Elementary School,,20,15,5,75.0%
+SCHOOL TOTAL,Elementary,Midland Street Elementary School,,27,11,16,40.7%
+SCHOOL TOTAL,Elementary,Nelson Place Elementary School,,46,12,34,26.1%
+SCHOOL TOTAL,Elementary,Norrback Avenue Elementary School,,31,19,12,61.3%
+SCHOOL TOTAL,High,North High School,,10,2,8,20.0%
+SCHOOL TOTAL,Elementary,Quinsigamond Elementary School,,35,25,10,71.4%
+SCHOOL TOTAL,Elementary,Rice Square Elementary School,,8,3,5,37.5%
+SCHOOL TOTAL,Elementary,Roosevelt Elementary School,,126,108,18,85.7%
+SCHOOL TOTAL,High,South High School,,45,33,12,73.3%
+SCHOOL TOTAL,Middle,Sullivan Middle School,,11,2,9,18.2%
+SCHOOL TOTAL,Elementary,Tatnuck Magnet Elementary School,,28,17,11,60.7%
+SCHOOL TOTAL,Elementary,Thorndyke Road Elementary School,,22,14,8,63.6%
+SCHOOL TOTAL,Elementary,Union Hill Elementary School,,5,5,0,100.0%
+SCHOOL TOTAL,Elementary,Vernon Hill Elementary School,,16,16,0,100.0%
+SCHOOL TOTAL,Elementary,Wawecus Road Elementary School,,9,6,3,66.7%
+SCHOOL TOTAL,Elementary,West Tatnuck Elementary School,,53,30,23,56.6%
+SCHOOL TOTAL,Elementary,Woodland Academy Elementary School,,53,45,8,84.9%
+SCHOOL TOTAL,Elementary,Worcester Arts Magnet School,,19,1,18,5.3%
+SCHOOL TOTAL,Elementary,Worcester Dual Language Magnet School,,10,6,4,60.0%
+SCHOOL TOTAL,Middle,Worcester East Middle School,,3,1,2,33.3%
+SCHOOL + GRADE,Elementary,Belmont Street Elementary School,Kindergarten,2,1,1,50.0%
+SCHOOL + GRADE,Elementary,Belmont Street Elementary School,1st Grade,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,Belmont Street Elementary School,2nd Grade,1,0,1,0.0%
+SCHOOL + GRADE,Elementary,Belmont Street Elementary School,3rd Grade,3,1,2,33.3%
+SCHOOL + GRADE,Elementary,Belmont Street Elementary School,4th Grade,1,0,1,0.0%
+SCHOOL + GRADE,Elementary,Belmont Street Elementary School,5th Grade,2,1,1,50.0%
+SCHOOL + GRADE,Elementary,Belmont Street Elementary School,6th Grade,1,0,1,0.0%
+SCHOOL + GRADE,High,Burncoat High School,9th Grade,24,21,3,87.5%
+SCHOOL + GRADE,High,Burncoat High School,10th Grade,3,3,0,100.0%
+SCHOOL + GRADE,High,Burncoat High School,11th Grade,1,0,1,0.0%
+SCHOOL + GRADE,High,Burncoat High School,12th Grade,2,1,1,50.0%
+SCHOOL + GRADE,Middle,Burncoat Middle School,6th Grade,1,0,1,0.0%
+SCHOOL + GRADE,Middle,Burncoat Middle School,7th Grade,24,9,15,37.5%
+SCHOOL + GRADE,Middle,Burncoat Middle School,8th Grade,4,2,2,50.0%
+SCHOOL + GRADE,Middle,Burncoat Middle School,Unknown,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,Burncoat Street Preparatory Elementary School,Kindergarten,4,3,1,75.0%
+SCHOOL + GRADE,Elementary,Burncoat Street Preparatory Elementary School,1st Grade,2,1,1,50.0%
+SCHOOL + GRADE,Elementary,Burncoat Street Preparatory Elementary School,2nd Grade,6,1,5,16.7%
+SCHOOL + GRADE,Elementary,Burncoat Street Preparatory Elementary School,3rd Grade,2,1,1,50.0%
+SCHOOL + GRADE,Elementary,Burncoat Street Preparatory Elementary School,4th Grade,4,0,4,0.0%
+SCHOOL + GRADE,Elementary,Burncoat Street Preparatory Elementary School,5th Grade,3,0,3,0.0%
+SCHOOL + GRADE,Elementary,Burncoat Street Preparatory Elementary School,6th Grade,4,0,4,0.0%
+SCHOOL + GRADE,Elementary,Canterbury Street Elementary School,Kindergarten,1,0,1,0.0%
+SCHOOL + GRADE,Elementary,Canterbury Street Elementary School,2nd Grade,3,3,0,100.0%
+SCHOOL + GRADE,Elementary,Canterbury Street Elementary School,3rd Grade,3,2,1,66.7%
+SCHOOL + GRADE,Elementary,Canterbury Street Elementary School,5th Grade,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,Chandler Elementary School,Kindergarten,4,0,4,0.0%
+SCHOOL + GRADE,Elementary,Chandler Elementary School,3rd Grade,2,1,1,50.0%
+SCHOOL + GRADE,Elementary,Chandler Elementary School,5th Grade,1,0,1,0.0%
+SCHOOL + GRADE,Elementary,Chandler Elementary School,7th Grade,1,0,1,0.0%
+SCHOOL + GRADE,Elementary,City View Discovery Elementary School,Kindergarten,4,4,0,100.0%
+SCHOOL + GRADE,Elementary,City View Discovery Elementary School,1st Grade,13,13,0,100.0%
+SCHOOL + GRADE,Elementary,City View Discovery Elementary School,2nd Grade,16,14,2,87.5%
+SCHOOL + GRADE,Elementary,City View Discovery Elementary School,3rd Grade,24,23,1,95.8%
+SCHOOL + GRADE,Elementary,City View Discovery Elementary School,4th Grade,11,10,1,90.9%
+SCHOOL + GRADE,Elementary,City View Discovery Elementary School,5th Grade,12,10,2,83.3%
+SCHOOL + GRADE,Elementary,City View Discovery Elementary School,6th Grade,7,7,0,100.0%
+SCHOOL + GRADE,High,Claremont Academy,9th Grade,8,8,0,100.0%
+SCHOOL + GRADE,High,Claremont Academy,10th Grade,5,5,0,100.0%
+SCHOOL + GRADE,High,Claremont Academy,11th Grade,10,9,1,90.0%
+SCHOOL + GRADE,High,Claremont Academy,12th Grade,8,7,1,87.5%
+SCHOOL + GRADE,Middle,Claremont Academy,7th Grade,13,6,7,46.2%
+SCHOOL + GRADE,Middle,Claremont Academy,8th Grade,6,5,1,83.3%
+SCHOOL + GRADE,Elementary,Clark Street Community School,Kindergarten,2,1,1,50.0%
+SCHOOL + GRADE,Elementary,Clark Street Community School,2nd Grade,2,1,1,50.0%
+SCHOOL + GRADE,Elementary,Clark Street Community School,3rd Grade,4,3,1,75.0%
+SCHOOL + GRADE,Elementary,Clark Street Community School,4th Grade,2,0,2,0.0%
+SCHOOL + GRADE,Elementary,Clark Street Community School,5th Grade,5,5,0,100.0%
+SCHOOL + GRADE,Elementary,Clark Street Community School,6th Grade,4,3,1,75.0%
+SCHOOL + GRADE,Elementary,Columbus Park Elementary School,Kindergarten,1,0,1,0.0%
+SCHOOL + GRADE,Elementary,Columbus Park Elementary School,1st Grade,2,2,0,100.0%
+SCHOOL + GRADE,Elementary,Columbus Park Elementary School,3rd Grade,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,Columbus Park Elementary School,4th Grade,2,2,0,100.0%
+SCHOOL + GRADE,Elementary,Columbus Park Elementary School,5th Grade,2,0,2,0.0%
+SCHOOL + GRADE,Elementary,Columbus Park Elementary School,6th Grade,1,1,0,100.0%
+SCHOOL + GRADE,High,Doherty Memorial High School,8th Grade,2,0,2,0.0%
+SCHOOL + GRADE,High,Doherty Memorial High School,9th Grade,43,15,28,34.9%
+SCHOOL + GRADE,High,Doherty Memorial High School,10th Grade,15,2,13,13.3%
+SCHOOL + GRADE,High,Doherty Memorial High School,11th Grade,3,1,2,33.3%
+SCHOOL + GRADE,High,Doherty Memorial High School,12th Grade,3,1,2,33.3%
+SCHOOL + GRADE,Elementary,Elm Park Community Elementary School,Kindergarten,1,0,1,0.0%
+SCHOOL + GRADE,Elementary,Elm Park Community Elementary School,2nd Grade,4,2,2,50.0%
+SCHOOL + GRADE,Elementary,Elm Park Community Elementary School,3rd Grade,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,Elm Park Community Elementary School,4th Grade,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,Elm Park Community Elementary School,5th Grade,3,2,1,66.7%
+SCHOOL + GRADE,Elementary,Elm Park Community Elementary School,6th Grade,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,Flagg Street Elementary School,Kindergarten,26,13,13,50.0%
+SCHOOL + GRADE,Elementary,Flagg Street Elementary School,1st Grade,12,11,1,91.7%
+SCHOOL + GRADE,Elementary,Flagg Street Elementary School,2nd Grade,14,13,1,92.9%
+SCHOOL + GRADE,Elementary,Flagg Street Elementary School,3rd Grade,12,12,0,100.0%
+SCHOOL + GRADE,Elementary,Flagg Street Elementary School,4th Grade,10,9,1,90.0%
+SCHOOL + GRADE,Elementary,Flagg Street Elementary School,5th Grade,8,7,1,87.5%
+SCHOOL + GRADE,Elementary,Flagg Street Elementary School,6th Grade,11,10,1,90.9%
+SCHOOL + GRADE,Middle,Forest Grove Middle School,7th Grade,55,14,41,25.5%
+SCHOOL + GRADE,Middle,Forest Grove Middle School,8th Grade,9,6,3,66.7%
+SCHOOL + GRADE,Middle,Forest Grove Middle School,9th Grade,1,0,1,0.0%
+SCHOOL + GRADE,Elementary,Francis J. McGrath Elementary School,Kindergarten,2,1,1,50.0%
+SCHOOL + GRADE,Elementary,Francis J. McGrath Elementary School,1st Grade,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,Francis J. McGrath Elementary School,2nd Grade,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,Francis J. McGrath Elementary School,3rd Grade,2,2,0,100.0%
+SCHOOL + GRADE,Elementary,Francis J. McGrath Elementary School,4th Grade,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,Francis J. McGrath Elementary School,6th Grade,2,2,0,100.0%
+SCHOOL + GRADE,Elementary,Gates Lane Elementary School,Kindergarten,4,0,4,0.0%
+SCHOOL + GRADE,Elementary,Gates Lane Elementary School,1st Grade,4,0,4,0.0%
+SCHOOL + GRADE,Elementary,Gates Lane Elementary School,3rd Grade,4,1,3,25.0%
+SCHOOL + GRADE,Elementary,Gates Lane Elementary School,4th Grade,4,2,2,50.0%
+SCHOOL + GRADE,Elementary,Gates Lane Elementary School,5th Grade,8,7,1,87.5%
+SCHOOL + GRADE,Elementary,Gates Lane Elementary School,6th Grade,5,5,0,100.0%
+SCHOOL + GRADE,Elementary,Gates Lane Elementary School,Unknown,1,0,1,0.0%
+SCHOOL + GRADE,Elementary,Goddard Elementary School of Science & Technology,Kindergarten,6,5,1,83.3%
+SCHOOL + GRADE,Elementary,Goddard Elementary School of Science & Technology,1st Grade,5,5,0,100.0%
+SCHOOL + GRADE,Elementary,Goddard Elementary School of Science & Technology,2nd Grade,4,3,1,75.0%
+SCHOOL + GRADE,Elementary,Goddard Elementary School of Science & Technology,3rd Grade,7,6,1,85.7%
+SCHOOL + GRADE,Elementary,Goddard Elementary School of Science & Technology,4th Grade,4,3,1,75.0%
+SCHOOL + GRADE,Elementary,Goddard Elementary School of Science & Technology,5th Grade,9,9,0,100.0%
+SCHOOL + GRADE,Elementary,Goddard Elementary School of Science & Technology,6th Grade,10,10,0,100.0%
+SCHOOL + GRADE,Elementary,Grafton Street Elementary School,4th Grade,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,Grafton Street Elementary School,5th Grade,1,0,1,0.0%
+SCHOOL + GRADE,Elementary,Heard Street Elementary School,Kindergarten,3,3,0,100.0%
+SCHOOL + GRADE,Elementary,Heard Street Elementary School,1st Grade,4,4,0,100.0%
+SCHOOL + GRADE,Elementary,Heard Street Elementary School,2nd Grade,2,2,0,100.0%
+SCHOOL + GRADE,Elementary,Heard Street Elementary School,3rd Grade,2,2,0,100.0%
+SCHOOL + GRADE,Elementary,Heard Street Elementary School,4th Grade,2,2,0,100.0%
+SCHOOL + GRADE,Elementary,Heard Street Elementary School,5th Grade,2,2,0,100.0%
+SCHOOL + GRADE,Elementary,Heard Street Elementary School,6th Grade,3,3,0,100.0%
+SCHOOL + GRADE,Elementary,Jacob Hiatt Elementary School,Kindergarten,2,0,2,0.0%
+SCHOOL + GRADE,Elementary,Jacob Hiatt Elementary School,1st Grade,2,2,0,100.0%
+SCHOOL + GRADE,Elementary,Jacob Hiatt Elementary School,2nd Grade,2,0,2,0.0%
+SCHOOL + GRADE,Elementary,Jacob Hiatt Elementary School,3rd Grade,3,0,3,0.0%
+SCHOOL + GRADE,Elementary,Jacob Hiatt Elementary School,4th Grade,3,0,3,0.0%
+SCHOOL + GRADE,Elementary,Lake View Elementary School,Kindergarten,6,2,4,33.3%
+SCHOOL + GRADE,Elementary,Lake View Elementary School,1st Grade,6,6,0,100.0%
+SCHOOL + GRADE,Elementary,Lake View Elementary School,2nd Grade,2,2,0,100.0%
+SCHOOL + GRADE,Elementary,Lake View Elementary School,3rd Grade,5,3,2,60.0%
+SCHOOL + GRADE,Elementary,Lake View Elementary School,5th Grade,3,3,0,100.0%
+SCHOOL + GRADE,Elementary,Lake View Elementary School,6th Grade,2,2,0,100.0%
+SCHOOL + GRADE,Elementary,Lincoln Street Elementary School,Kindergarten,1,0,1,0.0%
+SCHOOL + GRADE,Elementary,Lincoln Street Elementary School,1st Grade,3,2,1,66.7%
+SCHOOL + GRADE,Elementary,Lincoln Street Elementary School,2nd Grade,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,Lincoln Street Elementary School,3rd Grade,3,3,0,100.0%
+SCHOOL + GRADE,Elementary,Lincoln Street Elementary School,4th Grade,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,Lincoln Street Elementary School,5th Grade,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,Lincoln Street Elementary School,6th Grade,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,May Street Elementary School,Kindergarten,4,1,3,25.0%
+SCHOOL + GRADE,Elementary,May Street Elementary School,1st Grade,1,0,1,0.0%
+SCHOOL + GRADE,Elementary,May Street Elementary School,2nd Grade,4,4,0,100.0%
+SCHOOL + GRADE,Elementary,May Street Elementary School,3rd Grade,4,4,0,100.0%
+SCHOOL + GRADE,Elementary,May Street Elementary School,4th Grade,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,May Street Elementary School,5th Grade,3,3,0,100.0%
+SCHOOL + GRADE,Elementary,May Street Elementary School,6th Grade,3,2,1,66.7%
+SCHOOL + GRADE,Elementary,Midland Street Elementary School,Kindergarten,7,1,6,14.3%
+SCHOOL + GRADE,Elementary,Midland Street Elementary School,1st Grade,4,1,3,25.0%
+SCHOOL + GRADE,Elementary,Midland Street Elementary School,2nd Grade,3,0,3,0.0%
+SCHOOL + GRADE,Elementary,Midland Street Elementary School,3rd Grade,6,3,3,50.0%
+SCHOOL + GRADE,Elementary,Midland Street Elementary School,4th Grade,3,2,1,66.7%
+SCHOOL + GRADE,Elementary,Midland Street Elementary School,5th Grade,2,2,0,100.0%
+SCHOOL + GRADE,Elementary,Midland Street Elementary School,6th Grade,2,2,0,100.0%
+SCHOOL + GRADE,Elementary,Nelson Place Elementary School,Kindergarten,17,1,16,5.9%
+SCHOOL + GRADE,Elementary,Nelson Place Elementary School,1st Grade,6,1,5,16.7%
+SCHOOL + GRADE,Elementary,Nelson Place Elementary School,2nd Grade,3,0,3,0.0%
+SCHOOL + GRADE,Elementary,Nelson Place Elementary School,3rd Grade,5,1,4,20.0%
+SCHOOL + GRADE,Elementary,Nelson Place Elementary School,4th Grade,3,2,1,66.7%
+SCHOOL + GRADE,Elementary,Nelson Place Elementary School,5th Grade,7,4,3,57.1%
+SCHOOL + GRADE,Elementary,Nelson Place Elementary School,6th Grade,5,3,2,60.0%
+SCHOOL + GRADE,Elementary,Norrback Avenue Elementary School,Kindergarten,8,6,2,75.0%
+SCHOOL + GRADE,Elementary,Norrback Avenue Elementary School,1st Grade,3,3,0,100.0%
+SCHOOL + GRADE,Elementary,Norrback Avenue Elementary School,2nd Grade,5,2,3,40.0%
+SCHOOL + GRADE,Elementary,Norrback Avenue Elementary School,3rd Grade,4,2,2,50.0%
+SCHOOL + GRADE,Elementary,Norrback Avenue Elementary School,4th Grade,3,2,1,66.7%
+SCHOOL + GRADE,Elementary,Norrback Avenue Elementary School,5th Grade,5,3,2,60.0%
+SCHOOL + GRADE,Elementary,Norrback Avenue Elementary School,6th Grade,3,1,2,33.3%
+SCHOOL + GRADE,High,North High School,9th Grade,3,0,3,0.0%
+SCHOOL + GRADE,High,North High School,10th Grade,3,0,3,0.0%
+SCHOOL + GRADE,High,North High School,11th Grade,2,0,2,0.0%
+SCHOOL + GRADE,High,North High School,12th Grade,2,2,0,100.0%
+SCHOOL + GRADE,Elementary,Quinsigamond Elementary School,Kindergarten,5,3,2,60.0%
+SCHOOL + GRADE,Elementary,Quinsigamond Elementary School,1st Grade,4,3,1,75.0%
+SCHOOL + GRADE,Elementary,Quinsigamond Elementary School,2nd Grade,5,3,2,60.0%
+SCHOOL + GRADE,Elementary,Quinsigamond Elementary School,3rd Grade,4,4,0,100.0%
+SCHOOL + GRADE,Elementary,Quinsigamond Elementary School,4th Grade,4,2,2,50.0%
+SCHOOL + GRADE,Elementary,Quinsigamond Elementary School,5th Grade,10,8,2,80.0%
+SCHOOL + GRADE,Elementary,Quinsigamond Elementary School,6th Grade,3,2,1,66.7%
+SCHOOL + GRADE,Elementary,Rice Square Elementary School,Kindergarten,3,1,2,33.3%
+SCHOOL + GRADE,Elementary,Rice Square Elementary School,2nd Grade,3,1,2,33.3%
+SCHOOL + GRADE,Elementary,Rice Square Elementary School,3rd Grade,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,Rice Square Elementary School,5th Grade,1,0,1,0.0%
+SCHOOL + GRADE,Elementary,Roosevelt Elementary School,Kindergarten,27,22,5,81.5%
+SCHOOL + GRADE,Elementary,Roosevelt Elementary School,1st Grade,16,10,6,62.5%
+SCHOOL + GRADE,Elementary,Roosevelt Elementary School,2nd Grade,20,17,3,85.0%
+SCHOOL + GRADE,Elementary,Roosevelt Elementary School,3rd Grade,12,10,2,83.3%
+SCHOOL + GRADE,Elementary,Roosevelt Elementary School,4th Grade,18,18,0,100.0%
+SCHOOL + GRADE,Elementary,Roosevelt Elementary School,5th Grade,17,16,1,94.1%
+SCHOOL + GRADE,Elementary,Roosevelt Elementary School,6th Grade,16,15,1,93.8%
+SCHOOL + GRADE,High,South High School,8th Grade,1,0,1,0.0%
+SCHOOL + GRADE,High,South High School,9th Grade,5,4,1,80.0%
+SCHOOL + GRADE,High,South High School,10th Grade,9,6,3,66.7%
+SCHOOL + GRADE,High,South High School,11th Grade,14,9,5,64.3%
+SCHOOL + GRADE,High,South High School,12th Grade,16,14,2,87.5%
+SCHOOL + GRADE,Middle,Sullivan Middle School,7th Grade,6,0,6,0.0%
+SCHOOL + GRADE,Middle,Sullivan Middle School,8th Grade,5,2,3,40.0%
+SCHOOL + GRADE,Elementary,Tatnuck Magnet Elementary School,Kindergarten,7,3,4,42.9%
+SCHOOL + GRADE,Elementary,Tatnuck Magnet Elementary School,1st Grade,2,0,2,0.0%
+SCHOOL + GRADE,Elementary,Tatnuck Magnet Elementary School,2nd Grade,1,0,1,0.0%
+SCHOOL + GRADE,Elementary,Tatnuck Magnet Elementary School,3rd Grade,2,2,0,100.0%
+SCHOOL + GRADE,Elementary,Tatnuck Magnet Elementary School,4th Grade,7,6,1,85.7%
+SCHOOL + GRADE,Elementary,Tatnuck Magnet Elementary School,5th Grade,5,4,1,80.0%
+SCHOOL + GRADE,Elementary,Tatnuck Magnet Elementary School,6th Grade,4,2,2,50.0%
+SCHOOL + GRADE,Elementary,Thorndyke Road Elementary School,Kindergarten,7,3,4,42.9%
+SCHOOL + GRADE,Elementary,Thorndyke Road Elementary School,2nd Grade,2,2,0,100.0%
+SCHOOL + GRADE,Elementary,Thorndyke Road Elementary School,3rd Grade,3,2,1,66.7%
+SCHOOL + GRADE,Elementary,Thorndyke Road Elementary School,4th Grade,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,Thorndyke Road Elementary School,5th Grade,8,6,2,75.0%
+SCHOOL + GRADE,Elementary,Thorndyke Road Elementary School,Unknown,1,0,1,0.0%
+SCHOOL + GRADE,Elementary,Union Hill Elementary School,Kindergarten,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,Union Hill Elementary School,1st Grade,2,2,0,100.0%
+SCHOOL + GRADE,Elementary,Union Hill Elementary School,3rd Grade,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,Union Hill Elementary School,4th Grade,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,Vernon Hill Elementary School,Kindergarten,2,2,0,100.0%
+SCHOOL + GRADE,Elementary,Vernon Hill Elementary School,1st Grade,4,4,0,100.0%
+SCHOOL + GRADE,Elementary,Vernon Hill Elementary School,2nd Grade,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,Vernon Hill Elementary School,3rd Grade,3,3,0,100.0%
+SCHOOL + GRADE,Elementary,Vernon Hill Elementary School,4th Grade,4,4,0,100.0%
+SCHOOL + GRADE,Elementary,Vernon Hill Elementary School,6th Grade,2,2,0,100.0%
+SCHOOL + GRADE,Elementary,Wawecus Road Elementary School,Kindergarten,2,1,1,50.0%
+SCHOOL + GRADE,Elementary,Wawecus Road Elementary School,2nd Grade,2,1,1,50.0%
+SCHOOL + GRADE,Elementary,Wawecus Road Elementary School,3rd Grade,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,Wawecus Road Elementary School,5th Grade,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,Wawecus Road Elementary School,6th Grade,3,2,1,66.7%
+SCHOOL + GRADE,Elementary,West Tatnuck Elementary School,Kindergarten,17,3,14,17.6%
+SCHOOL + GRADE,Elementary,West Tatnuck Elementary School,1st Grade,4,3,1,75.0%
+SCHOOL + GRADE,Elementary,West Tatnuck Elementary School,2nd Grade,1,0,1,0.0%
+SCHOOL + GRADE,Elementary,West Tatnuck Elementary School,3rd Grade,10,5,5,50.0%
+SCHOOL + GRADE,Elementary,West Tatnuck Elementary School,4th Grade,2,2,0,100.0%
+SCHOOL + GRADE,Elementary,West Tatnuck Elementary School,5th Grade,6,6,0,100.0%
+SCHOOL + GRADE,Elementary,West Tatnuck Elementary School,6th Grade,13,11,2,84.6%
+SCHOOL + GRADE,Elementary,Woodland Academy Elementary School,Kindergarten,5,2,3,40.0%
+SCHOOL + GRADE,Elementary,Woodland Academy Elementary School,1st Grade,10,9,1,90.0%
+SCHOOL + GRADE,Elementary,Woodland Academy Elementary School,2nd Grade,4,4,0,100.0%
+SCHOOL + GRADE,Elementary,Woodland Academy Elementary School,3rd Grade,7,6,1,85.7%
+SCHOOL + GRADE,Elementary,Woodland Academy Elementary School,4th Grade,4,4,0,100.0%
+SCHOOL + GRADE,Elementary,Woodland Academy Elementary School,5th Grade,15,13,2,86.7%
+SCHOOL + GRADE,Elementary,Woodland Academy Elementary School,6th Grade,8,7,1,87.5%
+SCHOOL + GRADE,Elementary,Worcester Arts Magnet School,1st Grade,5,1,4,20.0%
+SCHOOL + GRADE,Elementary,Worcester Arts Magnet School,2nd Grade,6,0,6,0.0%
+SCHOOL + GRADE,Elementary,Worcester Arts Magnet School,3rd Grade,5,0,5,0.0%
+SCHOOL + GRADE,Elementary,Worcester Arts Magnet School,4th Grade,1,0,1,0.0%
+SCHOOL + GRADE,Elementary,Worcester Arts Magnet School,5th Grade,1,0,1,0.0%
+SCHOOL + GRADE,Elementary,Worcester Arts Magnet School,6th Grade,1,0,1,0.0%
+SCHOOL + GRADE,Elementary,Worcester Dual Language Magnet School,Kindergarten,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,Worcester Dual Language Magnet School,2nd Grade,1,0,1,0.0%
+SCHOOL + GRADE,Elementary,Worcester Dual Language Magnet School,3rd Grade,1,1,0,100.0%
+SCHOOL + GRADE,Elementary,Worcester Dual Language Magnet School,4th Grade,1,0,1,0.0%
+SCHOOL + GRADE,Elementary,Worcester Dual Language Magnet School,5th Grade,1,0,1,0.0%
+SCHOOL + GRADE,Elementary,Worcester Dual Language Magnet School,7th Grade,1,0,1,0.0%
+SCHOOL + GRADE,Elementary,Worcester Dual Language Magnet School,8th Grade,4,4,0,100.0%
+SCHOOL + GRADE,Middle,Worcester East Middle School,7th Grade,3,1,2,33.3%
