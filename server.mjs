@@ -1041,15 +1041,18 @@ app.post('/api/docling/extract-tables', express.json({ limit: '20mb' }), async (
       body: JSON.stringify(document),
       signal: AbortSignal.timeout(60000),
     });
-    const bodyText = await r.text();
     if (!r.ok) {
+      const bodyText = await r.text();
       return response.status(r.status).json({ error: `pdf-lab ${r.status}`, detail: bodyText.slice(0, 2000) });
     }
     if (format === 'xlsx') {
+      // Binary pass-through: read bytes, NOT text, to avoid zip corruption.
+      const buf = Buffer.from(await r.arrayBuffer());
       response.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       response.setHeader('Content-Disposition', 'attachment; filename="tables.xlsx"');
-      return response.send(Buffer.from(bodyText, 'latin1'));
+      return response.send(buf);
     }
+    const bodyText = await r.text();
     let data = null;
     try { data = JSON.parse(bodyText); } catch { data = { raw: bodyText.slice(0, 20000) }; }
     response.json({ ok: true, ...data });
