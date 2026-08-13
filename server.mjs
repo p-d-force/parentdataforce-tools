@@ -720,11 +720,13 @@ function doclingOptions(extra = {}) {
   };
   if (opts.do_picture_description) {
     // docling-serve picture_description_api expects an OpenAI-compatible endpoint.
+    // params are spread into the request body — Ollama needs the model name there.
     opts.picture_description_api = {
       url: `${DOCLING_VISION_URL}/chat/completions`,
       prompt: 'Describe this image in a few sentences. If it is a chart, graph, table, or handwriting, say what it shows. Do not mention being an AI.',
       timeout: 240,
       concurrency: 1,
+      params: { model: 'gemma3:4b' },
     };
   }
   return opts;
