@@ -153,7 +153,7 @@ def pymupdf_scan(path):
 
 def qpdf_scan(path):
     code, out = run(["qpdf", "--check", path], timeout=60)
-    ok = code == 0 and "no errors found" in out.lower()
+    ok = code == 0  # qpdf exits 0 when no syntax/stream errors are found
     return {"qpdf_ok": ok, "qpdf_exit": code, "qpdf_output": out[-5000:]}
 
 def scan_bytes(data: bytes, filename: str, content_type: str) -> dict:

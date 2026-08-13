@@ -331,7 +331,7 @@ function findOutput(data){
       const v = node[k] !== undefined ? node[k] : node[k + '_content'];
       if (v !== undefined && v !== null && (typeof v === 'string' || (k === 'json' && typeof v === 'object'))) { out[k] = v; has[k] = true; }
     });
-    ['documents','result','output','data','results'].forEach(prop => {
+    ['documents','document','result','output','data','results'].forEach(prop => {
       if (Array.isArray(node[prop])) node[prop].forEach(walk);
       else if (node[prop] && typeof node[prop] === 'object') walk(node[prop]);
     });
