@@ -183,6 +183,8 @@ footer a{color:var(--accent-glow)}
   </div>
 
   <button class="btn" id="convert-btn" disabled>Convert Document</button>
+  <button class="btn btn-secondary" id="batch-btn" style="margin-left:10px" disabled>Batch Convert (multiple files)</button>
+  <input type="file" id="batch-input" accept=".pdf,.docx,.doc,.pptx,.ppt,.xlsx,.xls,.html,.htm,.md,.txt,.png,.jpg,.jpeg,.webp" multiple hidden>
   <div id="status"></div>
 
   <div class="results" id="results" style="display:none">
@@ -337,6 +339,65 @@ $('convert-btn').addEventListener('click', async () => {
   btn.textContent = 'Convert Document';
 });
 
+// Batch convert: pick multiple files, send length-prefixed concat, poll each task.
+$('batch-btn').addEventListener('click', () => $('batch-input').click());
+$('batch-input').addEventListener('change', async (ev) => {
+  const files = Array.from(ev.target.files || []);
+  if (!files.length) return;
+  const btn = $('batch-btn');
+  btn.disabled = true;
+  showStatus(`<span class="spinner"></span>Queueing ${files.length} files for batch conversion…`, 'info');
+  try {
+    const options = buildOptions();
+    // length-prefixed concat: [len:4BE][bytes] per file
+    const parts = [];
+    for (const f of files) {
+      const buf = new Uint8Array(await f.arrayBuffer());
+      const len = new Uint8Array(4);
+      new DataView(len.buffer).setUint32(0, buf.length);
+      parts.push(len, buf);
+    }
+    const body = new Blob(parts, { type: 'application/octet-stream' });
+    const resp = await fetch('/api/docling/convert-batch', {
+      method: 'POST',
+      headers: {
+        'X-Filenames': JSON.stringify(files.map(f => f.name)),
+        'X-Options': JSON.stringify(options),
+      },
+      body,
+    });
+    const json = await resp.json();
+    if (!resp.ok) throw new Error(json.error || json.detail || `HTTP ${resp.status}`);
+    showStatus(`<span class="spinner"></span>${json.count} jobs queued — converting…`, 'info');
+
+    let done = 0, failed = 0;
+    const lines = [];
+    for (const t of json.tasks) {
+      for (;;) {
+        const poll = await fetch(`/api/docling/job/${encodeURIComponent(t.task_id)}`, { method: 'GET' });
+        const pollJson = await poll.json();
+        if (pollJson.status === 'success') {
+          done++;
+          lines.push(`✅ ${t.filename} — converted`);
+          break;
+        }
+        if (pollJson.ok === false) {
+          failed++;
+          lines.push(`❌ ${t.filename} — ${pollJson.error_message || 'failed'}`);
+          break;
+        }
+        await new Promise(r => setTimeout(r, 3000));
+      }
+    }
+    showStatus(`Batch complete: ${done} converted, ${failed} failed.`, done && !failed ? 'success' : 'error');
+    $('file-area').innerHTML = '<div class="file-chip">' + lines.map(l => `<div>${l}</div>`).join('') + '</div>';
+  } catch (e) {
+    console.error(e);
+    showStatus('❌ Batch conversion failed: ' + e.message, 'error');
+  }
+  btn.disabled = false;
+});
+
 // Defensive extraction of the per-format outputs from docling-serve's response.
 function findOutput(data){
   const out = {};
@@ -423,9 +484,59 @@ function renderResults(json){
     };
     bar.appendChild(b);
   });
+  // Table export (needs docling JSON with tables[])
+  const jsonDoc = typeof out.json === 'string' ? safeJsonParse(out.json) : (out.json || null);
+  if (jsonDoc) {
+    [['csv', 'Download Tables (CSV)', 'text/csv', 'csv'], ['xlsx', 'Download Tables (XLSX)', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'xlsx']].forEach(([fmt, label, type, ext]) => {
+      const b = document.createElement('button');
+      b.className = 'btn btn-secondary btn-sm';
+      b.textContent = label;
+      b.onclick = async () => {
+        try {
+          showStatus(`<span class="spinner"></span>Extracting tables (${fmt.toUpperCase()})…`, 'info');
+          const resp = await fetch('/api/docling/extract-tables', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ document: jsonDoc, format: fmt }),
+          });
+          if (!resp.ok) {
+            const err = await resp.json().catch(() => ({}));
+            throw new Error(err.error || err.detail || `HTTP ${resp.status}`);
+          }
+          const base = (json.filename || 'document').replace(/\.[^.]+$/, '');
+          if (fmt === 'xlsx') {
+            const blob = await resp.blob();
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = base + '-tables.xlsx';
+            document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+            showStatus('✅ Tables exported as XLSX.', 'success');
+          } else {
+            const data = await resp.json();
+            if (!data.count) throw new Error('No tables found in this document.');
+            const combined = data.tables.map(t => `# Table ${t.index} (${t.num_rows} rows x ${t.num_cols} cols)\n${t.csv}`).join('\n\n');
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([combined], { type: 'text/csv' }));
+            a.download = base + '-tables.csv';
+            document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+            showStatus(`✅ Exported ${data.count} tables as CSV.`, 'success');
+          }
+        } catch (e) {
+          showStatus('❌ Table export failed: ' + e.message, 'error');
+        }
+      };
+      bar.appendChild(b);
+    });
+  }
   $('result-title').textContent = 'Conversion results — ' + (json.filename || '');
   $('results').style.display = 'block';
   $('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function safeJsonParse(s){
+  try { return JSON.parse(s); } catch { return null; }
 }
 
 function escapeHtml(s){

@@ -17,9 +17,9 @@ python3 -m venv /opt/pdf-lab/venv
 # pdf-parser cover the same indicators and the service degrades gracefully.
 /opt/pdf-lab/venv/bin/pip install -q "pillow>=10.4.0" jsbeautifier future pythonaes colorama || true
 /opt/pdf-lab/venv/bin/pip install -q --no-deps peepdf || true
-/opt/pdf-lab/venv/bin/pip install -q "x-ray==0.3.6" fastapi "uvicorn[standard]" || {
+/opt/pdf-lab/venv/bin/pip install -q "x-ray==0.3.6" fastapi "uvicorn[standard]" openpyxl || {
   echo "PIP FAILED — retrying without x-ray version pin"
-  /opt/pdf-lab/venv/bin/pip install -q fastapi "uvicorn[standard]"
+  /opt/pdf-lab/venv/bin/pip install -q fastapi "uvicorn[standard]" openpyxl
   /opt/pdf-lab/venv/bin/pip install -q "x-ray==0.3.6" || true
 }
 

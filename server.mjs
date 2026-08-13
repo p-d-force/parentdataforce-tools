@@ -1024,6 +1024,102 @@ app.get('/api/docling/job/:id', async (request, response) => {
   }
 });
 
+// Extract tables from a docling JSON document (from a prior convert) — forwards
+// to pdf-lab /extract-tables. Returns per-table CSV (default) or XLSX file.
+app.post('/api/docling/extract-tables', express.json({ limit: '20mb' }), async (request, response) => {
+  try {
+    const { document, format } = request.body || {};
+    if (!document || typeof document !== 'object') {
+      return response.status(400).json({ error: 'A docling JSON document is required.' });
+    }
+    const r = await fetch(`${PDF_LAB_URL}/extract-tables?format=${format === 'xlsx' ? 'xlsx' : 'csv'}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(document),
+      signal: AbortSignal.timeout(60000),
+    });
+    const bodyText = await r.text();
+    if (!r.ok) {
+      return response.status(r.status).json({ error: `pdf-lab ${r.status}`, detail: bodyText.slice(0, 2000) });
+    }
+    if (format === 'xlsx') {
+      response.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      response.setHeader('Content-Disposition', 'attachment; filename="tables.xlsx"');
+      return response.send(Buffer.from(bodyText, 'latin1'));
+    }
+    let data = null;
+    try { data = JSON.parse(bodyText); } catch { data = { raw: bodyText.slice(0, 20000) }; }
+    response.json({ ok: true, ...data });
+  } catch (error) {
+    await proxyJsonError(error, response, 'extract-tables');
+  }
+});
+
+// Batch convert: multiple files in one request (multipart form-data, files[]).
+// Each file is queued as its own async job; the response lists task_ids that
+// the client polls with /job/:id.
+app.post('/api/docling/convert-batch',
+  express.raw({ type: () => true, limit: (DOCLING_MAX_UPLOAD * 5) + (1024 * 1024) }),
+  async (request, response) => {
+    try {
+      if (!request.body || request.body.length === 0) {
+        return response.status(400).json({ error: 'Empty upload body.' });
+      }
+      // Batch framing: X-Filenames is a JSON array of names, X-Options per file optional.
+      const filenames = parseJsonHeader(request.get('x-filenames'), []);
+      if (!Array.isArray(filenames) || filenames.length === 0) {
+        return response.status(400).json({ error: 'X-Filenames header must be a JSON array.' });
+      }
+      const options = parseJsonHeader(request.get('x-options'), {});
+      // Simple framing: files concatenated with a 16-byte length prefix per file.
+      // Layout: [len:4BE][bytes]...  (native endianness — both sides are Node here)
+      const parts = [];
+      let offset = 0;
+      const buf = request.body;
+      for (const fname of filenames) {
+        if (offset + 4 > buf.length) break;
+        const len = buf.readUInt32BE(offset);
+        offset += 4;
+        const chunk = buf.subarray(offset, offset + len);
+        offset += len;
+        parts.push({ filename: safeFilename(fname), bytes: chunk });
+      }
+      if (parts.length !== filenames.length) {
+        return response.status(400).json({ error: 'Batch framing mismatch (length-prefixed concat expected).' });
+      }
+      const tasks = [];
+      for (const part of parts) {
+        const payload = {
+          options: {
+            from_formats: ['pdf', 'docx', 'pptx', 'html', 'image', 'asciidoc', 'md', 'xlsx'],
+            to_formats: ['md', 'json', 'text', 'html', 'doctags'],
+            pdf_backend: 'dlparse_v2',
+            do_ocr: true,
+            abort_on_error: false,
+            ...(options || {}),
+          },
+          sources: [{ kind: 'file', base64_string: part.bytes.toString('base64'), filename: part.filename }],
+        };
+        const r = await fetch(`${DOCLING_SERVE_URL}/v1/convert/source/async`, {
+          method: 'POST',
+          headers: dlAuthHeaders({ 'Content-Type': 'application/json' }),
+          body: JSON.stringify(payload),
+          signal: AbortSignal.timeout(30000),
+        });
+        const bodyText = await r.text();
+        if (!r.ok) {
+          return response.status(r.status).json({ error: `docling-serve ${r.status}`, detail: bodyText.slice(0, 2000) });
+        }
+        let data = null;
+        try { data = JSON.parse(bodyText); } catch { data = { raw: bodyText.slice(0, 2000) }; }
+        tasks.push({ filename: part.filename, task_id: data.task_id, status: data.task_status || 'pending' });
+      }
+      response.status(202).json({ ok: true, count: tasks.length, tasks });
+    } catch (error) {
+      await proxyJsonError(error, response, 'convert-batch');
+    }
+  });
+
 // Forensic scan of an uploaded file (raw binary body) — forwards to pdf-lab.
 app.post('/api/docling/scan',
   express.raw({ type: () => true, limit: DOCLING_MAX_UPLOAD + (1024 * 1024) }),
