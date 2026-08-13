@@ -30,6 +30,7 @@ echo "[4/6] nginx vhosts (dev + tools)"
 "${SSH[@]}" 'cp /opt/parentdataforce-tools/deploy/nginx-dev.conf /etc/nginx/sites-enabled/parentdataforce-dev
 rm -f /etc/nginx/sites-enabled/parentdataforce-dev.conf
 cp /opt/parentdataforce-tools/deploy/nginx-tools.conf /etc/nginx/sites-enabled/parentdataforce-tools
+cp /opt/parentdataforce-tools/deploy/docling-rate-limit.conf /etc/nginx/conf.d/docling-rate-limit.conf
 nginx -t 2>&1 | tail -1 && systemctl reload nginx && echo NGINX_OK'
 
 echo "[5/6] restart app services"
