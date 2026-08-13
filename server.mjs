@@ -952,7 +952,15 @@ app.post('/api/docling/scan',
 
 app.use((error, _request, response, _next) => {
   console.error(error);
-  response.status(500).json({ error: 'Internal server error.' });
+  // Respect status from body-parser (413 PayloadTooLarge) and other typed errors;
+  // default to 500 for anything else.
+  const status = Number(error.status || error.statusCode || 500);
+  const message = (status >= 400 && status < 500 && error.type === 'entity.too.large')
+    ? `File exceeds ${Math.round(DOCLING_MAX_UPLOAD / 1024 / 1024)}MB limit.`
+    : error.expose
+      ? error.message
+      : 'Internal server error.';
+  response.status(status).json({ error: message });
 });
 
 app.listen(port, '127.0.0.1', () => {
