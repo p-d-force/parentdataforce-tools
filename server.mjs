@@ -84,9 +84,79 @@ function sanitizeStyle(raw) {
 
 // ── Premium tier limits ───────────────────────────────────────────────
 const TIER_LIMITS = {
-  free: { maxLinks: 10, historyCap: 200, webhooks: false, bulk: false },
-  pro: { maxLinks: 1000, historyCap: 5000, webhooks: true, bulk: true }
+  free: { maxLinks: 10, historyCap: 200, webhooks: false, bulk: false, convertsPerDay: 10, scansPerDay: 20 },
+  pro: { maxLinks: 1000, historyCap: 5000, webhooks: true, bulk: true, convertsPerDay: Infinity, scansPerDay: Infinity }
 };
+
+// Daily usage counters for docling conversions — persisted so restarts don't
+// reset quotas. Keyed by "date|scopeId" where scopeId is userId for logged-in
+// users, or an IP hash for anonymous (best effort).
+const quotaPath = path.join(dataDirectory, 'quota.json');
+
+function readQuotas() {
+  try {
+    const contents = fs.readFileSync(quotaPath, 'utf8').trim();
+    const parsed = JSON.parse(contents);
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch (error) {
+    if (error.code === 'ENOENT') return {};
+    return {};
+  }
+}
+
+function writeQuotas(store) {
+  const temporaryPath = `${quotaPath}.${process.pid}.tmp`;
+  fs.writeFileSync(temporaryPath, `${JSON.stringify(store, null, 2)}\n`, { mode: 0o600 });
+  fs.renameSync(temporaryPath, quotaPath);
+}
+
+function todayKey() {
+  return new Date().toISOString().slice(0, 10); // YYYY-MM-DD (UTC)
+}
+
+function quotaScope(request) {
+  const cookies = auth.parseCookies(request);
+  const user = auth.getUserBySessionToken(cookies.pdf_session);
+  if (user) return { scope: `u:${user.id}`, user, tier: tierOf(user) };
+  // Anonymous: best-effort per-IP counter using a hash so we never store raw IPs.
+  const ip = String(request.headers['x-forwarded-for'] || request.socket.remoteAddress || 'anon');
+  const hash = crypto.createHash('sha256').update(ip).digest('hex').slice(0, 16);
+  return { scope: `ip:${hash}`, user: null, tier: 'free' };
+}
+
+function getQuotaUsage(scope, kind) {
+  const quotas = readQuotas();
+  const key = `${todayKey()}|${scope}|${kind}`;
+  return Number(quotas[key] || 0);
+}
+
+function incrementQuota(scope, kind, amount = 1) {
+  const quotas = readQuotas();
+  const key = `${todayKey()}|${scope}|${kind}`;
+  quotas[key] = Number(quotas[key] || 0) + amount;
+  // Prune entries older than 14 days to keep the file small.
+  const today = todayKey();
+  for (const k of Object.keys(quotas)) {
+    const datePart = k.split('|')[0];
+    if (datePart && datePart < today.slice(0, 4) + '-01-01') delete quotas[k];
+  }
+  writeQuotas(quotas);
+  return quotas[key];
+}
+
+// Check a daily quota; throws a 403-typed error when exhausted.
+function assertQuota(request, kind, amount = 1) {
+  const { scope, user, tier } = quotaScope(request);
+  const limit = TIER_LIMITS[tier][kind];
+  if (limit === Infinity) return { scope, user, tier, remaining: Infinity };
+  const used = getQuotaUsage(scope, kind);
+  if (used + amount > limit) {
+    const err = new Error(`Daily ${kind.replace(/([A-Z])/g, ' $1').toLowerCase()} limit reached (${limit} per day). ${user ? 'Upgrade to Pro for unlimited use.' : 'Sign in for a higher limit.'}`);
+    err.status = 403;
+    throw err;
+  }
+  return { scope, user, tier, remaining: limit - used - amount };
+}
 
 function userLinkCount(userId) {
   if (!userId) return 0;
@@ -194,10 +264,33 @@ app.get('/api/auth/me', (request, response) => {
   const cookies = auth.parseCookies(request);
   const user = auth.getUserBySessionToken(cookies.pdf_session);
   if (!user) return response.status(401).json({ error: 'Not logged in.' });
+  const tier = tierOf(user);
   return response.json({
     user: { id: user.id, email: user.email, plan: user.plan },
-    limits: TIER_LIMITS[tierOf(user)] || TIER_LIMITS.free,
-    used: { links: userLinkCount(user.id) }
+    limits: TIER_LIMITS[tier] || TIER_LIMITS.free,
+    used: {
+      links: userLinkCount(user.id),
+      converts: getQuotaUsage(`u:${user.id}`, 'convertsPerDay'),
+      scans: getQuotaUsage(`u:${user.id}`, 'scansPerDay'),
+    }
+  });
+});
+
+// Anonymous quota status (no session needed) — lets the UI show remaining
+// conversions without forcing signup.
+app.get('/api/docling/quota', (request, response) => {
+  const { scope, tier } = quotaScope(request);
+  const limits = TIER_LIMITS[tier] || TIER_LIMITS.free;
+  response.json({
+    tier,
+    limits: {
+      convertsPerDay: limits.convertsPerDay === Infinity ? null : limits.convertsPerDay,
+      scansPerDay: limits.scansPerDay === Infinity ? null : limits.scansPerDay,
+    },
+    used: {
+      converts: getQuotaUsage(scope, 'convertsPerDay'),
+      scans: getQuotaUsage(scope, 'scansPerDay'),
+    },
   });
 });
 
@@ -867,6 +960,7 @@ app.post('/api/docling/convert',
       if (request.body.length > DOCLING_MAX_UPLOAD) {
         return response.status(413).json({ error: `File exceeds ${Math.round(DOCLING_MAX_UPLOAD / 1024 / 1024)}MB limit.` });
       }
+      const quota = assertQuota(request, 'convertsPerDay');
       const payload = {
         options: doclingOptions(options),
         // v1 API: sources[] with a kind discriminator (file | http | ...)
@@ -882,9 +976,10 @@ app.post('/api/docling/convert',
       if (!r.ok) {
         return response.status(r.status).json({ error: `docling-serve ${r.status}`, detail: bodyText.slice(0, 2000) });
       }
+      incrementQuota(quota.scope, 'convertsPerDay');
       let data = null;
       try { data = JSON.parse(bodyText); } catch { data = { raw: bodyText.slice(0, 20000) }; }
-      response.json({ ok: true, filename, options, data });
+      response.json({ ok: true, filename, options, data, quota_remaining: quota.remaining });
     } catch (error) {
       await proxyJsonError(error, response, 'convert');
     }
@@ -924,6 +1019,7 @@ app.post('/api/docling/convert-url', express.json({ limit: '16kb' }), async (req
     }
     const filename = safeFilename(decodeURIComponent(path.basename(new URL(r.url || url).pathname)) || 'remote.pdf');
 
+    const quota = assertQuota(request, 'convertsPerDay');
     const payload = {
       options: doclingOptions(options || {}),
       sources: [{ kind: 'file', base64_string: buf.toString('base64'), filename }],
@@ -938,9 +1034,10 @@ app.post('/api/docling/convert-url', express.json({ limit: '16kb' }), async (req
     if (!dr.ok) {
       return response.status(dr.status).json({ error: `docling-serve ${dr.status}`, detail: bodyText.slice(0, 2000) });
     }
+    incrementQuota(quota.scope, 'convertsPerDay');
     let data = null;
     try { data = JSON.parse(bodyText); } catch { data = { raw: bodyText.slice(0, 20000) }; }
-    response.json({ ok: true, url: r.url || url, filename, options: options || {}, data });
+    response.json({ ok: true, url: r.url || url, filename, options: options || {}, data, quota_remaining: quota.remaining });
   } catch (error) {
     await proxyJsonError(error, response, 'convert-url');
   }
@@ -961,6 +1058,7 @@ app.post('/api/docling/convert-async',
       if (request.body.length > DOCLING_MAX_UPLOAD) {
         return response.status(413).json({ error: `File exceeds ${Math.round(DOCLING_MAX_UPLOAD / 1024 / 1024)}MB limit.` });
       }
+      const quota = assertQuota(request, 'convertsPerDay');
       const payload = {
         options: doclingOptions(options),
         sources: [{ kind: 'file', base64_string: request.body.toString('base64'), filename }],
@@ -975,9 +1073,10 @@ app.post('/api/docling/convert-async',
       if (!r.ok) {
         return response.status(r.status).json({ error: `docling-serve ${r.status}`, detail: bodyText.slice(0, 2000) });
       }
+      incrementQuota(quota.scope, 'convertsPerDay');
       let data = null;
       try { data = JSON.parse(bodyText); } catch { data = { raw: bodyText.slice(0, 20000) }; }
-      response.status(202).json({ ok: true, filename, options, task_id: data.task_id, status: data.task_status || 'pending' });
+      response.status(202).json({ ok: true, filename, options, task_id: data.task_id, status: data.task_status || 'pending', quota_remaining: quota.remaining });
     } catch (error) {
       await proxyJsonError(error, response, 'convert-async');
     }
@@ -1098,6 +1197,7 @@ app.post('/api/docling/convert-batch',
       if (parts.length !== filenames.length) {
         return response.status(400).json({ error: 'Batch framing mismatch (length-prefixed concat expected).' });
       }
+      const quota = assertQuota(request, 'convertsPerDay', parts.length);
       const tasks = [];
       for (const part of parts) {
         const payload = {
@@ -1136,6 +1236,7 @@ app.post('/api/docling/scan',
       if (request.body.length > DOCLING_MAX_UPLOAD) {
         return response.status(413).json({ error: `File exceeds ${Math.round(DOCLING_MAX_UPLOAD / 1024 / 1024)}MB limit.` });
       }
+      const quota = assertQuota(request, 'scansPerDay');
       const r = await fetch(`${PDF_LAB_URL}/scan`, {
         method: 'POST',
         headers: {
@@ -1149,9 +1250,10 @@ app.post('/api/docling/scan',
       if (!r.ok) {
         return response.status(r.status).json({ error: `pdf-lab ${r.status}`, detail: bodyText.slice(0, 2000) });
       }
+      incrementQuota(quota.scope, 'scansPerDay');
       let data = null;
       try { data = JSON.parse(bodyText); } catch { data = { raw: bodyText.slice(0, 20000) }; }
-      response.json({ ok: true, filename, data });
+      response.json({ ok: true, filename, data, quota_remaining: quota.remaining });
     } catch (error) {
       await proxyJsonError(error, response, 'scan');
     }
