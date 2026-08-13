@@ -179,6 +179,7 @@ footer a{color:var(--accent-glow)}
       <div class="check-row"><input type="checkbox" id="opt-code"><label for="opt-code">Code enrichment</label></div>
       <div class="check-row"><input type="checkbox" id="opt-formula"><label for="opt-formula">Formula OCR (LaTeX)</label></div>
       <div class="check-row"><input type="checkbox" id="opt-chart"><label for="opt-chart">Chart extraction</label></div>
+      <div class="check-row"><input type="checkbox" id="opt-desc"><label for="opt-desc">Describe pictures (AI vision — slow, local)</label></div>
     </div>
   </div>
 
@@ -283,6 +284,7 @@ function buildOptions(){
   if ($('opt-code').checked) opts.do_code_enrichment = true;
   if ($('opt-formula').checked) opts.do_formula_enrichment = true;
   if ($('opt-chart').checked) opts.do_chart_extraction = true;
+  if ($('opt-desc').checked) opts.do_picture_description = true;
   return opts;
 }
 

@@ -19,6 +19,8 @@ Environment=DOCLING_SERVE_MAX_PARALLEL_JOBS=2
 Environment=DOCLING_SERVE_MAX_FILE_SIZE=52428800
 Environment=DOCLING_SERVE_MAX_NUM_PAGES=400
 Environment=DOCLING_SERVE_LOG_LEVEL=INFO
+# Allow docling to call the local Ollama vision server for picture descriptions
+Environment=DOCLING_SERVE_ENABLE_REMOTE_SERVICES=true
 # Results are single-use and auto-removed (privacy: nothing persists)
 
 [Install]

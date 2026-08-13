@@ -705,6 +705,30 @@ const DOCLING_TIMEOUT_MS = Number(process.env.DOCLING_TIMEOUT_MS || 600000);
 // Caps mirrored from docling-serve env so nginx/Node reject early with a clear 413
 const DOCLING_MAX_UPLOAD = Number(process.env.DOCLING_MAX_UPLOAD || 50 * 1024 * 1024);
 const DOCLING_MAX_PAGES = Number(process.env.DOCLING_MAX_PAGES || 400);
+// Local vision (Ollama) for picture descriptions — same box, CPU, slow but free.
+// Only attached when the caller asks for descriptions (opt-in; keep default fast).
+const DOCLING_VISION_URL = process.env.DOCLING_VISION_URL || 'http://127.0.0.1:11434/v1';
+
+function doclingOptions(extra = {}) {
+  const opts = {
+    from_formats: ['pdf', 'docx', 'pptx', 'html', 'image', 'asciidoc', 'md', 'xlsx'],
+    to_formats: ['md', 'json', 'text', 'html', 'doctags'],
+    pdf_backend: 'dlparse_v2',
+    do_ocr: true,
+    abort_on_error: false,
+    ...extra,
+  };
+  if (opts.do_picture_description) {
+    // docling-serve picture_description_api expects an OpenAI-compatible endpoint.
+    opts.picture_description_api = {
+      url: `${DOCLING_VISION_URL}/chat/completions`,
+      prompt: 'Describe this image in a few sentences. If it is a chart, graph, table, or handwriting, say what it shows. Do not mention being an AI.',
+      timeout: 240,
+      concurrency: 1,
+    };
+  }
+  return opts;
+}
 
 function dlAuthHeaders(extra = {}) {
   const headers = { ...extra };
@@ -842,14 +866,7 @@ app.post('/api/docling/convert',
         return response.status(413).json({ error: `File exceeds ${Math.round(DOCLING_MAX_UPLOAD / 1024 / 1024)}MB limit.` });
       }
       const payload = {
-        options: {
-          from_formats: ['pdf', 'docx', 'pptx', 'html', 'image', 'asciidoc', 'md', 'xlsx'],
-          to_formats: ['md', 'json', 'text', 'html', 'doctags'],
-          pdf_backend: 'dlparse_v2',
-          do_ocr: true,
-          abort_on_error: false,
-          ...options,
-        },
+        options: doclingOptions(options),
         // v1 API: sources[] with a kind discriminator (file | http | ...)
         sources: [{ kind: 'file', base64_string: request.body.toString('base64'), filename }],
       };
@@ -906,14 +923,7 @@ app.post('/api/docling/convert-url', express.json({ limit: '16kb' }), async (req
     const filename = safeFilename(decodeURIComponent(path.basename(new URL(r.url || url).pathname)) || 'remote.pdf');
 
     const payload = {
-      options: {
-        from_formats: ['pdf', 'docx', 'pptx', 'html', 'image', 'asciidoc', 'md', 'xlsx'],
-        to_formats: ['md', 'json', 'text', 'html', 'doctags'],
-        pdf_backend: 'dlparse_v2',
-        do_ocr: true,
-        abort_on_error: false,
-        ...(options || {}),
-      },
+      options: doclingOptions(options || {}),
       sources: [{ kind: 'file', base64_string: buf.toString('base64'), filename }],
     };
     const dr = await fetch(`${DOCLING_SERVE_URL}/v1/convert/source`, {
@@ -950,14 +960,7 @@ app.post('/api/docling/convert-async',
         return response.status(413).json({ error: `File exceeds ${Math.round(DOCLING_MAX_UPLOAD / 1024 / 1024)}MB limit.` });
       }
       const payload = {
-        options: {
-          from_formats: ['pdf', 'docx', 'pptx', 'html', 'image', 'asciidoc', 'md', 'xlsx'],
-          to_formats: ['md', 'json', 'text', 'html', 'doctags'],
-          pdf_backend: 'dlparse_v2',
-          do_ocr: true,
-          abort_on_error: false,
-          ...options,
-        },
+        options: doclingOptions(options),
         sources: [{ kind: 'file', base64_string: request.body.toString('base64'), filename }],
       };
       const r = await fetch(`${DOCLING_SERVE_URL}/v1/convert/source/async`, {
@@ -1096,14 +1099,7 @@ app.post('/api/docling/convert-batch',
       const tasks = [];
       for (const part of parts) {
         const payload = {
-          options: {
-            from_formats: ['pdf', 'docx', 'pptx', 'html', 'image', 'asciidoc', 'md', 'xlsx'],
-            to_formats: ['md', 'json', 'text', 'html', 'doctags'],
-            pdf_backend: 'dlparse_v2',
-            do_ocr: true,
-            abort_on_error: false,
-            ...(options || {}),
-          },
+          options: doclingOptions(options || {}),
           sources: [{ kind: 'file', base64_string: part.bytes.toString('base64'), filename: part.filename }],
         };
         const r = await fetch(`${DOCLING_SERVE_URL}/v1/convert/source/async`, {
