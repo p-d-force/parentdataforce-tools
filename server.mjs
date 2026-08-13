@@ -764,7 +764,8 @@ app.post('/api/docling/convert',
           abort_on_error: false,
           ...options,
         },
-        file_sources: [{ base64_string: request.body.toString('base64'), filename }],
+        // v1 API: sources[] with a kind discriminator (file | http | ...)
+        sources: [{ kind: 'file', base64_string: request.body.toString('base64'), filename }],
       };
       const r = await fetch(`${DOCLING_SERVE_URL}/v1/convert/source`, {
         method: 'POST',
@@ -800,7 +801,7 @@ app.post('/api/docling/convert-url', express.json({ limit: '16kb' }), async (req
         abort_on_error: false,
         ...(options || {}),
       },
-      http_sources: [{ url: String(url) }],
+      sources: [{ kind: 'http', url: String(url) }],
     };
     const r = await fetch(`${DOCLING_SERVE_URL}/v1/convert/source`, {
       method: 'POST',
