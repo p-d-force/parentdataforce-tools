@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="/styles.css">
   <style>
     /* Worcester page additions on the shared design system */
+    .construction-banner { display:flex; align-items:center; justify-content:center; gap:10px; padding:10px 18px; background:rgba(255,90,31,.14); border-bottom:1px solid rgba(255,90,31,.35); color:var(--accent-glow); font:500 .72rem 'DM Mono',monospace; letter-spacing:.1em; text-align:center; }
+    .construction-banner .flag { font-size:.9rem; }
     .story-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
     .story-card { min-height:200px; padding:28px; background:var(--bg-card); border:1px solid var(--border); display:flex; flex-direction:column; position:relative; transition:border-color .2s; }
     .story-card:hover { border-color:var(--accent); }
@@ -26,6 +28,7 @@
   </style>
 </head>
 <body>
+  <div class="construction-banner"><span class="flag">🚧</span> SITE UNDER CONSTRUCTION — Worcester Today is in testing. Stories and sources are being added. <span class="flag">🚧</span></div>
   <header class="site-header">
     <a class="brand" href="/" aria-label="Parent Data Force home">
       <img src="/logo.png" alt="Parent Data Force logo">

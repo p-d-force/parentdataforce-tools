@@ -10,6 +10,8 @@
   <style>
     /* Main-site additions on top of the shared tools design system */
     .hero p.lede { font-size:1.2rem; }
+    .construction-banner { display:flex; align-items:center; justify-content:center; gap:10px; padding:10px 18px; background:rgba(255,90,31,.14); border-bottom:1px solid rgba(255,90,31,.35); color:var(--accent-glow); font:500 .72rem 'DM Mono',monospace; letter-spacing:.1em; text-align:center; }
+    .construction-banner .flag { font-size:.9rem; }
     .branch-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
     .branch-card { min-height:230px; padding:30px 28px; background:var(--bg-card); border:1px solid var(--border); display:flex; flex-direction:column; text-decoration:none; position:relative; transition:border-color .2s; }
     .branch-card:hover { border-color:var(--accent); }
@@ -30,6 +32,7 @@
   </style>
 </head>
 <body>
+  <div class="construction-banner"><span class="flag">🚧</span> SITE UNDER CONSTRUCTION — Parent Data Force is testing this site before full release. Feedback welcome. <span class="flag">🚧</span></div>
   <header class="site-header">
     <a class="brand" href="/" aria-label="Parent Data Force home">
       <img src="/logo.png" alt="Parent Data Force logo">
