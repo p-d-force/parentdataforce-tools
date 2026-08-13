@@ -151,7 +151,8 @@ function assertQuota(request, kind, amount = 1) {
   if (limit === Infinity) return { scope, user, tier, remaining: Infinity };
   const used = getQuotaUsage(scope, kind);
   if (used + amount > limit) {
-    const err = new Error(`Daily ${kind.replace(/([A-Z])/g, ' $1').toLowerCase()} limit reached (${limit} per day). ${user ? 'Upgrade to Pro for unlimited use.' : 'Sign in for a higher limit.'}`);
+    const label = kind === 'convertsPerDay' ? 'conversion' : kind === 'scansPerDay' ? 'scan' : kind;
+    const err = new Error(`${label.charAt(0).toUpperCase() + label.slice(1)} limit reached (${limit} per day). ${user ? 'Upgrade to Pro for unlimited use.' : 'Sign in for a higher limit.'}`);
     err.status = 403;
     throw err;
   }
