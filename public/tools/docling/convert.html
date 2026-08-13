@@ -293,10 +293,10 @@ $('convert-btn').addEventListener('click', async () => {
   const btn = $('convert-btn');
   btn.disabled = true;
   btn.textContent = 'Converting…';
-  showStatus(`<span class="spinner"></span>Uploading ${currentFile.name} and running AI conversion — first run can take a few minutes while models load.`, 'info');
+  showStatus(`<span class="spinner"></span>Uploading ${currentFile.name} and queueing AI conversion — first run can take a few minutes while models load. You can close this tab; progress is tracked server-side.`, 'info');
   try {
     const options = buildOptions();
-    const resp = await fetch('/api/docling/convert', {
+    const resp = await fetch('/api/docling/convert-async', {
       method: 'POST',
       headers: {
         'Content-Type': currentFile.type || 'application/octet-stream',
@@ -307,9 +307,28 @@ $('convert-btn').addEventListener('click', async () => {
     });
     const json = await resp.json();
     if (!resp.ok) throw new Error(json.error || json.detail || `HTTP ${resp.status}`);
-    resultData = json;
-    renderResults(json);
-    showStatus('✅ Conversion complete. Your file has already been deleted from our server.', 'success');
+    const taskId = json.task_id;
+    showStatus(`<span class="spinner"></span>Queued as job <code>${taskId}</code> — polling for completion…`, 'info');
+
+    // Poll every 3s until terminal. Long conversions no longer hold this HTTP request.
+    const started = Date.now();
+    for (;;) {
+      const poll = await fetch(`/api/docling/job/${encodeURIComponent(taskId)}`, { method: 'GET' });
+      const pollJson = await poll.json();
+      if (!poll.ok) throw new Error(pollJson.error || pollJson.detail || `HTTP ${poll.status}`);
+      if (pollJson.status === 'success') {
+        resultData = { ok: true, filename: currentFile.name, options, data: pollJson.data };
+        renderResults(resultData);
+        showStatus('✅ Conversion complete. Your file has already been deleted from our server.', 'success');
+        break;
+      }
+      if (pollJson.ok === false) {
+        throw new Error(pollJson.error_message || 'Conversion failed on the server.');
+      }
+      const elapsed = Math.round((Date.now() - started) / 1000);
+      showStatus(`<span class="spinner"></span>Job <code>${taskId}</code> still running (${pollJson.status || 'processing'}, ${elapsed}s elapsed)…`, 'info');
+      await new Promise(r => setTimeout(r, 3000));
+    }
   } catch (e) {
     console.error(e);
     showStatus('❌ Conversion failed: ' + e.message, 'error');

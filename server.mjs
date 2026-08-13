@@ -821,6 +821,93 @@ app.post('/api/docling/convert-url', express.json({ limit: '16kb' }), async (req
   }
 });
 
+// Convert an uploaded file ASYNC (returns task_id immediately, poll /job/:id).
+// Same payload contract as /convert; docling-serve queues it and the client
+// polls status until done. Keeps long conversions off the HTTP connection.
+app.post('/api/docling/convert-async',
+  express.raw({ type: () => true, limit: process.env.DOCLING_MAX_UPLOAD || '60mb' }),
+  async (request, response) => {
+    try {
+      const filename = safeFilename(request.get('x-filename'));
+      const options = parseJsonHeader(request.get('x-options'), {});
+      if (!request.body || request.body.length === 0) {
+        return response.status(400).json({ error: 'Empty upload body.' });
+      }
+      const payload = {
+        options: {
+          from_formats: ['pdf', 'docx', 'pptx', 'html', 'image', 'asciidoc', 'md', 'xlsx'],
+          to_formats: ['md', 'json', 'text', 'html', 'doctags'],
+          pdf_backend: 'dlparse_v2',
+          do_ocr: true,
+          abort_on_error: false,
+          ...options,
+        },
+        sources: [{ kind: 'file', base64_string: request.body.toString('base64'), filename }],
+      };
+      const r = await fetch(`${DOCLING_SERVE_URL}/v1/convert/source/async`, {
+        method: 'POST',
+        headers: dlAuthHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(30000),
+      });
+      const bodyText = await r.text();
+      if (!r.ok) {
+        return response.status(r.status).json({ error: `docling-serve ${r.status}`, detail: bodyText.slice(0, 2000) });
+      }
+      let data = null;
+      try { data = JSON.parse(bodyText); } catch { data = { raw: bodyText.slice(0, 20000) }; }
+      response.status(202).json({ ok: true, filename, options, task_id: data.task_id, status: data.task_status || 'pending' });
+    } catch (error) {
+      await proxyJsonError(error, response, 'convert-async');
+    }
+  });
+
+// Poll an async conversion job. When done, returns the full conversion result
+// (same shape as /convert). When still running, returns { status } so the
+// client keeps polling every ~3s.
+app.get('/api/docling/job/:id', async (request, response) => {
+  try {
+    const taskId = String(request.params.id || '').trim();
+    if (!taskId) return response.status(400).json({ error: 'task id required' });
+
+    const statusR = await fetch(`${DOCLING_SERVE_URL}/v1/status/poll/${encodeURIComponent(taskId)}`, {
+      headers: dlAuthHeaders(),
+      signal: AbortSignal.timeout(20000),
+    });
+    const statusText = await statusR.text();
+    if (!statusR.ok) {
+      return response.status(statusR.status).json({ error: `docling-serve ${statusR.status}`, detail: statusText.slice(0, 2000) });
+    }
+    let status = null;
+    try { status = JSON.parse(statusText); } catch { status = { raw: statusText.slice(0, 2000) }; }
+
+    const taskStatus = String(status.task_status || 'unknown').toLowerCase();
+    // Terminal states (docling-serve v1): success, failure, timeout, cancelled
+    const done = ['success', 'failed', 'failure', 'timeout', 'cancelled', 'error'].includes(taskStatus);
+    if (!done) {
+      return response.json({ ok: true, task_id: taskId, status: taskStatus, position: status.task_position });
+    }
+
+    if (taskStatus !== 'success') {
+      return response.json({ ok: false, task_id: taskId, status: taskStatus, error_message: status.error_message || 'conversion failed' });
+    }
+
+    const resultR = await fetch(`${DOCLING_SERVE_URL}/v1/result/${encodeURIComponent(taskId)}`, {
+      headers: dlAuthHeaders(),
+      signal: AbortSignal.timeout(30000),
+    });
+    const resultText = await resultR.text();
+    if (!resultR.ok) {
+      return response.status(resultR.status).json({ error: `docling-serve ${resultR.status}`, detail: resultText.slice(0, 2000) });
+    }
+    let result = null;
+    try { result = JSON.parse(resultText); } catch { result = { raw: resultText.slice(0, 20000) }; }
+    response.json({ ok: true, task_id: taskId, status: 'success', data: result });
+  } catch (error) {
+    await proxyJsonError(error, response, 'job');
+  }
+});
+
 // Forensic scan of an uploaded file (raw binary body) — forwards to pdf-lab.
 app.post('/api/docling/scan',
   express.raw({ type: () => true, limit: process.env.DOCLING_MAX_UPLOAD || '60mb' }),
