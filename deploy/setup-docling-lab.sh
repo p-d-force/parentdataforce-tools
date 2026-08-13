@@ -6,11 +6,20 @@
 set -euo pipefail
 
 echo "==> [1/4] pdf-lab venv + deps"
+# Pillow must have a wheel (or libjpeg headers) or the source build aborts with
+# "jpeg is required". Preinstall a recent Pillow wheel, then the rest.
+apt-get install -y -qq libjpeg-dev zlib1g-dev >/dev/null 2>&1 || true
 python3 -m venv /opt/pdf-lab/venv
 /opt/pdf-lab/venv/bin/pip install -q --upgrade pip
-/opt/pdf-lab/venv/bin/pip install -q "x-ray==0.3.6" peepdf fastapi "uvicorn[standard]" || {
+# NOTE: peepdf 0.4.2 pins Pillow==3.2.0 (2016 sdist — cannot build on py3.12).
+# Install peepdf --no-deps with modern substitutes (jsbeautifier, future,
+# pythonaes, colorama, pillow>=10). If peepdf's CLI still breaks, pdfid +
+# pdf-parser cover the same indicators and the service degrades gracefully.
+/opt/pdf-lab/venv/bin/pip install -q "pillow>=10.4.0" jsbeautifier future pythonaes colorama || true
+/opt/pdf-lab/venv/bin/pip install -q --no-deps peepdf || true
+/opt/pdf-lab/venv/bin/pip install -q "x-ray==0.3.6" fastapi "uvicorn[standard]" || {
   echo "PIP FAILED — retrying without x-ray version pin"
-  /opt/pdf-lab/venv/bin/pip install -q peepdf fastapi "uvicorn[standard]"
+  /opt/pdf-lab/venv/bin/pip install -q fastapi "uvicorn[standard]"
   /opt/pdf-lab/venv/bin/pip install -q "x-ray==0.3.6" || true
 }
 
