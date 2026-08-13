@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
+import dns from 'node:dns/promises';
 import { fileURLToPath } from 'node:url';
 import express from 'express';
 import QRCode from 'qrcode';
@@ -726,9 +727,88 @@ function safeFilename(value) {
   return name && name.length <= 255 ? name : 'document.pdf';
 }
 
+// SSRF guard for convert-url: resolve hostname and reject private/loopback/
+// link-local/literal-IP targets so the server can't be used to poke internal
+// services (metadata endpoints, localhost apps, VPC ranges). Redirect-follow
+// cap lives at the fetch call site (manual, max 3).
+const PRIVATE_IPV4 = [
+  { name: 'loopback', re: /^127\./ },
+  { name: 'private-10', re: /^10\./ },
+  { name: 'private-172', re: /^172\.(1[6-9]|2[0-9]|3[01])\./ },
+  { name: 'private-192', re: /^192\.168\./ },
+  { name: 'link-local', re: /^169\.254\./ },
+  { name: 'carrier-grade-nat', re: /^100\.(6[4-9]|[7-9][0-9]|1[01][0-9]|12[0-7])\./ },
+];
+const PRIVATE_IPV6 = [
+  { name: 'loopback6', re: /^::1$/ },
+  { name: 'link-local6', re: /^fe80:/i },
+  { name: 'unique-local6', re: /^fc00:/i },
+  { name: 'ula6', re: /^fd[0-9a-f]{2}:/i },
+  { name: 'unspecified6', re: /^::$/ },
+];
+
+function isPrivateIp(address) {
+  const ip = String(address || '').toLowerCase();
+  if (ip.includes('.')) return PRIVATE_IPV4.find(r => r.re.test(ip))?.name || null;
+  return PRIVATE_IPV6.find(r => r.re.test(ip))?.name || null;
+}
+
+async function assertSafeUrl(rawUrl, redirectsLeft = 3) {
+  let parsed;
+  try { parsed = new URL(rawUrl); } catch { throw Object.assign(new Error('Invalid URL.'), { status: 400, expose: true }); }
+  if (!/^https?:$/i.test(parsed.protocol)) {
+    throw Object.assign(new Error('Only http(s) URLs are allowed.'), { status: 400, expose: true });
+  }
+  const hostname = parsed.hostname.replace(/^\[|\]$/g, '').toLowerCase();
+
+  // Literal IPs: check directly.
+  const literalIp = /^\d{1,3}(\.\d{1,3}){3}$/.test(hostname) || hostname.includes(':');
+  if (literalIp) {
+    const hit = isPrivateIp(hostname);
+    if (hit) throw Object.assign(new Error(`Blocked: ${hit} IP addresses are not allowed.`), { status: 400, expose: true });
+    return { url: parsed.toString(), hostname };
+  }
+
+  // Hostname: resolve and check every A/AAAA record.
+  let records;
+  try {
+    records = await dns.lookup(hostname, { all: true, verbatim: true });
+  } catch (e) {
+    throw Object.assign(new Error(`DNS resolution failed for ${hostname}.`), { status: 400, expose: true });
+  }
+  if (!records || records.length === 0) {
+    throw Object.assign(new Error(`No addresses for ${hostname}.`), { status: 400, expose: true });
+  }
+  for (const rec of records) {
+    const hit = isPrivateIp(rec.address);
+    if (hit) throw Object.assign(new Error(`Blocked: ${hostname} resolves to ${hit} address (${rec.address}).`), { status: 400, expose: true });
+  }
+  return { url: parsed.toString(), hostname };
+}
+
+// Follow up to `max` redirects, re-running the SSRF check at each hop.
+async function fetchWithSafeRedirects(url, init, max = 3) {
+  let current = url;
+  for (let hop = 0; hop <= max; hop++) {
+    const { url: safeUrl } = await assertSafeUrl(current);
+    const r = await fetch(safeUrl, init);
+    if (r.status >= 300 && r.status < 400 && r.headers.get('location')) {
+      current = new URL(r.headers.get('location'), safeUrl).toString();
+      continue;
+    }
+    return r;
+  }
+  throw Object.assign(new Error('Too many redirects.'), { status: 400, expose: true });
+}
+
 async function proxyJsonError(error, response, label) {
   console.error(`Docling Lab ${label} error:`, error);
   if (response.headersSent) return;
+  // Typed client errors (SSRF guard 400s, payload caps) pass through as-is;
+  // everything else is a backend failure → 502.
+  if (error.status && error.status >= 400 && error.status < 500) {
+    return response.status(error.status).json({ error: String(error.message || 'Bad request.') });
+  }
   response.status(502).json({ error: `${label} failed: ${String(error.message || error)}` });
 }
 
@@ -791,13 +871,40 @@ app.post('/api/docling/convert',
     }
   });
 
-// Convert a remote URL (http/https only).
+// Convert a remote URL (http/https only). SSRF-guarded: we validate the target
+// (private/loopback/link-local rejected, redirect cap 3), fetch the bytes
+// ourselves with a size cap, then hand docling-serve a FILE source — docling
+// never fetches the URL itself, so no second-hop SSRF.
 app.post('/api/docling/convert-url', express.json({ limit: '16kb' }), async (request, response) => {
   try {
     const { url, options } = request.body || {};
     if (!url || !/^https?:\/\//i.test(String(url))) {
       return response.status(400).json({ error: 'A valid http(s) URL is required.' });
     }
+    await assertSafeUrl(String(url));
+
+    // Fetch with redirect cap; each hop re-validated by assertSafeUrl.
+    const r = await fetchWithSafeRedirects(String(url), {
+      headers: { 'User-Agent': 'ParentDataForce-DoclingLab/1.0 (+https://parentdataforce.org)' },
+      redirect: 'manual',
+      signal: AbortSignal.timeout(30000),
+    });
+    if (!r.ok) {
+      return response.status(502).json({ error: `Upstream ${r.status} while fetching URL.` });
+    }
+    const totalBytes = Number(r.headers.get('content-length') || 0);
+    if (totalBytes > DOCLING_MAX_UPLOAD) {
+      return response.status(413).json({ error: `Remote file exceeds ${Math.round(DOCLING_MAX_UPLOAD / 1024 / 1024)}MB limit.` });
+    }
+    const buf = Buffer.from(await r.arrayBuffer());
+    if (buf.length === 0) {
+      return response.status(400).json({ error: 'Remote URL returned an empty body.' });
+    }
+    if (buf.length > DOCLING_MAX_UPLOAD) {
+      return response.status(413).json({ error: `Remote file exceeds ${Math.round(DOCLING_MAX_UPLOAD / 1024 / 1024)}MB limit.` });
+    }
+    const filename = safeFilename(decodeURIComponent(path.basename(new URL(r.url || url).pathname)) || 'remote.pdf');
+
     const payload = {
       options: {
         from_formats: ['pdf', 'docx', 'pptx', 'html', 'image', 'asciidoc', 'md', 'xlsx'],
@@ -807,21 +914,21 @@ app.post('/api/docling/convert-url', express.json({ limit: '16kb' }), async (req
         abort_on_error: false,
         ...(options || {}),
       },
-      sources: [{ kind: 'http', url: String(url) }],
+      sources: [{ kind: 'file', base64_string: buf.toString('base64'), filename }],
     };
-    const r = await fetch(`${DOCLING_SERVE_URL}/v1/convert/source`, {
+    const dr = await fetch(`${DOCLING_SERVE_URL}/v1/convert/source`, {
       method: 'POST',
       headers: dlAuthHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(payload),
       signal: AbortSignal.timeout(DOCLING_TIMEOUT_MS),
     });
-    const bodyText = await r.text();
-    if (!r.ok) {
-      return response.status(r.status).json({ error: `docling-serve ${r.status}`, detail: bodyText.slice(0, 2000) });
+    const bodyText = await dr.text();
+    if (!dr.ok) {
+      return response.status(dr.status).json({ error: `docling-serve ${dr.status}`, detail: bodyText.slice(0, 2000) });
     }
     let data = null;
     try { data = JSON.parse(bodyText); } catch { data = { raw: bodyText.slice(0, 20000) }; }
-    response.json({ ok: true, url, options: options || {}, data });
+    response.json({ ok: true, url: r.url || url, filename, options: options || {}, data });
   } catch (error) {
     await proxyJsonError(error, response, 'convert-url');
   }
