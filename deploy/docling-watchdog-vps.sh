@@ -34,7 +34,9 @@ fi
 NOW=$(now)
 
 # Something is down — restart all docling stack services, report outcome.
-RESTART_OUT=$(systemctl restart ollama docling-serve pdf-lab parentdataforce-tools 2>&1; sleep 5; \
+# `|| true`: a failed restart (systemd race, unit mid-stop) must NOT abort
+# the script before the alert fires.
+RESTART_OUT=$(systemctl restart ollama docling-serve pdf-lab parentdataforce-tools 2>&1 || true; sleep 5; \
   echo "docling-serve=$(svc_state docling-serve) pdf-lab=$(svc_state pdf-lab) ollama=$(svc_state ollama) node=$(svc_state parentdataforce-tools)")
 
 MSG="🚨 **DOCLING LAB DOWN** at $NOW
