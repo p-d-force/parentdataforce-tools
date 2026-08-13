@@ -1028,7 +1028,10 @@ app.get('/api/docling/job/:id', async (request, response) => {
 // to pdf-lab /extract-tables. Returns per-table CSV (default) or XLSX file.
 app.post('/api/docling/extract-tables', express.json({ limit: '20mb' }), async (request, response) => {
   try {
-    const { document, format } = request.body || {};
+    const body = request.body || {};
+    // Accept either { document: <docling json> } or a bare docling JSON document.
+    const document = (body.document && typeof body.document === 'object') ? body.document : (body.schema_name || body.tables ? body : null);
+    const format = body.format || request.query.format || 'csv';
     if (!document || typeof document !== 'object') {
       return response.status(400).json({ error: 'A docling JSON document is required.' });
     }
