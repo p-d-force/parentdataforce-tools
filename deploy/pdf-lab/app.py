@@ -200,7 +200,8 @@ def incremental_detect(path):
     import fitz
     doc = fitz.open(path)
     try:
-        trailer = doc.trailer
+        # PyMuPDF >=1.24: trailer via pdf_trailer (dict of trailer keys)
+        trailer = doc.pdf_trailer if hasattr(doc, "pdf_trailer") else doc.trailer
         revisions = 0
         prev = trailer.get("Prev") if isinstance(trailer, dict) else None
         while prev:
