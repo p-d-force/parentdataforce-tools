@@ -33,6 +33,9 @@ cp /opt/parentdataforce-tools/deploy/nginx-tools.conf /etc/nginx/sites-enabled/p
 cp /opt/parentdataforce-tools/deploy/docling-rate-limit.conf /etc/nginx/conf.d/docling-rate-limit.conf
 nginx -t 2>&1 | tail -1 && systemctl reload nginx && echo NGINX_OK'
 
+echo "[4c/6] live site (parentdataforce.org main site)"
+"${SSH[@]}" 'rsync -a --delete /opt/parentdataforce-tools/live-site/ /var/www/parentdataforce/live/ 2>/dev/null || (rm -rf /var/www/parentdataforce/live && cp -r /opt/parentdataforce-tools/live-site /var/www/parentdataforce/live) && chown -R root:root /var/www/parentdataforce/live && ls /var/www/parentdataforce/live | tr "\n" " " && echo LIVE_OK'
+
 echo "[4b/6] docling-serve unit (parallel jobs / caps)"
 "${SSH[@]}" 'cp /opt/parentdataforce-tools/deploy/docling-serve.service /etc/systemd/system/docling-serve.service && systemctl daemon-reload && systemctl restart docling-serve && sleep 3 && systemctl is-active docling-serve'
 

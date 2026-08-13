@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="index,follow">
+  <meta name="description" content="Worcester Today — reporting on Worcester Public Schools from the source documents: school committee minutes, records, budgets, and filings, written by Parent Data Force.">
+  <title>Worcester Today | Parent Data Force</title>
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    /* Worcester page additions on the shared design system */
+    .story-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+    .story-card { min-height:200px; padding:28px; background:var(--bg-card); border:1px solid var(--border); display:flex; flex-direction:column; position:relative; transition:border-color .2s; }
+    .story-card:hover { border-color:var(--accent); }
+    .story-card .story-date { color:var(--text-muted); font:500 .68rem 'DM Mono',monospace; letter-spacing:.1em; }
+    .story-card h3 { margin:16px 0 8px; font-size:1.3rem; letter-spacing:-.025em; line-height:1.2; }
+    .story-card p { margin:0 0 16px; color:var(--text-secondary); font-size:.92rem; line-height:1.55; }
+    .story-card .source-tag { display:inline-block; margin-top:auto; color:var(--accent-glow); font:500 .68rem 'DM Mono',monospace; letter-spacing:.08em; text-transform:uppercase; }
+    .story-card .source-tag::before { content:"📄 "; }
+    .watch-list { padding:26px 28px; background:var(--bg-elevated); border:1px solid var(--border); margin-top:16px; }
+    .watch-list h3 { margin:0 0 10px; font-size:1.1rem; letter-spacing:-.02em; }
+    .watch-list p { margin:0; color:var(--text-secondary); font-size:.9rem; line-height:1.6; }
+    .watch-list ul { margin:14px 0 0; padding-left:20px; color:var(--text-secondary); font-size:.9rem; line-height:1.7; }
+    .empty-state { padding:44px 28px; text-align:center; color:var(--text-muted); font-size:.9rem; border:1px dashed var(--border); border-radius:4px; margin-top:16px; }
+    @media (max-width:720px) { .story-grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Parent Data Force home">
+      <img src="/logo.png" alt="Parent Data Force logo">
+      <span><strong>PARENT DATA FORCE</strong><em>WORCESTER TODAY</em></span>
+    </a>
+    <nav aria-label="Primary navigation">
+      <a href="/">Home</a>
+      <a href="#stories">Stories</a>
+      <a href="#sources">Sources</a>
+      <a href="https://tools.parentdataforce.org/" rel="noreferrer">Tools ↗</a>
+      <a href="https://tools.parentdataforce.org/articles/" rel="noreferrer">Articles ↗</a>
+      <a href="#support">Support Us</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="eyebrow">WORCESTER • MASSACHUSETTS • SCHOOLS</p>
+      <h1>Worcester, on the record.</h1>
+      <p class="lede">Worcester Today reports on Worcester Public Schools from the source documents — school committee minutes, budgets, records, and filings. Every story is written from the primary record and tagged with the document it came from.</p>
+      <div class="hero-support-banner">
+        <span class="banner-icon">♥</span>
+        <p><strong>From the source.</strong> We don't summarize press releases. We read the minutes, the budgets, and the records — then tell you what's in them. Stories here are written from the reports and source documents themselves.</p>
+      </div>
+      <div class="actions">
+        <a class="button" href="#stories">Latest from Worcester</a>
+        <a class="text-link" href="#sources">How we source →</a>
+      </div>
+    </section>
+
+    <section id="stories" class="section">
+      <div class="section-heading"><p class="eyebrow">WORCESTER TODAY</p><h2>Latest reporting</h2><p>Stories are written from the source documents of the reports — minutes, filings, and public records.</p></div>
+      <div class="story-grid">
+        <article class="story-card">
+          <span class="story-date">—</span>
+          <h3>First story coming soon</h3>
+          <p>Reporting on Worcester Public Schools starts here. Watch this space for the first piece written from the source documents.</p>
+          <span class="source-tag">Source: pending</span>
+        </article>
+      </div>
+    </section>
+
+    <section id="sources" class="section">
+      <div class="section-heading"><p class="eyebrow">HOW WE SOURCE</p><h2>From the documents up.</h2><p>Stories are grounded in the primary record. We publish the source so you can check our work.</p></div>
+      <div class="story-grid">
+        <div class="watch-list">
+          <h3>School Committee</h3>
+          <p>Minutes, agendas, and votes of the Worcester School Committee — the public record of every decision.</p>
+          <ul>
+            <li>Agendas and minutes are read cover to cover</li>
+            <li>Votes are checked against the meeting video when available</li>
+            <li>Written by the source documents of the reports</li>
+          </ul>
+        </div>
+        <div class="watch-list">
+          <h3>Public Records</h3>
+          <p>Records requests, DESE filings, budgets, and contracts — the documents districts would rather stay quiet.</p>
+          <ul>
+            <li>Every claim traced to a named document</li>
+            <li>Records requests tracked on the public-records board</li>
+            <li>Redaction and tampering checks on every PDF</li>
+          </ul>
+        </div>
+      </div>
+      <div class="empty-state">More source categories — budgets, discipline data, and staffing — are being added.</div>
+    </section>
+
+    <!-- Donation / Support Section -->
+    <section id="support" class="section donation-section">
+      <div class="section-heading"><p class="eyebrow">SUPPORT</p><h2>Keep Worcester reporting funded.</h2><p>Records requests cost money. Your support pays for the documents behind the stories.</p></div>
+      <div class="donation-grid">
+        <div class="donation-card">
+          <div class="donation-icon">❤️</div>
+          <h3>Donate on GoFundMe</h3>
+          <p>Support Parent Data Force advocacy</p>
+          <a href="https://www.gofundme.com/f/support-parent-data-force-advocacy" target="_blank" rel="noreferrer" class="button donation-btn">GoFundMe ↗</a>
+        </div>
+        <div class="donation-card">
+          <div class="donation-icon">💙</div>
+          <h3>Venmo</h3>
+          <p>@ParentDataForce</p>
+          <a href="https://venmo.com/?txn=pay&audience=public&recipients=ParentDataForce" target="_blank" rel="noreferrer" class="button donation-btn">Venmo ↗</a>
+        </div>
+        <div class="donation-card">
+          <div class="donation-icon">📬</div>
+          <h3>Resources</h3>
+          <p>Advocacy library, data portal, and more</p>
+          <a href="https://www.parentdataforce.com/donate/" target="_blank" rel="noreferrer" class="button donation-btn">Learn more ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="privacy-note">
+      <p class="eyebrow">OUR STANDARD</p>
+      <h2>We do not sell family data.</h2>
+      <p>Worcester Today reports from public records and source documents only. We never publish student records or confidential casework.</p>
+    </section>
+  </main>
+
+  <footer>
+    <span>© Parent Data Force</span>
+    <span>Worcester Today · Parent-run educational watchdog</span>
+    <div class="footer-donate">
+      <span class="footer-donate-label">Support our work:</span>
+      <a href="https://www.gofundme.com/f/support-parent-data-force-advocacy" target="_blank" rel="noreferrer">GoFundMe</a>
+      <a href="https://venmo.com/?txn=pay&audience=public&recipients=ParentDataForce" target="_blank" rel="noreferrer">Venmo</a>
+      <a href="https://www.parentdataforce.com/donate/" target="_blank" rel="noreferrer">More ↗</a>
+    </div>
+  </footer>
+</body>
+</html>
