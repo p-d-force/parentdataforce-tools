@@ -348,6 +348,18 @@ $('convert-btn').addEventListener('click', async () => {
         resultData = { ok: true, filename: currentFile.name, options, data: pollJson.data };
         renderResults(resultData);
         showStatus('✅ Conversion complete. Your file has already been deleted from our server.', 'success');
+        // Post-conversion donation CTA (GoFundMe + Venmo only, per Joey's rule)
+        const cta = document.createElement('div');
+        cta.style.marginTop = '14px';
+        cta.style.padding = '16px 20px';
+        cta.style.background = 'var(--bg-card)';
+        cta.style.border = '1px solid var(--border)';
+        cta.style.borderRadius = '6px';
+        cta.innerHTML = '<div style="font-weight:700;margin-bottom:6px">Loved it? Support the watchdog 💜</div>'
+          + '<div style="font-size:.85rem;color:var(--text-secondary);margin-bottom:10px">Parent Data Force is a parent-run nonprofit. Every conversion is free — your support keeps the lights on.</div>'
+          + '<a class="btn btn-secondary btn-sm" href="https://www.gofundme.com/f/parent-data-force" target="_blank" rel="noopener">GoFundMe</a> '
+          + '<a class="btn btn-secondary btn-sm" href="https://venmo.com/parentdataforce" target="_blank" rel="noopener">Venmo @parentdataforce</a>';
+        $('status').appendChild(cta);
         break;
       }
       if (pollJson.ok === false) {
