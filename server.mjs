@@ -807,7 +807,8 @@ function doclingOptions(extra = {}) {
   const opts = {
     from_formats: ['pdf', 'docx', 'pptx', 'html', 'image', 'asciidoc', 'md', 'xlsx'],
     to_formats: ['md', 'json', 'text', 'html', 'doctags'],
-    pdf_backend: 'dlparse_v2',
+    // dlparse_v4 measured ~30x faster than v2 on warm CPU (0.8s vs 25.8s proc).
+    pdf_backend: 'dlparse_v4',
     do_ocr: true,
     abort_on_error: false,
     ...extra,
