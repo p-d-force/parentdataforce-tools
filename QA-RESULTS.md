@@ -80,7 +80,7 @@
 | Dark theme renders | PASS | body rgb(11,11,11), Outfit font |
 | Logo loads | PASS | naturalWidth > 0 |
 | LIVE cards + badges | PASS | PDF/YT cards marked LIVE + New Tool |
-| Donation section | PASS | Ko-fi/PayPal/Venmo links present |
+| Donation section | PASS | GoFundMe/Venmo links present (ko-fi/paypal purged) |
 | $80 goal tracker | PASS | "Monthly goal: Help us cover $80/month" |
 | Referral links | PASS | Vultr/Cloudflare/GitHub |
 | QR form intact | PASS | destination/label/tracking + generate |

@@ -1,6 +1,15 @@
 # Parent Data Force — Monetization Plan
 ## Target: Cover $80/month deficit → Build to $500+/month
 
+> ## ⛔ HARD DECISION (Joey, 2026-08-13) — donation channels
+> **GoFundMe + Venmo ONLY.** Ko-fi, PayPal, and Buy Me a Coffee are all
+> **dead** — do not add buttons, links, or mentions of them anywhere.
+> - GoFundMe: `https://www.gofundme.com/f/support-parent-data-force-advocacy`
+> - Venmo: `https://venmo.com/?txn=pay&audience=public&recipients=ParentDataForce`
+> - Donate page: `https://www.parentdataforce.com/donate/`
+> Anything in this doc that says Ko-fi/PayPal/Buy-Me-A-Coffee is stale and
+> superseded by the banner above.
+
 ---
 
 ## CURRENT STATE (August 11, 2026)

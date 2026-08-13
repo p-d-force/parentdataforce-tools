@@ -241,7 +241,7 @@ let resultData = null;
     if (remaining === null) {
       bar.innerHTML = '<span>Pro tier — unlimited conversions. 💜</span><span>Thank you for supporting the watchdog!</span>';
     } else {
-      bar.innerHTML = `<span>Free tier — <span class="q-remaining">${remaining} of ${cLimit} conversions</span> left today.</span><a href="https://parentdataforce.org/donate" target="_blank" rel="noopener">Support Parent Data Force →</a>`;
+      bar.innerHTML = `<span>Free tier — <span class="q-remaining">${remaining} of ${cLimit} conversions</span> left today.</span><a href="https://www.parentdataforce.com/donate/" target="_blank" rel="noopener">Support Parent Data Force →</a>`;
     }
     bar.style.display = 'flex';
   } catch { /* non-fatal: quota bar is progressive enhancement */ }
@@ -357,8 +357,8 @@ $('convert-btn').addEventListener('click', async () => {
         cta.style.borderRadius = '6px';
         cta.innerHTML = '<div style="font-weight:700;margin-bottom:6px">Loved it? Support the watchdog 💜</div>'
           + '<div style="font-size:.85rem;color:var(--text-secondary);margin-bottom:10px">Parent Data Force is a parent-run nonprofit. Every conversion is free — your support keeps the lights on.</div>'
-          + '<a class="btn btn-secondary btn-sm" href="https://www.gofundme.com/f/parent-data-force" target="_blank" rel="noopener">GoFundMe</a> '
-          + '<a class="btn btn-secondary btn-sm" href="https://venmo.com/parentdataforce" target="_blank" rel="noopener">Venmo @parentdataforce</a>';
+          + '<a class="btn btn-secondary btn-sm" href="https://www.gofundme.com/f/support-parent-data-force-advocacy" target="_blank" rel="noopener">GoFundMe</a> '
+          + '<a class="btn btn-secondary btn-sm" href="https://venmo.com/?txn=pay&audience=public&recipients=ParentDataForce" target="_blank" rel="noopener">Venmo @ParentDataForce</a>';
         $('status').appendChild(cta);
         break;
       }
@@ -384,7 +384,7 @@ $('convert-btn').addEventListener('click', async () => {
       const remaining = cLimit === null ? null : Math.max(0, cLimit - (q.used.converts || 0));
       const bar = $('quota-bar');
       if (remaining !== null) {
-        bar.innerHTML = `<span>Free tier — <span class="q-remaining">${remaining} of ${cLimit} conversions</span> left today.</span><a href="https://parentdataforce.org/donate" target="_blank" rel="noopener">Support Parent Data Force →</a>`;
+        bar.innerHTML = `<span>Free tier — <span class="q-remaining">${remaining} of ${cLimit} conversions</span> left today.</span><a href="https://www.parentdataforce.com/donate/" target="_blank" rel="noopener">Support Parent Data Force →</a>`;
       }
     }
   } catch { /* non-fatal */ }
