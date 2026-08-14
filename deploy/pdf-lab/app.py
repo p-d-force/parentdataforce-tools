@@ -286,6 +286,16 @@ def redaction_pixel(path):
         return {"available": False, "error": str(exc)[:300]}
     finally:
         doc.close()
+    # Downgrade repeated identical boxes (same bbox + text on 3+ pages):
+    # those are headers/footers/watermarks/letterheads, not redactions.
+    from collections import Counter
+    key = lambda b: (tuple(b["bbox"]), str(b.get("covered_text_preview", ""))[:40])
+    counts = Counter(key(b) for b in findings)
+    for b in findings:
+        if counts[key(b)] >= 3:
+            b["severity"] = "info"
+            b["note"] = "repeated across %d pages — likely header/footer/letterhead" % counts[key(b)]
+    findings = [b for b in findings if b.get("severity") != "info"]
     return {"available": True, "findings": len(findings), "boxes": findings[:50]}
 
 def _rect_overlap(rect, word):
