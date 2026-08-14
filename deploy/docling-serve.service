@@ -21,6 +21,8 @@ Environment=DOCLING_SERVE_MAX_NUM_PAGES=400
 Environment=DOCLING_SERVE_LOG_LEVEL=INFO
 # Allow docling to call the local Ollama vision server for picture descriptions
 Environment=DOCLING_SERVE_ENABLE_REMOTE_SERVICES=true
+# Accept the custom picture_description_api config from the request (qwen2.5vl:3b via Ollama)
+Environment=DOCLING_SERVE_ALLOW_CUSTOM_PICTURE_DESCRIPTION_CONFIG=true
 # Results are single-use and auto-removed (privacy: nothing persists)
 
 [Install]
