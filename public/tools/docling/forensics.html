@@ -121,6 +121,7 @@ footer a{color:var(--accent-glow)}
   <div id="file-area"></div>
 
   <button class="btn" id="scan-btn" disabled>Run Forensic Scan</button>
+  <button class="btn btn-secondary" id="redact-btn" disabled style="margin-top:22px">🔒 Redaction Audit Only</button>
   <div id="status"></div>
 
   <div class="report" id="report" style="display:none"></div>
@@ -165,10 +166,11 @@ setupDrop('upload-zone', 'file-input', file => {
   currentFile = file;
   $('file-area').innerHTML = `<div class="file-chip">🔬 <span>${file.name}</span><span class="file-size">${formatBytes(file.size)}</span><button onclick="clearFile()" title="Remove">✕</button></div>`;
   $('scan-btn').disabled = false;
+  $('redact-btn').disabled = false;
   $('status').innerHTML = '';
   $('report').style.display = 'none';
 });
-window.clearFile = () => { currentFile = null; $('file-area').innerHTML = ''; $('scan-btn').disabled = true; };
+window.clearFile = () => { currentFile = null; $('file-area').innerHTML = ''; $('scan-btn').disabled = true; $('redact-btn').disabled = true; };
 
 function showStatus(msg, type){ $('status').innerHTML = `<div class="status-msg ${type}">${msg}</div>`; }
 
@@ -183,16 +185,7 @@ $('scan-btn').addEventListener('click', async () => {
   btn.textContent = 'Scanning…';
   showStatus('<span class="spinner"></span>Running forensic scan (hash, metadata, structure, redaction X-Ray, malware indicators)…', 'info');
   try {
-    const resp = await fetch('/api/docling/scan', {
-      method: 'POST',
-      headers: {
-        'Content-Type': currentFile.type || 'application/octet-stream',
-        'X-Filename': currentFile.name,
-      },
-      body: currentFile,
-    });
-    const json = await resp.json();
-    if (!resp.ok) throw new Error(json.error || json.detail || `HTTP ${resp.status}`);
+    const json = await runScan();
     lastReport = json;
     renderReport(json);
     showStatus('✅ Scan complete. Your file has already been deleted from our server.', 'success');
@@ -203,6 +196,95 @@ $('scan-btn').addEventListener('click', async () => {
   btn.disabled = false;
   btn.textContent = 'Run Forensic Scan';
 });
+
+async function runScan(){
+  const resp = await fetch('/api/docling/scan', {
+    method: 'POST',
+    headers: {
+      'Content-Type': currentFile.type || 'application/octet-stream',
+      'X-Filename': currentFile.name,
+    },
+    body: currentFile,
+  });
+  const json = await resp.json();
+  if (!resp.ok) throw new Error(json.error || json.detail || `HTTP ${resp.status}`);
+  return json;
+}
+
+$('redact-btn').addEventListener('click', async () => {
+  if (!currentFile) return;
+  const btn = $('redact-btn');
+  btn.disabled = true;
+  btn.textContent = 'Auditing…';
+  showStatus('<span class="spinner"></span>Running redaction audit (X-Ray text-layer + pixel rendering)…', 'info');
+  try {
+    const json = await runScan();
+    lastReport = json;
+    renderRedactionAudit(json);
+    showStatus('✅ Redaction audit complete. Your file has already been deleted from our server.', 'success');
+  } catch (e) {
+    console.error(e);
+    showStatus('❌ Audit failed: ' + e.message, 'error');
+  }
+  btn.disabled = false;
+  btn.textContent = '🔒 Redaction Audit Only';
+});
+
+function renderRedactionAudit(json){
+  const d = json.data || json;
+  const ev = d.evidence || {};
+  const red = d.redaction || {};
+  const rp = d.redaction_pixel || {};
+  const xrayFindings = red.pages || [];
+  const pixelBoxes = rp.boxes || [];
+  const total = xrayFindings.length + (rp.findings || 0);
+  let html = '';
+
+  // Verdict banner
+  const verdict = total === 0
+    ? `<div class="status-msg success">✅ No failed redactions detected by either detector.<br><span style="font-size:.8rem;opacity:.85">A clean result does not prove the PDF is safely redacted — always confirm visually.</span></div>`
+    : `<div class="status-msg error">⚠ ${total} potential failed redaction(s) detected. Review each finding below and confirm visually before relying on the document.</div>`;
+  html += `<section class="panel"><div class="panel-head"><h2>Redaction Audit Verdict</h2><div>${badge(total === 0 ? 'CLEAN' : total + ' FINDINGS', total === 0 ? 'ok' : 'crit')}</div></div><div class="panel-body">${verdict}
+    <div class="kv" style="margin-top:16px">
+      <div><div class="k">File</div><div class="v">${escapeHtml(ev.filename || json.filename || '—')}</div></div>
+      <div><div class="k">SHA-256</div><div class="v">${escapeHtml(ev.sha256 || '—')}</div></div>
+      <div><div class="k">Pages</div><div class="v">${escapeHtml(String(ev.page_count ?? '—'))}</div></div>
+      <div><div class="k">Scanned at</div><div class="v">${escapeHtml(ev.scanned_at || '—')}</div></div>
+    </div></div></section>`;
+
+  // X-Ray (text-layer) findings
+  if (red.available === false){
+    html += panel('X-Ray — text-layer scan', '<p style="color:var(--text-muted);font-size:.85rem;margin:0">X-Ray scanner not available for this file type.</p>', badge('Skipped', 'info'));
+  } else if (!xrayFindings.length){
+    html += panel('X-Ray — text-layer scan (FreeLaw X-Ray v' + escapeHtml(d.tools?.xray || '?') + ')', '<p style="color:var(--text-muted);font-size:.85rem;margin:0">No extractable text found under redaction overlays.</p>', badge('Clean', 'ok'));
+  } else {
+    const body = xrayFindings.map(f => `<div class="finding"><div class="f-page">PAGE ${f.page}${f.severity ? ' · ' + escapeHtml(f.severity) : ''}</div><div class="f-text">${escapeHtml(f.text)}</div>${f.bbox ? `<div class="f-bbox">bbox ${f.bbox.join(', ')}</div>` : ''}</div>`).join('');
+    html += panel('X-Ray — text-layer scan (FreeLaw X-Ray v' + escapeHtml(d.tools?.xray || '?') + ')', `<p style="margin:0 0 12px;font-size:.82rem;color:var(--crit)">⚠ ${xrayFindings.length} finding(s) — text is extractable beneath a redaction overlay. Treat as CRITICAL until visually confirmed.</p>${body}`, badge(xrayFindings.length + ' findings', 'crit'));
+  }
+
+  // Pixel-based findings
+  if (rp.available === false){
+    html += panel('Pixel — rendered-image scan', '<p style="color:var(--text-muted);font-size:.85rem;margin:0">Pixel redaction scan not available for this file type.</p>', badge('Skipped', 'info'));
+  } else if (!pixelBoxes.length){
+    html += panel('Pixel — rendered-image scan', '<p style="color:var(--text-muted);font-size:.85rem;margin:0">No filled rectangles covering extractable text found in rendered pages.</p>', badge('Clean', 'ok'));
+  } else {
+    const body = pixelBoxes.map(b => {
+      const sev = b.severity === 'critical' ? badge('CRITICAL', 'crit') : badge('WARNING', 'warn');
+      return `<div class="finding"><div class="f-page">PAGE ${b.page} · ${sev}${b.color ? ' · ' + escapeHtml(b.color) + ' box' : ''}</div><div class="f-text">${escapeHtml(b.covered_text_preview || '')}</div>${b.bbox ? `<div class="f-bbox">bbox ${b.bbox.join(', ')}${b.covered_chars ? ' · ' + b.covered_chars + ' chars covered' : ''}</div>` : ''}</div>`;
+    }).join('');
+    const crit = pixelBoxes.filter(b => b.severity === 'critical').length;
+    html += panel('Pixel — rendered-image scan (' + pixelBoxes.length + ' box(es))',
+      `<p style="margin:0 0 12px;font-size:.82rem;color:var(--text-secondary)">${crit} critical (dark box) · ${pixelBoxes.length - crit} warning (light box — may be table shading, confirm visually).</p>${body}`,
+      badge(crit + ' critical', crit ? 'crit' : 'ok'));
+  }
+
+  // Download
+  html += panel('Report', '<div style="margin-top:4px"><button class="btn btn-secondary btn-sm" onclick="downloadReport(\'json\')">Download report (JSON)</button> <button class="btn btn-secondary btn-sm" onclick="downloadReport(\'manifest\')">Copy evidence manifest</button></div>');
+
+  $('report').innerHTML = html;
+  $('report').style.display = 'grid';
+  $('report').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
 function badge(text, cls){ return `<span class="badge ${cls}">${text}</span>`; }
 function panel(title, bodyHtml, extraHead){

@@ -230,6 +230,12 @@ def redaction_pixel(path):
     Renders vector drawings per page and flags large near-black/near-white
     fills whose bbox overlaps extractable text — the classic 'black box over
     text' redaction pattern that x-ray (text-layer based) can miss.
+
+    Severity: dark boxes (near-black fill) = critical (classic redaction bar).
+    Light boxes (near-white fill) = warning (could be a white-box redaction OR
+    table row shading — needs visual confirmation).
+    Full-page background rects (>=90% of page area) are skipped: they are
+    page backgrounds, not redactions.
     """
     import fitz
     doc = fitz.open(path)
@@ -240,6 +246,8 @@ def redaction_pixel(path):
             words = page.get_text("words")  # [x0,y0,x1,y1,word,...]
             if not words:
                 continue
+            pr = page.rect
+            page_area = max(pr.width * pr.height, 1)
             drawings = page.get_drawings()
             for d in drawings:
                 rect = d.get("rect")
@@ -258,6 +266,10 @@ def redaction_pixel(path):
                 light = r > 0.75 and g > 0.75 and b > 0.75
                 if not (dark or light):
                     continue
+                # Skip full-page background rects (>=90% of page area)
+                rect_area = rect.width * rect.height
+                if rect_area / page_area >= 0.9:
+                    continue
                 # does the box cover any text?
                 covered = [wd for wd in words if _rect_overlap(rect, wd)]
                 if covered:
@@ -266,6 +278,7 @@ def redaction_pixel(path):
                         "page": pno,
                         "bbox": [round(rect.x0), round(rect.y0), round(rect.x1), round(rect.y1)],
                         "color": "dark" if dark else "light",
+                        "severity": "critical" if dark else "warning",
                         "covered_chars": sum(len(str(wd[4])) for wd in covered),
                         "covered_text_preview": text[:MAX_TEXT],
                     })
