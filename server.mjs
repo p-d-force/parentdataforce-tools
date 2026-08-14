@@ -821,7 +821,7 @@ function doclingOptions(extra = {}) {
       prompt: 'Describe this image in a few sentences. If it is a chart, graph, table, or handwriting, say what it shows. Do not mention being an AI.',
       timeout: 240,
       concurrency: 1,
-      params: { model: 'gemma3:4b' },
+      params: { model: 'qwen2.5vl:3b' },
     };
   }
   return opts;
